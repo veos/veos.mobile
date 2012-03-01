@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1" />
+        <title>
+        </title>
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
+        <style>
+            /* App custom styles */
+        </style>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js">
+        </script>
+        <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js">
+        </script>
+    </head>
+    <body>
+        <div data-role="page" id="page2">
+            <div data-theme="a" data-role="header" data-position="fixed">
+                <h3>
+                    VEOS - surveillance within xxx km
+                </h3>
+            </div>
+            <div data-role="content">
+                <div>
+                    <img src="https://codiqa.com/static/images/v2/image_component.jpg" />
+                </div>
+                <a data-role="button" data-inline="true" data-transition="fade" href="#page2">
+                    Add New
+                </a>
+                <a data-role="button" data-inline="true" data-transition="fade" href="#page2">
+                    List View
+                </a>
+            </div>
+        </div>
+        <div data-role="page" id="page1">
+            <div data-theme="a" data-role="header">
+                <h3>
+                    VEOS
+                </h3>
+            </div>
+            <div data-role="content">
+                <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                        <label for="textinput2">
+                            Owner
+                        </label>
+                        <input id="textinput2" placeholder="" value="" type="text" />
+                    </fieldset>
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="selectmenu1">
+                        Type
+                    </label>
+                    <select name="selectmenu1" id="selectmenu1" data-theme="e">
+                        <option value="retail_camera">
+                            Retail camera
+                        </option>
+                        <option value="street_camera">
+                            Street camera
+                        </option>
+                    </select>
+                </div>
+                <div class="ui-grid-b">
+                    <div class="ui-block-a">
+                        <a data-role="button" data-transition="fade" data-theme="e" href="#page1">
+                            Add Photo
+                        </a>
+                    </div>
+                    <div class="ui-block-b">
+                        <a data-role="button" data-transition="fade" data-theme="e" href="#page1">
+                            Pin to map
+                        </a>
+                    </div>
+                    <div class="ui-block-c">
+                        <a data-role="button" data-transition="fade" data-theme="e" href="#page1">
+                            Add Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            //App custom javascript
+        </script>
+    </body>
+</html>
