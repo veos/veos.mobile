@@ -2,8 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <!-- <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1" /> -->
-        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+        <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1" /> 
         <title>
         </title>
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
@@ -16,8 +15,12 @@
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js">
         </script>
-        <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js">
-        </script>
+
+<!--    <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js">
+        I cause issues with Google Maps API
+-->
+
+
         <script type="text/javascript"
             src="http://maps.googleapis.com/maps/api/js?key=AIzaSyADosfr10Z0idZbNiRFtXKXzzOlwOar8vU&sensor=false">
         </script>
@@ -32,8 +35,6 @@
             myOptions);
         }
         </script>
-
-
     </head>
     <body onload="initialize()">
         <div id="map_canvas" style="width:100%; height:100%"></div>
