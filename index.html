@@ -2,7 +2,8 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1" />
+        <!-- <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1" /> -->
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
         <title>
         </title>
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
@@ -18,13 +19,13 @@
         <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js">
         </script>
         <script type="text/javascript"
-            src="http://maps.googleapis.com/maps/api/js?key=AIzaSyADosfr10Z0idZbNiRFtXKXzzOlwOar8vU&amp;sensor=false">
+            src="http://maps.googleapis.com/maps/api/js?key=AIzaSyADosfr10Z0idZbNiRFtXKXzzOlwOar8vU&sensor=false">
         </script>
         <script type="text/javascript">
         function initialize() {
             var myOptions = {
-            center: new google.maps.LatLng(-34.397, 150.644),
-            zoom: 8,
+            center: new google.maps.LatLng(43.654,-79.381),
+            zoom: 4,
             mapTypeId: google.maps.MapTypeId.ROADMAP
             };
             var map = new google.maps.Map(document.getElementById("map_canvas"),
@@ -36,10 +37,5 @@
     </head>
     <body onload="initialize()">
         <div id="map_canvas" style="width:100%; height:100%"></div>
-
-
-        <script>
-            //App custom javascript
-        </script>
     </body>
 </html>
