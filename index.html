@@ -27,19 +27,27 @@
         <script type="text/javascript">
             var suc = function(p) {
                 alert(p.coords.latitude + " " + p.coords.longitude);
-            };
-            var locFail = function() {
-            };
-            
-            function initialize() {
-                navigator.geolocation.getCurrentPosition(suc, locFail);
+                
                 var myOptions = {
-                center: new google.maps.LatLng(43.656,-79.381),
+                center: new google.maps.LatLng(p.coords.latitude,p.coords.longitude),
                 zoom: 14,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
                 };
                 var map = new google.maps.Map(document.getElementById("map_canvas"),
                 myOptions);
+            };
+            var locFail = function() {
+            };
+
+            function initialize() {
+                navigator.geolocation.getCurrentPosition(suc, locFail);
+                // var myOptions = {
+                // center: new google.maps.LatLng(43.656,-79.381),
+                // zoom: 14,
+                // mapTypeId: google.maps.MapTypeId.ROADMAP
+                // };
+                // var map = new google.maps.Map(document.getElementById("map_canvas"),
+                // myOptions);
             }            
         </script>
     </head>
