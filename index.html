@@ -3,9 +3,11 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1" /> 
-        <title>
-        </title>
+        <title>VEOS - Video Eyes On the Street</title>
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
+        <script type="text/javascript" charset="utf-8" src="phonegap-1.2.0.js"></script>
+        <script type="text/javascript" charset="utf-8" src="barcodescanner.js"></script>
+        
         <style>
             /* App custom styles */
         html { height: 100% }
@@ -13,13 +15,11 @@
         #map_canvas { height: 100% }
         </style>
 
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js">
-        </script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 
 <!--    <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js">
         I cause issues with Google Maps API
 -->
-
 
         <script type="text/javascript"
             src="http://maps.googleapis.com/maps/api/js?key=AIzaSyADosfr10Z0idZbNiRFtXKXzzOlwOar8vU&amp;sensor=true">
@@ -34,6 +34,13 @@
             var map = new google.maps.Map(document.getElementById("map_canvas"),
             myOptions);
         }
+
+            var suc = function(p) {
+                alert(p.coords.latitude + " " + p.coords.longitude);
+            };
+            var locFail = function() {
+            };
+            navigator.geolocation.getCurrentPosition(suc, locFail);
         </script>
     </head>
     <body onload="initialize()">
