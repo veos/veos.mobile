@@ -25,22 +25,21 @@
             src="http://maps.googleapis.com/maps/api/js?key=AIzaSyADosfr10Z0idZbNiRFtXKXzzOlwOar8vU&amp;sensor=true">
         </script>
         <script type="text/javascript">
-            var suc = function(p) {
-                alert(p.coords.latitude + " " + p.coords.longitude);
-                
+            var locSuccess = function(p) {
                 var myOptions = {
-                center: new google.maps.LatLng(p.coords.latitude,p.coords.longitude),
-                zoom: 14,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
+                    center: new google.maps.LatLng(p.coords.latitude,p.coords.longitude),
+                    zoom: 14,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
                 };
-                var map = new google.maps.Map(document.getElementById("map_canvas"),
-                myOptions);
+                var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
             };
             var locFail = function() {
+                alert('Unable to retrieve your current GPS location, please enable GPS and reload!');
             };
 
             function initialize() {
-                navigator.geolocation.getCurrentPosition(suc, locFail);
+                // retrieve the current position of the phone
+                navigator.geolocation.getCurrentPosition(locSuccess, locFail);
                 // var myOptions = {
                 // center: new google.maps.LatLng(43.656,-79.381),
                 // zoom: 14,
