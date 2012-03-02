@@ -25,22 +25,22 @@
             src="http://maps.googleapis.com/maps/api/js?key=AIzaSyADosfr10Z0idZbNiRFtXKXzzOlwOar8vU&amp;sensor=true">
         </script>
         <script type="text/javascript">
-        function initialize() {
-            var myOptions = {
-            center: new google.maps.LatLng(43.656,-79.381),
-            zoom: 14,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-            };
-            var map = new google.maps.Map(document.getElementById("map_canvas"),
-            myOptions);
-        }
-
             var suc = function(p) {
                 alert(p.coords.latitude + " " + p.coords.longitude);
             };
             var locFail = function() {
             };
-            navigator.geolocation.getCurrentPosition(suc, locFail);
+            
+            function initialize() {
+                navigator.geolocation.getCurrentPosition(suc, locFail);
+                var myOptions = {
+                center: new google.maps.LatLng(43.656,-79.381),
+                zoom: 14,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+                };
+                var map = new google.maps.Map(document.getElementById("map_canvas"),
+                myOptions);
+            }            
         </script>
     </head>
     <body onload="initialize()">
