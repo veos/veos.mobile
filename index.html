@@ -27,10 +27,10 @@
         </script>
         <script type="text/javascript">
             var locSuccess = function(current_position) {
-                var LatLong = new google.maps.LatLng(current_position.coords.latitude,current_position.coords.longitude);
+                var lat_lng = new google.maps.LatLng(current_position.coords.latitude,current_position.coords.longitude);
 
                 var myOptions = {
-                    center: LatLong,
+                    center: lat_lng,
                     zoom: 14,
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 };
@@ -38,7 +38,7 @@
 
                 // adding a marker for the current location as determined by the browser/phone
                 var marker = new google.maps.Marker({
-                    position: LatLong,
+                    position: lat_lng,
                     title:"Your position"
                 });
 
