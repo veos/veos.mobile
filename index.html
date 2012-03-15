@@ -7,69 +7,27 @@
 
         <link href="css/veos.css" rel="stylesheet" type="text/css" /> 
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
-        <link rel="VEOS icon" href="images/favicon.ico">
-                
-        <script type="text/javascript" charset="utf-8" src="js/libs/phonegap-1.2.0.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/libs/barcodescanner.js"></script>
-
-
-        <style>
-            /* App custom styles */
-        html { height: 100% }
-        body { height: 100%; margin: 0; padding: 0 }
-        #map_canvas { height: 100% }
-        </style>
+        <link rel="VEOS icon" href="images/favicon.ico">     
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-        <!--<script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
-        <script src="jQuery.noConflict">-->
-
-
+        <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
+        <script type="text/javascript">$.noConflict();</script>
+        
         <script type="text/javascript"
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyADosfr10Z0idZbNiRFtXKXzzOlwOar8vU&amp;sensor=true">
-        </script>
-        <script type="text/javascript">
-            var locSuccess = function(current_position) {
-                var lat_lng = new google.maps.LatLng(current_position.coords.latitude,current_position.coords.longitude);
+        </script>        
 
-                var myOptions = {
-                    center: lat_lng,
-                    zoom: 14,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP
-                };
-                var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-
-                // adding a marker for the current location as determined by the browser/phone
-                var marker = new google.maps.Marker({
-                    position: lat_lng,
-                    title:"Your position"
-                });
-
-                // To add the marker to the map, call setMap();
-                marker.setMap(map);
-            };
-            var locFail = function() {
-                alert('Unable to retrieve your current GPS location, please enable GPS and reload!');
-            };
-
-            function initialize() {
-                // retrieve the current position of the phone
-                navigator.geolocation.getCurrentPosition(locSuccess, locFail);
-                // var myOptions = {
-                // center: new google.maps.LatLng(43.656,-79.381),
-                // zoom: 14,
-                // mapTypeId: google.maps.MapTypeId.ROADMAP
-                // };
-                // var map = new google.maps.Map(document.getElementById("map_canvas"),
-                // myOptions);
-            }            
-        </script>
     </head>
-    <body onload="initialize()">
+    <body>
         <div id="map_canvas"></div>
         <div id="map-button-container"> 
-            <button id="add-report-button" class="index-button">Add Report</button>
-            <button id="view-report-button" class="index-button">View As List</button>
+            <button id="add-report-button" data-inline="true" data-icon="plus" href="google.ca">Add Report</button>
+            <button id="view-list-button" data-inline="true" data-icon="grid">View As List</button>
         </div>
+
+ 
+        <script type="text/javascript" charset="utf-8" src="js/libs/phonegap-1.2.0.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/libs/barcodescanner.js"></script>  
+        <script type="text/javascript" charset="utf-8" src="js/veos.js"></script>
     </body>
 </html>
