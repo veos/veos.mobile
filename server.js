@@ -1,3 +1,5 @@
+/*jshint node: true */
+
 var http = require('http');
 var httpProxy = require('http-proxy');
 var httpStatic = require('node-static');
@@ -60,6 +62,6 @@ server.proxyMap  = [
             });
         }
     }
-]
+];
 
 server.start(8000);
