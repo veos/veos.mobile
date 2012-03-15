@@ -5,10 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>
         </title>
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
-        <style>
-            /* App custom styles */
-        </style>
+
+        <link rel="stylesheet" href="themes/veos.css" />
+        <link rel="stylesheet" href="css/veos.css" />
+
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js">
         </script>
         <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js">
@@ -16,74 +16,74 @@
     </head>
     <body>
         <div data-role="page" id="page1">
+            <div data-theme="a" data-role="header">
+                <h3>
+                    Filing a New Report
+                </h3>
+            </div>
             <div data-role="content">
-                <h2>
-                    Filing a report
-                </h2>
-                <div>
-                    <img src="http://www.howtovanish.com/images/surveillance-cameras.jpg" />
-                </div>
-                <ul data-role="listview" data-divider-theme="b" data-inset="true">
-                    <li data-role="list-divider" role="heading">
-                        This is a...
-                    </li>
-                    <li data-theme="c">
-                        <a href="#page1" data-transition="slide">
-                            Button
+                <div data-role="collapsible-set" data-theme="" data-content-theme="">
+                    <div data-role="collapsible" data-collapsed="false" id="photos-container">
+                        <h3>
+                            Photos
+                        </h3>
+                        <a data-role="button" data-transition="fade" href="#page1" data-icon="plus" data-iconpos="left">
+                            Add Photo
                         </a>
-                    </li>
-                    <li data-theme="c">
-                        <a href="#page1" data-transition="slide">
-                            Camera
-                        </a>
-                    </li>
-                    <li data-theme="c">
-                        <a href="#page1" data-transition="slide">
-                            Sign
-                        </a>
-                    </li>
-                </ul>
-                <div data-role="fieldcontain">
-                    <fieldset data-role="controlgroup">
-                        <label for="textinput1">
+                        <div class="photo-list">
+                            <img src="http://videosecurityatlanta.com/files/2011/05/af8ca_cctv_surveillance_camera_4632603680_64beef1f40.jpg" />
+                            <img src="http://www.howtovanish.com/images/surveillance-cameras.jpg" />
+                        </div>
+                    </div>
+                    <div data-role="collapsible" data-collapsed="false" id="location-container">
+                        <h3>
                             Location
-                        </label>
-                        <input id="textinput1" placeholder="15 Bloor St." value="" type="text" />
-                    </fieldset>
+                        </h3>
+                        <div>
+                            <img src="http://blog.laptopmag.com/wpress/wp-content/uploads/2011/04/Google-Maps-Location.png" />
+                        </div>
+                        <div data-role="fieldcontain">
+                            <fieldset data-role="controlgroup">
+                                <label for="textinput1">
+                                    Address or Place
+                                </label>
+                                <input id="textinput1" placeholder="15 Bloor St. W." value="" type="text" />
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div data-role="collapsible" data-collapsed="false" id="details-container">
+                        <h3>
+                            Details
+                        </h3>
+                        <div data-role="fieldcontain">
+                            <fieldset data-role="controlgroup">
+                                <label for="owner">
+                                    Owner
+                                </label>
+                                <input id="owner" placeholder="" value="" type="text" />
+                            </fieldset>
+                        </div>
+                        <div data-role="fieldcontain">
+                            <fieldset data-role="controlgroup">
+                                <label for="type">
+                                    Type
+                                </label>
+                                <input id="type" placeholder="" value="" type="text" />
+                            </fieldset>
+                        </div>
+                        <a data-role="button" data-transition="fade" href="#page1" data-icon="arrow-r" data-iconpos="right">
+                            Enter Advanced Details
+                        </a>
+                    </div>
                 </div>
-                <div data-role="fieldcontain">
-                    <fieldset data-role="controlgroup">
-                        <label for="textinput2">
-                            Owner
-                        </label>
-                        <input id="textinput2" placeholder="" value="" type="text" />
-                    </fieldset>
-                </div>
-                <div data-role="fieldcontain">
-                    <fieldset data-role="controlgroup">
-                        <label for="textinput3">
-                            Type
-                        </label>
-                        <input id="textinput3" placeholder="" value="" type="text" />
-                    </fieldset>
-                </div>
-                <input type="submit" data-inline="true" data-icon="delete" data-iconpos="left" value="Cancel" />
-                <input type="submit" data-inline="true" data-theme="b" data-icon="check" data-iconpos="left" value="Submit" />
             </div>
-            <div data-theme="a" data-role="footer" data-position="fixed">
-            </div>
-        </div>
-        <div data-role="page" id="page2">
-            <div data-role="content">
-                <div>
-                    <img src="http://www.howtovanish.com/images/surveillance-cameras.jpg" />
-                </div>
-                <div>
-                    <img src="http://videosecurityatlanta.com/files/2011/05/af8ca_cctv_surveillance_camera_4632603680_64beef1f40.jpg" />
-                </div>
-                <a data-role="button" data-transition="fade" href="#page2" data-icon="plus" data-iconpos="left">
-                    Take Another Photo
+
+            <div data-theme="a" data-role="footer" class="footer-with-buttons">
+                <a id="cancel-report"  data-role="button" data-transition="fade" data-theme="f" href="index.html" data-icon="delete" data-iconpos="left">
+                    Cancel
                 </a>
+
+                <input id="submit-report" type="submit" data-theme="b" data-icon="check" data-iconpos="left" value="Submit" />
             </div>
         </div>
         <script>
