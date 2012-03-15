@@ -8,15 +8,20 @@
 
 
 
+/* index.html */
+html { 
+	height: 100% 
+}
 
+body {
+	height: 100%;
+	margin: 0;
+	padding: 0
+}
 
 #map-button-container {
 	position: absolute;
 	bottom: 5%;
 	right: 5%;
 	z-index: 1;
-}
-
-.index-button {
-	/* style this like jquery */
 }
