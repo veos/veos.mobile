@@ -1,48 +1,47 @@
-/*Google maps stuff*/
+/***** OVERVIEW MAP *****/
 
-#map_canvas {
+#overview-map-page #map_canvas {
 	position: absolute;
 	width: 100%;
 	height: 100%;
 }
 
-
-
 /* index.html */
-html { 
+#overview-map-page html { 
 	height: 100% 
 }
 
-body {
+#overview-map-page body {
 	height: 100%;
 	margin: 0;
 	padding: 0
 }
 
-#map-button-container {
+#overview-map-page #map-button-container {
 	position: absolute;
 	bottom: 5%;
 	right: 5%;
 	z-index: 1;
 }
 
-.index-button {
+#overview-map-page .index-button {
 	/* style this like jquery */
 }
 
 
 /***** REPORT *****/
 
-.photo-list {
+#report-page .photo-list {
+
 }
 
-.photo-list img {
+#report-page .photo-list img {
     display: inline;
     width: 49%;
     height: auto;
 }
 
-.footer-with-buttons {
+#report-page .footer-with-buttons {
     display: -moz-box !important;
     display: -webkit-box !important;
     display: box !important;
@@ -52,7 +51,7 @@ body {
     box-orient: horizontal !important;
 }
 
-.footer-with-buttons > .ui-btn {
+#report-page .footer-with-buttons > .ui-btn {
     -moz-box-flex: 1 !important;
     -webkit-box-flex: 1 !important;
     box-flex: 1 !important;
