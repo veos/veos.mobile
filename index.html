@@ -5,8 +5,8 @@
         <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1" /> 
         <title>VEOS - Video Eyes On the Street</title>
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
-        <script type="text/javascript" charset="utf-8" src="phonegap-1.2.0.js"></script>
-        <script type="text/javascript" charset="utf-8" src="barcodescanner.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/libs/phonegap-1.2.0.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/libs/barcodescanner.js"></script>
         <link rel="VEOS icon" href="images/favicon.ico">
 
         <style>
@@ -27,8 +27,10 @@
         </script>
         <script type="text/javascript">
             var locSuccess = function(current_position) {
+                var LatLong = new google.maps.LatLng(current_position.coords.latitude,current_position.coords.longitude);
+
                 var myOptions = {
-                    center: new google.maps.LatLng(current_position.coords.latitude,current_position.coords.longitude),
+                    center: LatLong,
                     zoom: 14,
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 };
@@ -36,7 +38,7 @@
 
                 // adding a marker for the current location as determined by the browser/phone
                 var marker = new google.maps.Marker({
-                    position: current_position,
+                    position: LatLong,
                     title:"Your position"
                 });
 
