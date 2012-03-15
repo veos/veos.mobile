@@ -51,4 +51,10 @@ jQuery(document).ready(function(){
 	jQuery('#add-report-button').click(function() {
 		document.location = "/report.html";
 	});
+	jQuery('#view-list-button').click(function() {
+		document.location = "/installations.html";
+	});
+
+
+
 });
