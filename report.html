@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>
+        </title>
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
+        <style>
+            /* App custom styles */
+        </style>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js">
+        </script>
+        <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js">
+        </script>
+    </head>
+    <body>
+        <div data-role="page" id="page1">
+            <div data-role="content">
+                <h2>
+                    Filing a report
+                </h2>
+                <div>
+                    <img src="http://www.howtovanish.com/images/surveillance-cameras.jpg" />
+                </div>
+                <ul data-role="listview" data-divider-theme="b" data-inset="true">
+                    <li data-role="list-divider" role="heading">
+                        This is a...
+                    </li>
+                    <li data-theme="c">
+                        <a href="#page1" data-transition="slide">
+                            Button
+                        </a>
+                    </li>
+                    <li data-theme="c">
+                        <a href="#page1" data-transition="slide">
+                            Camera
+                        </a>
+                    </li>
+                    <li data-theme="c">
+                        <a href="#page1" data-transition="slide">
+                            Sign
+                        </a>
+                    </li>
+                </ul>
+                <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                        <label for="textinput1">
+                            Location
+                        </label>
+                        <input id="textinput1" placeholder="15 Bloor St." value="" type="text" />
+                    </fieldset>
+                </div>
+                <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                        <label for="textinput2">
+                            Owner
+                        </label>
+                        <input id="textinput2" placeholder="" value="" type="text" />
+                    </fieldset>
+                </div>
+                <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                        <label for="textinput3">
+                            Type
+                        </label>
+                        <input id="textinput3" placeholder="" value="" type="text" />
+                    </fieldset>
+                </div>
+                <input type="submit" data-inline="true" data-icon="delete" data-iconpos="left" value="Cancel" />
+                <input type="submit" data-inline="true" data-theme="b" data-icon="check" data-iconpos="left" value="Submit" />
+            </div>
+            <div data-theme="a" data-role="footer" data-position="fixed">
+            </div>
+        </div>
+        <div data-role="page" id="page2">
+            <div data-role="content">
+                <div>
+                    <img src="http://www.howtovanish.com/images/surveillance-cameras.jpg" />
+                </div>
+                <div>
+                    <img src="http://videosecurityatlanta.com/files/2011/05/af8ca_cctv_surveillance_camera_4632603680_64beef1f40.jpg" />
+                </div>
+                <a data-role="button" data-transition="fade" href="#page2" data-icon="plus" data-iconpos="left">
+                    Take Another Photo
+                </a>
+            </div>
+        </div>
+        <script>
+            //App custom javascript
+        </script>
+    </body>
+</html>
