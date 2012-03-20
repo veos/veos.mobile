@@ -13,6 +13,9 @@
         </script>
         <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js">
         </script>
+        <script type="text/javascript">$.noConflict();</script>
+        <script type="text/javascript" charset="utf-8" src="js/libs/phonegap-1.2.0.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/libs/barcodescanner.js"></script>
     </head>
     <body>
         <div data-role="page" id="report-page">
@@ -27,11 +30,11 @@
                         <h3>
                             Photos
                         </h3>
-                        <a data-role="button" data-transition="fade" href="#report-page" data-icon="plus" data-iconpos="left">
+                        <a id="add-photo-button" data-role="button" data-transition="fade" href="#report-page" data-icon="plus" data-iconpos="left">
                             Add Photo
                         </a>
                         <div class="photo-list">
-                            <img src="http://videosecurityatlanta.com/files/2011/05/af8ca_cctv_surveillance_camera_4632603680_64beef1f40.jpg" />
+                            <img id="photo-preview" src="http://videosecurityatlanta.com/files/2011/05/af8ca_cctv_surveillance_camera_4632603680_64beef1f40.jpg" />
                             <img src="http://www.howtovanish.com/images/surveillance-cameras.jpg" />
                         </div>
                     </div>
@@ -86,8 +89,13 @@
                 <input id="submit-report" type="submit" data-theme="b" data-icon="check" data-iconpos="left" value="Submit" />
             </div>
         </div>
+        <script type="text/javascript" charset="utf-8" src="js/report.js"></script>
         <script>
-            //App custom javascript
+            jQuery(document).ready(function () {
+                jQuery('#add-photo-button').click(function() {
+                    window.report.capturePhoto();
+                });
+            });
         </script>
     </body>
 </html>
