@@ -54,7 +54,10 @@ jQuery(document).ready(function(){
 	jQuery('#view-list-button').click(function() {
 		document.location = "/installations.html";
 	});
-
+/*    better to use href for all of these, or do it this way?
+jQuery('#cancel-report').click(function() {
+        document.location = "/overview-map.html";
+    });*/
 
 
 });
