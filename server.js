@@ -9,7 +9,16 @@ var fs = require('fs');
 
 
 var proxy = new httpProxy.RoutingProxy();
-var file = new(httpStatic.Server)('.', {cache: false});
+var file = new(httpStatic.Server)('.', {
+    cache: 0, 
+    headers: {
+        "Pragma-directive": "no-cache",
+        "Cache-directive": "no-cache",
+        "Cache-control": "no-cache",
+        "Pragma": "no-cache",
+        "Expires": "0"
+    }
+});
 
 
 var server = http.createServer(function (req, res) {
