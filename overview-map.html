@@ -29,6 +29,24 @@
 
         <script type="text/javascript" charset="utf-8" src="js/libs/phonegap-1.2.0.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/libs/barcodescanner.js"></script>  
+        
         <script type="text/javascript" charset="utf-8" src="js/veos.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/veos.map.js"></script>
+
+        <script type="text/javascript">
+            veos.map.init();
+
+            jQuery('#add-report-button').click(function() {
+                document.location = "/report.html";
+            });
+            jQuery('#view-list-button').click(function() {
+                document.location = "/installations.html";
+            });
+
+            //    better to use href for all of these, or do it this way?
+            jQuery('#cancel-report').click(function() {
+                document.location = "/overview-map.html";
+            });
+        </script>
     </body>
 </html>
