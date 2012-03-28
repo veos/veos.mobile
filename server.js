@@ -61,6 +61,21 @@ server.proxyMap  = [
     //     }
     // },
 
+    { 
+        name: "home STATIC",
+        match: function(req) { 
+            var reqPath = url.parse(req.url).pathname;
+            return reqPath == '/' || reqPath == '' 
+        },
+        proxy: function(req, res) {
+            req.addListener('end', function() {
+                req.url = "/overview-map.html";
+                console.log("home STATIC "+req.url);
+                file.serve(req, res);     
+            });
+        }
+    },
+
     {
         name: "STATIC",
         match: function(req) { return true; },
