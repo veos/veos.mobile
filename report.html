@@ -8,13 +8,14 @@
         <link rel="stylesheet" href="themes/veos.css" />
         <link rel="stylesheet" href="css/veos.css" />
 
+        <script type="text/javascript" charset="utf-8" src="js/libs/cordova-1.5.0.js"></script>
+
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js">
         </script>
         <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js">
         </script>
         <script type="text/javascript">$.noConflict();</script>
-        <script type="text/javascript" charset="utf-8" src="js/libs/phonegap-1.2.0.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/libs/barcodescanner.js"></script>
+        <!--<script type="text/javascript" charset="utf-8" src="js/libs/barcodescanner.js"></script>-->
     </head>
     <body>
         <div data-role="page" id="report-page">
@@ -91,7 +92,7 @@
         </div>
         <script type="text/javascript" charset="utf-8" src="js/report.js"></script>
         <script>
-            jQuery(document).ready(function () {
+            document.addEventListener('deviceready', function() {
                 jQuery('#add-photo-button').click(function() {
                     window.report.capturePhoto();
                 });
