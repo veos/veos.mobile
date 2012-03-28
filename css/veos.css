@@ -24,10 +24,10 @@
 	z-index: 1;
 }
 
-#overview-map-page .index-button {
-	/* style this like jquery */
+/*#overview-map-page .index-button {
+	// style this like jquery 
 }
-
+*/
 
 /***** REPORT *****/
 
@@ -52,6 +52,33 @@
 }
 
 #report-page .footer-with-buttons > .ui-btn {
+    -moz-box-flex: 1 !important;
+    -webkit-box-flex: 1 !important;
+    box-flex: 1 !important;
+
+    display: block !important;
+
+    margin: 5px 8px;
+
+    /*font-size: 150%;*/
+}
+
+
+
+
+/***** INSTALLATIONS *****/
+
+#installations-page .footer-with-buttons {
+    display: -moz-box !important;
+    display: -webkit-box !important;
+    display: box !important;
+
+    -moz-box-orient: horizontal !important;
+    -webkit-box-orient: horizontal !important;
+    box-orient: horizontal !important;
+}
+
+#installations-page .footer-with-buttons > .ui-btn {
     -moz-box-flex: 1 !important;
     -webkit-box-flex: 1 !important;
     box-flex: 1 !important;

@@ -3,8 +3,11 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1" />
-        <title>
-        </title>
+        <title>VEOS - Video Eyes On the Street</title>
+
+
+        <link rel="stylesheet" href="themes/veos.css" />
+        <link rel="stylesheet" href="css/veos.css" />        
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js">
@@ -12,25 +15,51 @@
         <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js">
         </script>
     </head>
-
     <body>
-        <div data-role="page" id="page2">
-            <div data-theme="a" data-role="header" data-position="fixed">
+        <div data-role="page" id="installations-page">
+            <div data-theme="a" data-role="header">
                 <h3>
-                    VEOS - surveillance within xxx km
+                    VEOS - surveillance within <span id="range-from-pin">XXX</span> km
                 </h3>
             </div>
             <div data-role="content">
-                <div>
-                    <img src="https://codiqa.com/static/images/v2/image_component.jpg" alt="" />
-                </div>
-                <a data-role="button" data-inline="true" data-transition="fade" href="#page2">
+                <!-- presumably it makes sense to generate these with a DB pull -->
+                <ul data-role="listview" data-divider-theme="b" data-inset="true">
+                    <li data-theme="c">
+                        <a href="installation-details.html" data-transition="slide">
+                            installation 1
+                        </a>
+                    </li>
+                    <li data-theme="c">
+                        <a href="#installation-details.html" data-transition="slide">
+                            installation 2
+                        </a>
+                    </li>
+                    <li data-theme="c">
+                        <a href="#installation-details.html" data-transition="slide">
+                            installation 3
+                        </a>
+                    </li>
+                </ul>
+              
+                <img style="width: 25%; height: 25%; float: right" src="http://www.cctv-surveillancecameras.com/img/upload/img/48/73/9d/f6f4fa9ee3aa7d5320c09054e9.jpg" />
+
+                </a>
+            </div>
+            <div data-theme="a" data-role="footer" class="footer-with-buttons">
+                <a data-role="button" data-inline="true" data-transition="fade" data-theme="b" href="report.html" data-icon="plus" data-iconpos="left">
                     Add New
                 </a>
-                <a data-role="button" data-inline="true" data-transition="fade" href="#page2">
-                    List View
+                <a data-role="button" data-inline="true" data-transition="fade" data-theme="b" href="overview-map.html" data-icon="home" data-iconpos="left">
+                    Map View
                 </a>
             </div>
         </div>
     </body>
 </html>
+<!-- 
+                <a data-role="button" data-inline="true" data-transition="fade" href="installation-details.html">
+                    installation 1
+                </a>
+                <a data-role="button" data-inline="true" data-transition="fade" href="installation-details.html">
+                    installation 2   -->
