@@ -6,17 +6,17 @@
 	height: 100%;
 }
 
-/* index.html */
 #overview-map-page html { 
-	height: 100% 
+	height: 100%;
 }
 
 #overview-map-page body {
 	height: 100%;
 	margin: 0;
-	padding: 0
+	padding: 0;
 }
 
+/* THIS POSITIONING WORKS ON BROWSER AND TABLET BUT NOT ON COLIN'S PHONE*/
 #overview-map-page #map-button-container {
 	position: absolute;
 	bottom: 5%;
@@ -24,10 +24,7 @@
 	z-index: 1;
 }
 
-/*#overview-map-page .index-button {
-	// style this like jquery 
-}
-*/
+
 
 /***** REPORT *****/
 
@@ -38,6 +35,15 @@
 #report-page .photo-list img {
     display: inline;
     width: 49%;
+    height: auto;
+}
+
+#report-page .map-thumbnail-container {
+    text-align: center;
+}
+
+#report-page .map-thumbnail {
+    width: 90%;
     height: auto;
 }
 
@@ -67,6 +73,19 @@
 
 
 /***** INSTALLATIONS *****/
+
+
+#installations-page .ui-block-a {
+    width: 75%;
+}
+
+#installations-page .ui-block-b {
+    width: 25%;
+}
+
+#installations-page .photo-thumbnail {
+    max-width: 100px;
+}
 
 #installations-page .footer-with-buttons {
     display: -moz-box !important;

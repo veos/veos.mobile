@@ -44,7 +44,7 @@
                         <h3>
                             Location
                         </h3>
-                        <div class="map-thumbnail">
+                        <div class="map-thumbnail-container">
                              <!--Google Maps thumbnail
                                 -parameters static for now, but to be pulled from DB
                                 -types of params we might want to use: lat/long, string (ie, "Toronto, On")
@@ -60,7 +60,7 @@
                             markers=installation_2_ll" />
                             etc.
                             -->
-                            <img src="http://maps.googleapis.com/maps/api/staticmap?zoom=13&size=200x200&scale=2&sensor=true&center=43.668135,-79.398347&markers=43.669135,-79.399347&markers=43.658135,-79.388347" />
+                            <img class="map-thumbnail" src="http://maps.googleapis.com/maps/api/staticmap?zoom=13&size=200x200&scale=2&sensor=true&center=43.668135,-79.398347&markers=43.669135,-79.399347&markers=43.658135,-79.388347" />
                         </div>
                         <div data-role="fieldcontain">
                             <fieldset data-role="controlgroup">
@@ -99,8 +99,7 @@
             </div>
 
             <div data-theme="a" data-role="footer" class="footer-with-buttons">
-                <!-- looks like we need to force a reload or something here -->
-                <a id="cancel-report"  data-role="button" data-transition="fade" data-theme="f" href="overview-map.html" data-icon="delete" data-iconpos="left">
+                <a id="cancel-report"  data-role="button" data-transition="fade" data-theme="f" data-icon="delete" data-iconpos="left">
                     Cancel
                 </a>
 
@@ -126,8 +125,11 @@
             });
 
             jQuery(document).ready(function() {
-                jQuery('.map-thumbnail').click(function() {
-                    alert('jump to locate-self-page');
+                jQuery('#report-page .map-thumbnail').click(function() {
+                    alert('jump to refine-location-page');
+                });
+                jQuery('#cancel-report').click(function() {
+                    document.location.href="overview-map.html"
                 });
             });
         </script>
