@@ -44,22 +44,37 @@ server.start = function(port) {
 
 
 server.proxyMap  = [
-    // {
-    //     name: 'GoogleMaps',
-    //     match: function(req) { return url.parse(req.url).pathname.match(/^\/gmaps/); },
-    //     proxy: function(req, res) {
-    //         console.log("PROXY "+req.url+" ==> "+gmaps);
-    //         var gmapsUrl = url.parse(gmaps);
-    //         req.headers['host'] = gmapsUrl.hostname;
-    //         console.log(req);
-    //         req.url = gmapsUrl.path;
-    //         console.log(req);
-    //         proxy.proxyRequest(req, res, {
-    //             host: gmapsUrl.hostname,
-    //             port: gmapsUrl.port || 80
-    //         });
-    //     }
-    // },
+    {
+        name: "VEOS",
+        match: function(req) { return url.parse(req.url).pathname.match(/^\/veos/); },
+        proxy: function(req, res) {
+            var veos = "http://veos.surveillancerights.ca";
+            var veosURL = url.parse(veos);
+            console.log("PROXY " + req.url + " ==> " + veos);
+            //req.headers['host'] = veosURL.hostname;
+            req.url = url.parse(req.url).path.replace(/^\/veos/,'');
+            console.log(req);
+            proxy.proxyRequest(req, res, {
+                host: veosURL.hostname,
+                port: veosURL.port || 80
+            });
+        }
+    },
+
+    { 
+        name: "home STATIC",
+        match: function(req) { 
+            var reqPath = url.parse(req.url).pathname;
+            return reqPath === '/' || reqPath === '';
+        },
+        proxy: function(req, res) {
+            req.addListener('end', function() {
+                req.url = "/overview-map.html";
+                console.log("home STATIC "+req.url);
+                file.serve(req, res);     
+            });
+        }
+    },
 
     {
         name: "STATIC",
