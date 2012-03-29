@@ -8,17 +8,15 @@ window.report = (function(report) {
     function cameraSuccess (imageURI) {
       console.log("Got image: ", imageURI);
 
-      // Get image list handle
-      var cameraImage = document.getElementById('camera-image');
-
-      // Unhide image elements
-      cameraImage.style.display = 'block';
-
-      // Show the captured photo
-      // The inline CSS rules are used to resize the image
-      //
-      //firstImage.src = "data:image/jpeg;base64," + imageData;
-      cameraImage.src = imageURI;
+      // create empty image element
+      var cameraImage = jQuery('<img />');
+      // set image URI of image element
+      cameraImage.attr('src', imageURI);
+      
+      // select div that will hold all image elements added
+      var imageList = jQuery('#image-list');
+      // add newly created image to image list
+      imageList.append(cameraImage);
     }
 
     function cameraError (message) {
