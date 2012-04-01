@@ -9,7 +9,6 @@
         <link rel="stylesheet" href="themes/veos.css" />
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
 
-
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js">
         </script>
         <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js">
@@ -28,7 +27,7 @@
             <div data-role="content">
                 <div class="ui-grid-a">
                     <div class="ui-block-a">
-                        <a data-role="button" data-transition="fade" href="#installation-details" data-icon="arrow-r" data-iconpos="left">
+                        <a data-role="button" data-transition="fade" href="#installation-details-page" data-icon="arrow-r" data-iconpos="left">
                             Installation 1 (compliant)
                         </a>
                     </div>
@@ -36,7 +35,7 @@
                         <img class="photo-thumbnail" src="http://www.cctv-surveillancecameras.com/img/upload/img/48/73/9d/f6f4fa9ee3aa7d5320c09054e9.jpg" />
                     </div>
                     <div class="ui-block-a">
-                        <a data-role="button" data-transition="fade" href="#installation-details" data-icon="arrow-r" data-iconpos="left">
+                        <a data-role="button" data-transition="fade" href="#installation-details-page" data-icon="arrow-r" data-iconpos="left">
                             Installation 2 (compliant)
                         </a>
                     </div>
@@ -44,7 +43,7 @@
                         <img class="photo-thumbnail" src="http://i.telegraph.co.uk/multimedia/archive/01362/cctv_camera_124686_1362510c.jpg" />
                     </div>
                     <div class="ui-block-a">
-                        <a data-role="button" data-transition="fade" href="#installation-details" data-icon="arrow-r" data-iconpos="left">
+                        <a data-role="button" data-transition="fade" href="#installation-details-page" data-icon="arrow-r" data-iconpos="left">
                             Installation 3 (non-compliant)
                         </a>
                     </div>
@@ -64,109 +63,141 @@
         </div>
 
 
+
         <!-- INSTALLATION-DETAILS PAGE -->
-
-
-        <div data-role="page" id="installation-details">
+        
+        <div data-role="page" id="installation-details-page">
             <div data-theme="a" data-role="header">
-                <h3>
-                    VEOS - Toronto installation
-                </h3>
-            </div>
+                <h5>
+                    VEOS - <span class="installation-title">Eaton Centre</span>
+                </h5>
+            </div>            
             <div data-role="content">
-                <div>
-                    <b>
-                        Camera
+                <div class="installation-details-content-container">
+                    <!-- shows all installation points -->
+                    <img class="map-thumbnail" src="http://maps.googleapis.com/maps/api/staticmap?zoom=13&size=200x200&scale=2&sensor=true&center=43.668135,-79.398347&markers=43.669135,-79.399347&markers=43.658135,-79.388347" />
+                    <div>        
+                        <b>
+                            <span class="city-location">Toronto</span> - <span class="installation-title">Eaton Centre</span>
+                            <br />
+                            <span class="compliance">Compliant</span>
+                            <br />
+                            <br />
+                        </b>
+                        <b>
+                            Owner: <span class="installation-camera-owner">Chubb</span>
+                        </b>
                         <br />
+                        <b>
+                            Type: <span class="installation-type">Private</span>
+                        </b>
                         <br />
-                    </b>
-                </div>
-                <div>
-                    <b>
-                        Type of space surveilled:
-                    </b>
-                    parking lot
-                    <br />
-                    <b>
-                    </b>
-                </div>
-                <div>
-                    <b>
-                        Camera's location:
-                    </b>
-                    Accessible private space
-                    <br />
-                    <br />
-                    <b>
-                    </b>
-                </div>
-                <div>
-                    <b>
-                        Camera type:
-                    </b>
-                    bullet
-                    <br />
-                    <b>
-                    </b>
-                </div>
-                <div>
-                    <img style="width: 70%; height: 25%" src="http://www.essexstreetmarket.com/Images/GoogleMap.gif" />
-                </div>
-            </div>
-        </div>
-
-
-        <!-- POINT-DETAILS PAGE -->
-
-
-        <div data-role="page" id="point-details">
-            <div data-role="content">
-                <img style="width: 25%; height: 25%" src="http://www.ssc.ca/archive/2007/images/bigMapThumbnail.png" />
-                <div>
-                    <b>
-                        Toronto - Eaton Centre
-                        <br />
-                        Compliant
-                        <br />
-                        <br />
-                    </b>
-                    <b>
-                        Owner: Chubb
-                    </b>
-                    <br />
-                    <b>
-                        Type: Private
-                    </b>
-                    <br />
+                    </div>
                 </div>
                 <div class="ui-grid-a">
                     <div class="ui-block-a">
-                        <a data-role="button" data-transition="fade" href="#page5" data-icon="arrow-r" data-iconpos="right">
+                        <a data-role="button" data-transition="fade" href="#camera-details-page" data-icon="arrow-r" data-iconpos="right">
                             Camera
                         </a>
                     </div>
                     <div class="ui-block-b">
-                        <img style="width: 25%; height: 25%" src="http://www.cctv-surveillancecameras.com/img/upload/img/48/73/9d/f6f4fa9ee3aa7d5320c09054e9.jpg" />
+                        <img class="photo-thumbnail" src="http://www.cctv-surveillancecameras.com/img/upload/img/48/73/9d/f6f4fa9ee3aa7d5320c09054e9.jpg" />
                     </div>
                     <div class="ui-block-a">
-                        <a data-role="button" data-transition="fade" href="#page5" data-icon="arrow-r" data-iconpos="right">
+                        <a data-role="button" data-transition="fade" href="#camera-details-page" data-icon="arrow-r" data-iconpos="right">
                             Camera
                         </a>
                     </div>
                     <div class="ui-block-b">
-                        <img style="width: 25%; height: 25%" src="http://www.howtovanish.com/images/surveillance-cameras.jpg" />
+                        <img class="photo-thumbnail" src="http://www.howtovanish.com/images/surveillance-cameras.jpg" />
                     </div>
                     <div class="ui-block-a">
-                        <a data-role="button" data-transition="fade" href="#page7" data-icon="arrow-r" data-iconpos="right">
+                        <a data-role="button" data-transition="fade" href="#sign-details-page" data-icon="arrow-r" data-iconpos="right">
                             Sign
                         </a>
                     </div>
                     <div class="ui-block-b">
-                        <img style="width: 25%; height: 25%" src="http://www.safetysign.com/images/catlog/product/medium/F7112.png" />
+                        <img class="photo-thumbnail" src="http://www.safetysign.com/images/catlog/product/medium/F7112.png" />
                     </div>
                 </div>
             </div>
         </div>
+
+
+
+        <!-- POINT-DETAILS PAGES -->
+
+        <div data-role="page" id="camera-details-page">
+            <div data-theme="a" data-role="header">
+                <h3>
+                    VEOS - <span class="installation-title">Eaton Centre</span>
+                </h3>
+            </div>
+            <div data-role="content">
+                <div>
+                    <b>Camera</b>
+                    <br />
+                    <br />
+                </div>
+                <div>
+                    <b>Type of space surveilled: </b><span class="camera-type-of-space">parking lot</span>
+                    <br />
+                </div>
+                <div>
+                    <b>Camera's location: </b><span class="camera-location">Accessible private space</span>
+                    <br />
+                    <br />
+                </div>
+                <div>
+                    <b>Camera type: </b><span class="camera-type">bullet</span>
+                    <br />
+                    <br />
+                </div>
+                <div>
+                    <!-- only one marker here -->
+                    <img class="map-thumbnail" src="http://maps.googleapis.com/maps/api/staticmap?zoom=13&size=200x200&scale=2&sensor=true&center=43.668135,-79.398347&markers=43.669135,-79.399347" />
+                </div>
+            </div>
+        </div>
+
+        <div data-role="page" id="sign-details-page">
+            <div data-theme="a" data-role="header">
+                <h3>
+                    VEOS - <span class="installation-title">Eaton Centre</span>
+                </h3>
+            </div>
+            <div data-role="content">
+                <div>
+                    <b>Sign</b>
+                    <br />
+                    <br />
+                </div>
+                <div>
+                    <b>Visibility: </b><span class="sign-visibility">Obscure/High</span>
+                    <br />
+                </div>
+                <div>
+                    <b>Stated Purpose: </b><span class="sign-stated-purpose">Public Safety</span>
+                    <br />
+                    <br />
+                </div>
+                <div>
+                    <b>Stated Properties: </b><span class="sign-stated-properties">Live Montitoring</span>
+                    <br />
+                    <br />
+                </div>
+                <div>
+                    <b>Text of Sign: </b><span class="sign-text">Lorum ipsofacto</span>
+                    <br />
+                    <br />
+                <div>
+                    <!-- only one marker here -->
+                    <img class="map-thumbnail" src="http://maps.googleapis.com/maps/api/staticmap?zoom=13&size=200x200&scale=2&sensor=true&center=43.668135,-79.398347&markers=43.669135,-79.399347" />
+                </div>
+            </div>
+        </div>
+
+
         <script>
             jQuery(document).ready(function() {
                 jQuery('#installations-page .map-view-button').click(function() {
@@ -179,84 +210,3 @@
         </script>
     </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- 
-
-
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1" />
-        <title>VEOS - Video Eyes On the Street</title>
-
-
-        <link rel="stylesheet" href="themes/veos.css" />
-        <link rel="stylesheet" href="css/veos.css" />        
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
-
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js">
-        </script>
-        <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js">
-        </script>
-    </head>
-    <body>
-        <div data-role="page" id="installations-page">
-            <div data-theme="a" data-role="header">
-                <h3>
-                    VEOS - surveillance within <span id="range-from-pin">XXX</span> km
-                </h3>
-            </div>
-            <div data-role="content">
-                <ul data-role="listview" data-divider-theme="b" data-inset="true">
-                    <li data-theme="c">
-                        <a href="installation-details.html" data-transition="slide">
-                            installation 1
-                        </a>
-                    </li>
-                    <li data-theme="c">
-                        <a href="#installation-details.html" data-transition="slide">
-                            installation 2
-                        </a>
-                    </li>
-                    <li data-theme="c">
-                        <a href="#installation-details.html" data-transition="slide">
-                            installation 3
-                        </a>
-                    </li>
-                </ul>
-              
-                <img style="width: 25%; height: 25%; float: right" src="http://www.cctv-surveillancecameras.com/img/upload/img/48/73/9d/f6f4fa9ee3aa7d5320c09054e9.jpg" />
-
-                </a>
-            </div>
-            <div data-theme="a" data-role="footer" class="footer-with-buttons">
-                <a data-role="button" data-inline="true" data-transition="fade" data-theme="b" href="report.html" data-icon="plus" data-iconpos="left">
-                    Add New
-                </a>
-                <a data-role="button" data-inline="true" data-transition="fade" data-theme="b" href="overview-map.html" data-icon="home" data-iconpos="left">
-                    Map View
-                </a>
-            </div>
-        </div>
-    </body>
-</html> -->

@@ -16,14 +16,14 @@
 	padding: 0;
 }
 
-/* THIS POSITIONING WORKS ON BROWSER AND TABLET BUT NOT ON COLIN'S PHONE*/
+/* WE NEED A SMALL FONT TO FIT THESE LATERALLY ON A PHONE SCREEN. SWITCH TO VERITCAL? */
 #overview-map-page #map-button-container {
 	position: absolute;
 	bottom: 5%;
 	right: 5%;
 	z-index: 1;
+    font-size: 60%;
 }
-
 
 
 /***** REPORT *****/
@@ -76,15 +76,16 @@
 
 
 #installations-page .ui-block-a {
-    width: 75%;
+    width: 90%;
 }
 
 #installations-page .ui-block-b {
-    width: 25%;
+    width: 10%;
 }
 
-#installations-page .photo-thumbnail {
+.photo-thumbnail {
     max-width: 100px;
+    max-height: 100px;
 }
 
 #installations-page .footer-with-buttons {
@@ -105,6 +106,24 @@
     display: block !important;
 
     margin: 5px 8px;
-
-    /*font-size: 150%;*/
 }
+
+#installation-details-page .installation-details-content-container {
+    height: 20%;
+    width: auto;
+}
+
+#installation-details-page .map-thumbnail {
+    height: 80%;
+    float: right;
+}
+
+/* ask Matt about cascading here */
+#installation-details-page .ui-block-a {
+    width: 90%;
+}
+
+#installation-details-page .ui-block-b {
+    width: 10%;
+}
+
