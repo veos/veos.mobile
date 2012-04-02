@@ -5,8 +5,9 @@
         <meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1" /> 
         <title>VEOS - Video Eyes On the Street</title>
 
-        <link href="css/veos.css" rel="stylesheet" type="text/css" /> 
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
+        <link href="css/veos.css" rel="stylesheet" type="text/css" /> 
+        
         <link rel="VEOS icon" href="images/favicon.ico">     
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
@@ -22,8 +23,8 @@
         <div data-role="page" id="overview-map-page">
             <div id="map_canvas"></div>
             <div id="map-button-container"> 
-                <button id="add-report-button" data-theme="b" data-inline="true" data-icon="plus">Add Report</button>
-                <button id="view-list-button" data-theme="b" data-inline="true" data-icon="grid">View As List</button>
+                <button class="add-report-button" data-theme="b" data-inline="true" data-icon="plus">Add Report</button>
+                <button class="view-list-button" data-theme="b" data-inline="true" data-icon="grid">View As List</button>
             </div>
         </div>
 
@@ -36,16 +37,11 @@
         <script type="text/javascript">
             veos.map.init();
 
-            jQuery('#add-report-button').click(function() {
-                document.location = "/report.html";
+            jQuery('#overview-map-page .add-report-button').click(function() {
+                document.location = "report.html";
             });
-            jQuery('#view-list-button').click(function() {
-                document.location = "/installations.html";
-            });
-
-            //    better to use href for all of these, or do it this way?
-            jQuery('#cancel-report').click(function() {
-                document.location = "/overview-map.html";
+            jQuery('#overview-map-page .view-list-button').click(function() {
+                document.location = "installations.html";
             });
         </script>
     </body>

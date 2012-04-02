@@ -3,8 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>
-        </title>
+        <title>VEOS - Video Eyes On the Street</title>
 
         <link rel="stylesheet" href="themes/veos.css" />
         <link rel="stylesheet" href="css/veos.css" />
@@ -32,19 +31,36 @@
                             Photos
                         </h3>
                         <a id="add-photo-button" data-role="button" data-transition="fade" href="#report-page" data-icon="plus" data-iconpos="left">
-                            Add Photo
+                            Take Photo
                         </a>
-                        <div class="photo-list">
-                            <img id="photo-preview" src="http://videosecurityatlanta.com/files/2011/05/af8ca_cctv_surveillance_camera_4632603680_64beef1f40.jpg" />
-                            <img src="http://www.howtovanish.com/images/surveillance-cameras.jpg" />
+                        <a id="select-photo-button" data-role="button" data-transition="fade" data-icon="plus" data-iconpos="left">
+                            Select Photo from Gallery
+                        </a>
+                        <div id="image-list" class="photo-list">
+                            <!-- Images are added dynamically via camera or gallery selection -->
                         </div>
                     </div>
                     <div data-role="collapsible" data-collapsed="false" id="location-container">
                         <h3>
                             Location
                         </h3>
-                        <div>
-                            <img src="http://blog.laptopmag.com/wpress/wp-content/uploads/2011/04/Google-Maps-Location.png" />
+                        <div class="map-thumbnail-container">
+                             <!--Google Maps thumbnail
+                                -parameters static for now, but to be pulled from DB
+                                -types of params we might want to use: lat/long, string (ie, "Toronto, On")
+                                -markers are pins that we want to insert for each installation. We may want to set marker styles if there are multiple types of locations, ie src="http://maps.googleapis.com/maps/api/staticmap?center=43.668135,-79.398347&markers=size:small%7Ccolor:blue%7C43.669135,-79.399347&markers=43.658135,-79.388347&zoom=13&size=200x200&scale=2&sensor=true"
+                                -set 'scale=2' for mobile devices
+                                -docs claim we need 'sensor=true', but I doubt it
+                                -for more details, see https://developers.google.com/maps/documentation/staticmaps/
+                             -->
+                             <!-- variables defined in the string for now, abstract and move when ready
+                            <img src="http://maps.googleapis.com/maps/api/staticmap?zoom=13&size=200x200&scale=2&sensor=true" + 
+                            center=current_position + &
+                            markers=installation_1_ll + &
+                            markers=installation_2_ll" />
+                            etc.
+                            -->
+                            <img class="map-thumbnail" src="http://maps.googleapis.com/maps/api/staticmap?zoom=13&size=200x200&scale=2&sensor=true&center=43.668135,-79.398347&markers=43.669135,-79.399347&markers=43.658135,-79.388347" />
                         </div>
                         <div data-role="fieldcontain">
                             <fieldset data-role="controlgroup">
@@ -83,7 +99,7 @@
             </div>
 
             <div data-theme="a" data-role="footer" class="footer-with-buttons">
-                <a id="cancel-report"  data-role="button" data-transition="fade" data-theme="f" href="overview-map.html" data-icon="delete" data-iconpos="left">
+                <a id="cancel-report"  data-role="button" data-transition="fade" data-theme="f" data-icon="delete" data-iconpos="left">
                     Cancel
                 </a>
 
@@ -101,6 +117,19 @@
             document.addEventListener('deviceready', function() {
                 jQuery('#add-photo-button').click(function() {
                     window.report.capturePhoto();
+                });
+                jQuery('#select-photo-button').click(function() {
+                    window.report.selectPhoto();
+                });                
+
+            });
+
+            jQuery(document).ready(function() {
+                jQuery('#report-page .map-thumbnail').click(function() {
+                    alert('jump to refine-location-page');
+                });
+                jQuery('#cancel-report').click(function() {
+                    document.location.href="overview-map.html"
                 });
             });
         </script>
