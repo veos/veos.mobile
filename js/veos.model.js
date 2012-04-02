@@ -1,5 +1,5 @@
 /*jshint browser: true, devel: true */
-/*global Backbone, _ */
+/*global Backbone, _, jQuery */
 
 window.veos = (function(veos) {
   var self = {};
@@ -9,9 +9,8 @@ window.veos = (function(veos) {
   // ushahidi.baseURL = window.location.protocol + "://" + window.location.host + 
   //   (window.location.port ? ':' + window.location.port : '');
   
-  // ushahidi.baseURL = "http://veos.surveillancerights.ca";
-
-  ushahidi.baseURL = "http://localhost:8000/veos"
+  ushahidi.baseURL = "http://veos.surveillancerights.ca";
+  //ushahidi.baseURL = "http://localhost:8000/veos"
 
   /*** Report ***/
 
@@ -24,14 +23,29 @@ window.veos = (function(veos) {
 
   jQuery.support.cors = true; // enable cross-domain AJAX requests
 
-  Backbone.emulateJSON = false;
-
   self.Report = Backbone.Model.extend({
+    idAttribute: "incident_id",
+
     url: function() {
       if (this.isNew()) 
+        // Ushahidi API sucks (can't handle photo uploads, for example), so we hack by
+        // posting directly to the HTML form receiver
         return ushahidi.baseURL + '/api?task=report';
       else
         return ushahidi.baseURL + '/api?task=incidents&by=incidentid&id='+encodeURIComponent(this.id);
+    },
+    parse: function(resp, xhr) {
+      if (resp.code || (resp.payload.success === 'false')) {
+        var err;
+        if (resp.error && resp.error.code)
+          err = resp.error;
+        else
+          err = resp;
+        console.error(err.message, err.code);
+        this.trigger('error', this, err);
+      } else {
+        return resp.payload.incidents[0];
+      }
     },
     sync: function(method, model, options) {
       var type = methodMap[method];
@@ -46,41 +60,25 @@ window.veos = (function(veos) {
         params.url = this.url();
       }
 
-      // Ensure that we have the appropriate request data.
       if (!options.data && model && (method == 'create' || method == 'update')) {
-        params.contentType = 'application/json';
-        params.data = JSON.stringify(model.toJSON());
-      }
-
-      // For older servers, emulate JSON by encoding the request into an HTML-form.
-      if (Backbone.emulateJSON) {
+        // see http://stackoverflow.com/a/5976031/233370
         params.contentType = 'application/x-www-form-urlencoded';
-        params.data = params.data ? {model: params.data} : {};
-      }
+        params.data = _.clone(this.attributes);
 
-      // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
-      // And an `X-HTTP-Method-Override` header.
-      if (Backbone.emulateHTTP) {
-        if (type === 'PUT' || type === 'DELETE') {
-          if (Backbone.emulateJSON) params.data._method = type;
-          params.type = 'POST';
-          params.beforeSend = function(xhr) {
-            xhr.setRequestHeader('X-HTTP-Method-Override', type);
-          };
-        }
+        if (method == 'create')
+          params.data.task = 'report'; // report param in URL doesn't seem to work, so need to do it here
       }
 
       // Don't process data on a non-GET request.
-      if (params.type !== 'GET' && !Backbone.emulateJSON) {
-        params.processData = false;
-      }
+      // if (params.type !== 'GET' && !Backbone.emulateJSON) {
+      //   params.processData = false;
+      // }
 
       // Make the request, allowing the user to override any Ajax options.
       switch (method) {
-        case 'read':
         case 'create':
+        case 'read':
           return jQuery.ajax(_.extend(params, options));
-          break;
         default:
           throw new Error('Cannot "'+method+'" this object because this operation is not implemented.');
       }
@@ -88,6 +86,9 @@ window.veos = (function(veos) {
   });
 
   self.Reports = Backbone.Collection.extend({
+      url: function() {
+          return ushahidi.baseURL + '/api?task=incidents';
+      },
       model: self.Report
   });
 
