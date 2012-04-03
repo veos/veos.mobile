@@ -68,31 +68,28 @@ window.report = (function(report) {
   navigator.geolocation.getCurrentPosition(geolocationSuccess, geolocationFailure);
   
   function geolocationSuccess (currentLocation) {
-    var r = new veos.model.Reports();  // creates the "reports" collection proxy object
-    // retrieves all of the reports from the server
-    r.fetch({
-      success: function () {
-        var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=13&size=200x200&scale=2&sensor=true&center=" + currentLocation.coords.latitude + "," + currentLocation.coords.longitude;
-        
-        // TODO: limit number of markers?
-        r.each(function(report) {
-          staticMapCriteria += "&markers=" + report.get('latitude') + ',' + report.get('longitude');
-        });
-
-        var mapThumbnail = jQuery('<img class="map-thumbnail" />');
-        mapThumbnail.attr('src', staticMapCriteria);
-        
-        var thumbnailContainer = jQuery('#report-page .map-thumbnail-container');
-        thumbnailContainer.append(mapThumbnail);
-
-        //TODO: adding reverse geocoding to #locationAddress. See https://developers.google.com/maps/documentation/javascript/geocoding
-
-      },
-      error: function () {
-        // is there an actual error code I should be using here?
-        alert('Unable to access database. Please confirm you are connected to the internet and try again. Alternatively, the VEOS server may be down')
-      }
+    var r = new veos.model.Reports();
+    r.on('reset', function(collection) {
+      createMapThumbnail();
     });
+    r.fetch();
+
+    function createMapThumbnail () {
+      var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=13&size=200x200&scale=2&sensor=true&center=" + currentLocation.coords.latitude + "," + currentLocation.coords.longitude;
+      
+      // TODO: limit number of markers?
+      r.each(function(report) {
+        staticMapCriteria += "&markers=" + report.get('latitude') + ',' + report.get('longitude');
+      });
+
+      var mapThumbnail = jQuery('<img class="map-thumbnail" />');
+      mapThumbnail.attr('src', staticMapCriteria);
+      
+      var thumbnailContainer = jQuery('#report-page .map-thumbnail-container');
+      thumbnailContainer.append(mapThumbnail);
+
+      //TODO: adding reverse geocoding to #locationAddress. See https://developers.google.com/maps/documentation/javascript/geocoding
+    },
   }
 
   function geolocationFailure (errorMessage) {
