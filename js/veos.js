@@ -8,7 +8,6 @@ window.veos = (function(veos) {
 
 
 
-/* index.html */
 
 jQuery(document).ready(function(){
 

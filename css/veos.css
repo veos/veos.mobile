@@ -75,12 +75,22 @@
 /***** INSTALLATIONS *****/
 
 
+/*#installations-page {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -4em;
+}
+.footer, .push {
+    height: 4em;
+}*/
+
 #installations-page .ui-block-a {
-    width: 90%;
+    width: 75%;
 }
 
 #installations-page .ui-block-b {
-    width: 10%;
+    width: 25%;
 }
 
 .photo-thumbnail {
@@ -114,16 +124,20 @@
 }
 
 #installation-details-page .map-thumbnail {
-    height: 80%;
+    max-width: 25%;
     float: right;
+}
+
+#installation-details-page .test {
+    max-width: 74%;
 }
 
 /* ask Matt about cascading here */
 #installation-details-page .ui-block-a {
-    width: 90%;
+    width: 75%;
 }
 
 #installation-details-page .ui-block-b {
-    width: 10%;
+    width: 25%;
 }
 

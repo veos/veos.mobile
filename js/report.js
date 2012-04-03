@@ -51,6 +51,7 @@ window.report = (function(report) {
       navigator.camera.getPicture(cameraSuccess, cameraError, options);
     }
 
+
     /*self.getPicture = function () {
         console.log('before camera call');
         // Take picture using device camera and retrieve image as base64-encoded string
@@ -62,6 +63,21 @@ window.report = (function(report) {
         alert('after camera call');
         console.log('after camera call');
     };*/
+
+
+    var reports = new veos.model.Reports();  // creates the "reports" collection proxy object
+    // retrieves all of the reports from the server
+    reports.fetch({
+      success: function () {
+        console.log(reports.get(20).attributes.incident_title);
+      },
+      error: function () {
+        // is there an actual error code I should be using here?
+        alert('Unable to access database. Please confirm you are connected to the internet and try again. Alternatively, the VEOS server may be down')
+      }
+    });
+  
+
 
     return self;
 })(window.report || {});
