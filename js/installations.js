@@ -17,7 +17,7 @@ window.installations = (function (installations) {
 
 
 
-  // retrieves all of the reports from the server
+  // retrieves all of the reports from the server TODO: should I restrict this to certain conditions? Reload on a subpage would reload this unnecessarily
   r.fetch({
     success: function () {
 /*    	console.log(r.get(20).get('incident_title'));
@@ -40,6 +40,9 @@ window.installations = (function (installations) {
 	      divA.append(installationOuterButton);
 	      installationInnerButton.text(report.get('location_name'));
 	      installationGrid.append(divA);
+	      installationOuterButton.click(function() {
+	      	alert('pass some info');
+	      });
 	      // TODO: bind some data in here so that the click event knows what data to fill on the next page. Something like:
 	      // installationOuterButton.attr(report.get('location_name'));
 	      // or should just pull the .text and use that?

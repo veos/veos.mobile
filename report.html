@@ -45,29 +45,14 @@
                             Location
                         </h3>
                         <div class="map-thumbnail-container">
-                             <!--Google Maps thumbnail
-                                -parameters static for now, but to be pulled from DB
-                                -types of params we might want to use: lat/long, string (ie, "Toronto, On")
-                                -markers are pins that we want to insert for each installation. We may want to set marker styles if there are multiple types of locations, ie src="http://maps.googleapis.com/maps/api/staticmap?center=43.668135,-79.398347&markers=size:small%7Ccolor:blue%7C43.669135,-79.399347&markers=43.658135,-79.388347&zoom=13&size=200x200&scale=2&sensor=true"
-                                -set 'scale=2' for mobile devices
-                                -docs claim we need 'sensor=true', but I doubt it
-                                -for more details, see https://developers.google.com/maps/documentation/staticmaps/
-                             -->
-                             <!-- variables defined in the string for now, abstract and move when ready
-                            <img src="http://maps.googleapis.com/maps/api/staticmap?zoom=13&size=200x200&scale=2&sensor=true" + 
-                            center=current_position + &
-                            markers=installation_1_ll + &
-                            markers=installation_2_ll" />
-                            etc.
-                            -->
-                            <img class="map-thumbnail" src="http://maps.googleapis.com/maps/api/staticmap?zoom=13&size=200x200&scale=2&sensor=true&center=43.668135,-79.398347&markers=43.669135,-79.399347&markers=43.658135,-79.388347" />
+                            <!-- filled in the JS -->
                         </div>
                         <div data-role="fieldcontain">
                             <fieldset data-role="controlgroup">
                                 <label for="textinput1">
                                     Address or Place
                                 </label>
-                                <input id="textinput1" placeholder="15 Bloor St. W." value="" type="text" />
+                                <input id="locationAddress" placeholder="15 Bloor St. W." value="" type="text" />
                             </fieldset>
                         </div>
                     </div>
