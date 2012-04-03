@@ -28,14 +28,14 @@ window.veos = (function(veos) {
 
     url: function() {
       if (this.isNew()) 
-        // Ushahidi API sucks (can't handle photo uploads, for example), so we hack by
-        // posting directly to the HTML form receiver
         return ushahidi.baseURL + '/api?task=report';
       else
         return ushahidi.baseURL + '/api?task=incidents&by=incidentid&id='+encodeURIComponent(this.id);
     },
     parse: function(resp, xhr) {
-      if (resp.code || (resp.payload.success === 'false')) {
+      if (resp.incident_id) {
+        return resp;
+      } else if (resp.code || (resp.payload.success === 'false')) {
         var err;
         if (resp.error && resp.error.code)
           err = resp.error;
@@ -86,10 +86,23 @@ window.veos = (function(veos) {
   });
 
   self.Reports = Backbone.Collection.extend({
+      model: self.Report,
       url: function() {
           return ushahidi.baseURL + '/api?task=incidents';
       },
-      model: self.Report
+      parse: function(resp, xhr) {
+      if (resp.code || (resp.payload.success === 'false')) {
+        var err;
+        if (resp.error && resp.error.code)
+          err = resp.error;
+        else
+          err = resp;
+        console.error(err.message, err.code);
+        this.trigger('error', this, err);
+      } else {
+        return resp.payload.incidents;
+      }
+    },
   });
 
   veos.model = self;
