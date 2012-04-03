@@ -25,8 +25,9 @@ window.installations = (function (installations) {
       console.log('id_20 long: ' + r.get(19).attributes.longitude);*/
 
       // filling the installation-page.html grid
+      // TODO: limit this to just <2 km?
       r.each(function(report) {
-        console.log(report.get('media'));
+        //console.log(report.get('media'));
         var installationGrid = jQuery('#installations-page .ui-grid-a');     
 
 	      // creating the HTML for the jQuery button to be filled with returned content. Why are you so ugly jQuery?
@@ -45,18 +46,17 @@ window.installations = (function (installations) {
 
 
 	      // creating the HTML for the returned thumbnail
-	      // r.get(report).attributes.media[1].link_url
-	      // TODO: fix this to deal with undefined     
-/*	      if (r.get(report).attributes.media[1].link_url) {
+	      // NOTE: I'm assuming the thumbnail is always in the same place (media[1])
+	      if (_.isEmpty(report.attributes.media[1])) {
+	      	console.log('no picture');
+		    }
+		    else {
 		      var divB = jQuery('<div class="ui-block-b">')
 		      var installationThumbnail = jQuery('<img class="photo-thumbnail" />');
 		      installationThumbnail.attr('src', r.get(report).attributes.media[1].link_url);   // thumb_url may look better, check on phone
 		      divB.append(installationThumbnail);
-		      installationGrid.append(divB);
+		      installationGrid.append(divB);		    	
 		    }
-		    else {
-		    	console.log('else');
-		    }*/
 
       });
 
