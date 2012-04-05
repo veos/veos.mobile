@@ -89,7 +89,7 @@ window.report = (function(report) {
       thumbnailContainer.append(mapThumbnail);
 
       //TODO: adding reverse geocoding to #locationAddress. See https://developers.google.com/maps/documentation/javascript/geocoding
-    },
+    }
   }
 
   function geolocationFailure (errorMessage) {
