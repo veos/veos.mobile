@@ -96,7 +96,7 @@ window.installations = (function (installations) {
     var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=14&size=100x100&scale=2&sensor=true&center=" + lat + "," + lon;
 
     // TODO: remove when we switch off Ush, replace with the _.each below
-    staticMapCriteria += "&markers=" + lat + ',' + lon;
+    staticMapCriteria += "&markers=size:mid%7C" + lat + ',' + lon;
     
     // TODO: can't get this working without a better idea of the data model
 /*    _.each(report.get('media'), function(point) {
@@ -182,7 +182,7 @@ window.installations = (function (installations) {
   	var lon = currentLocation.coords.longitude;
   	// note: higher zoom level
     var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=16&size=100x100&scale=2&sensor=true&center=" + lat + "," + lon;
-    staticMapCriteria += "&markers=" + lat + ',' + lon;
+    staticMapCriteria += "&markers=size:small%7C" + lat + ',' + lon;
     var mapThumbnail = jQuery('<img class="map-thumbnail" />');
     mapThumbnail.attr('src', staticMapCriteria);    
     var thumbnailContainer = jQuery('#point-details-page .map-thumbnail-container');
