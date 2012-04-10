@@ -93,7 +93,7 @@ window.installations = (function (installations) {
   function createInstallationDetailsMapThumbnail (filteredReports, currentLocation) {
   	var lat = currentLocation.coords.latitude;
   	var lon = currentLocation.coords.longitude;
-    var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=13&size=200x200&scale=2&sensor=true&center=" + lat + "," + lon;
+    var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=14&size=100x100&scale=2&sensor=true&center=" + lat + "," + lon;
 
     // TODO: remove when we switch off Ush, replace with the _.each below
     staticMapCriteria += "&markers=" + lat + ',' + lon;
@@ -106,13 +106,12 @@ window.installations = (function (installations) {
 		//_.each(filteredReports, function()
 
     var mapThumbnail = jQuery('<img class="map-thumbnail" />');
-    mapThumbnail.attr('src', staticMapCriteria);
-    
+    mapThumbnail.attr('src', staticMapCriteria);    
     var thumbnailContainer = jQuery('#installation-details-page .map-thumbnail-container');
     thumbnailContainer.append(mapThumbnail);
   }
 
-  // will need to massively rewrite this later, also modularize the html grid creation code 
+  // TODO: will need to massively rewrite this later, also modularize the html grid creation code 
   function createInstallationDetailsGrid (report, currentLocation) {
 		var installationGrid = jQuery('#installation-details-page .ui-grid-a');
 		// clear out all child elements (if it's users second time to the page)
@@ -136,7 +135,7 @@ window.installations = (function (installations) {
       	createPointDetailsThumbnail(currentLocation);
 		  });
 
-		  // I'm not even going to bother to rewrite this, as it will change
+		  // TODO: I'm not even going to bother to rewrite this, as it will change
 /*		  if (report.get('media')[1] && report.get('media')[1].link_url) {
 		    var divB = jQuery('<div class="ui-block-b">')
 		    var installationThumbnail = jQuery('<img class="photo-thumbnail" />');
@@ -181,8 +180,8 @@ window.installations = (function (installations) {
   function createPointDetailsThumbnail(currentLocation) {
     var lat = currentLocation.coords.latitude;
   	var lon = currentLocation.coords.longitude;
-  	// higher zoom level
-    var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=15&size=200x200&scale=2&sensor=true&center=" + lat + "," + lon;
+  	// note: higher zoom level
+    var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=16&size=100x100&scale=2&sensor=true&center=" + lat + "," + lon;
     staticMapCriteria += "&markers=" + lat + ',' + lon;
     var mapThumbnail = jQuery('<img class="map-thumbnail" />');
     mapThumbnail.attr('src', staticMapCriteria);    
