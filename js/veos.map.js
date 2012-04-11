@@ -9,13 +9,14 @@ window.veos = (function(veos) {
         var myOptions = {
             center: lat_lng,
             zoom: 14,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
+            mapTypeId: google.maps.MapTypeId.ROADMAP //HYBRID
         };
         var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
         // adding a marker for the current location as determined by the browser/phone
         var marker = new google.maps.Marker({
             position: lat_lng,
+            draggable: true,
             title:"Your position"
         });
 
@@ -34,7 +35,7 @@ window.veos = (function(veos) {
         // var myOptions = {
         // center: new google.maps.LatLng(43.656,-79.381),
         // zoom: 14,
-        // mapTypeId: google.maps.MapTypeId.ROADMAP
+        // mapTypeId: google.maps.MapTypeId.HYRBID
         // };
         // var map = new google.maps.Map(document.getElementById("map_canvas"),
         // myOptions);

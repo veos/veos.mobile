@@ -94,6 +94,7 @@
     height: 4em;
 }*/
 
+
 #installations-page .ui-block-a {
     width: 75%;
 }
@@ -129,3 +130,6 @@
     width: 25%;
 }
 
+#installation-details-page .ui-grid-a {
+    clear: right;
+}

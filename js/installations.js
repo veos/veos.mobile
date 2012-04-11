@@ -36,21 +36,23 @@ window.installations = (function (installations) {
 		}
 	}
 
-  // retrieves all of the reports from the server TODO: should I restrict this to certain conditions? Reload on a subpage would reload this unnecessarily
+  // retrieves all of the reports from the server TODO: should we restrict this to certain conditions? Reload on a subpage would reload this unnecessarily
 	function createInstallationGrid (filteredReports, currentLocation) {
     _.each(filteredReports, function(report) {
       // filles the installation-page.html grid
       var installationGrid = jQuery('#installations-page .ui-grid-a');
       jQuery('#installation-page .ui-grid-a').empty(); // clear out previous grids. May not be necessary
+
       // creates the HTML for the jQuery button to be filled with returned content. Why are you so ugly jQuery?
+      var buttonText = report.get('location_name') + "<br/>" + report.get('latitude') + ', ' + report.get('longitude');  // TODO: location_name is a substitute for installation name, lat/long here is a substitute for actual address 
       var divA = jQuery('<div class="ui-block-a">')
-      var installationOuterButton = jQuery('<a data-role="button" data-transition="fade" href="#installation-details-page"	data-icon="arrow-r" data-iconpos="left" data-theme="c" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-c"></a>');
-      var installationInnerButton = jQuery('<span class="ui-btn-inner ui-btn-corner-all">');
-      var installationButtonIcon = jQuery('<span class="ui-icon ui-icon-arrow-r ui-icon-shadow">');
+      var installationOuterButton = jQuery('<a data-role="button" data-transition="fade" href="#installation-details-page"data-icon="arrow-r" data-iconpos="left" data-theme="c" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-c" />');
+      var installationInnerButton = jQuery('<span class="ui-btn-inner ui-btn-corner-all">' + buttonText + '</span>');
+      var installationButtonIcon = jQuery('<span class="ui-icon ui-icon-arrow-r ui-icon-shadow" />');
       installationOuterButton.append(installationInnerButton);
       installationOuterButton.append(installationButtonIcon);
       divA.append(installationOuterButton);
-      installationInnerButton.text(report.get('location_name'));
+      //installationInnerButton.text(report.get('location_name') + &#10; + report.get('latitude'));
       installationGrid.append(divA);
       installationOuterButton.click(function() {
       	// this can't be right. Ask Armin/Matt how to unspaghetti this
@@ -93,7 +95,7 @@ window.installations = (function (installations) {
   function createInstallationDetailsMapThumbnail (filteredReports, currentLocation) {
   	var lat = currentLocation.coords.latitude;
   	var lon = currentLocation.coords.longitude;
-    var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=14&size=100x100&scale=2&sensor=true&center=" + lat + "," + lon;
+    var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&type=hybrid&sensor=true&center=" + lat + "," + lon;
 
     // TODO: remove when we switch off Ush, replace with the _.each below
     staticMapCriteria += "&markers=size:mid%7C" + lat + ',' + lon;
@@ -132,7 +134,7 @@ window.installations = (function (installations) {
 		  installationInnerButton.text(point.category.title);
 		  installationOuterButton.click(function() {
       	populatePointDetailsContent(point);
-      	createPointDetailsThumbnail(currentLocation);
+      	createPointDetailsMap(currentLocation);
 		  });
 
 		  // TODO: I'm not even going to bother to rewrite this, as it will change
@@ -151,6 +153,12 @@ window.installations = (function (installations) {
   function populatePointDetailsContent(point) {
   	// replace all this with non-static data, of the form .text(report.get('title'))
   	jQuery('#point-details-page .installation-title').text('Eaton Centre');
+
+    // TODO: replace with Matt's stuff
+/*    var photoThumbnail = jQuery('<img class="photo-thumbnail" />');
+    photoThumbnail.attr('src', I'M GOING TO BE A PHOTO);
+    var photoContainer = jQuery('#point-details-page .photo-thumbnail-container');
+    photoContainer.append(photoThumbnail); */ 
 
   	if (point.category.title === "Camera") {
   		jQuery('#point-details-page .point-type').text('Camera');
@@ -172,17 +180,18 @@ window.installations = (function (installations) {
   		jQuery('#point-details-page .point-content-4').text('loridium loripus ipsorino this could be a *lot* of text');
   		jQuery('#point-details-page .point-content-4').append(jQuery('<br />'))
   	} else {
-  		console.log ('not sure if this is a camera or a sign');
+  		console.log ('neither a camera or a sign');
   	}
   }
 
   // TODO: fix this so that it centers on the point, not the current location
-  function createPointDetailsThumbnail(currentLocation) {
+  function createPointDetailsMap(currentLocation) {
     var lat = currentLocation.coords.latitude;
   	var lon = currentLocation.coords.longitude;
   	// note: higher zoom level
     var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=16&size=100x100&scale=2&sensor=true&center=" + lat + "," + lon;
     staticMapCriteria += "&markers=size:small%7C" + lat + ',' + lon;
+    
     var mapThumbnail = jQuery('<img class="map-thumbnail" />');
     mapThumbnail.attr('src', staticMapCriteria);    
     var thumbnailContainer = jQuery('#point-details-page .map-thumbnail-container');

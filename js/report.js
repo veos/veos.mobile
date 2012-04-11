@@ -75,11 +75,11 @@ window.report = (function(report) {
     r.fetch();
 
     function createMapThumbnail () {
-      var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=13&size=200x200&scale=2&sensor=true&center=" + currentLocation.coords.latitude + "," + currentLocation.coords.longitude;
+      var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=13&size=200x100&scale=2&sensor=true&center=" + currentLocation.coords.latitude + "," + currentLocation.coords.longitude;
       
       // TODO: limit number of markers?
       r.each(function(report) {
-        staticMapCriteria += "&markers=" + report.get('latitude') + ',' + report.get('longitude');
+        staticMapCriteria += "&markers=size:mid%7C" + report.get('latitude') + ',' + report.get('longitude');
       });
 
       var mapThumbnail = jQuery('<img class="map-thumbnail" />');
