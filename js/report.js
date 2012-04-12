@@ -52,12 +52,12 @@ window.report = (function(report) {
   };
 
 
-  function createMapThumbnail (currentLocation, reportsCollection) {
+  function createMapThumbnail (currentLat, currentLng, reportsCollection) {
     // creating static map that is centered around the current location
-    var staticMapCriteria = "https://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" + currentLocation.coords.latitude + "," + currentLocation.coords.longitude;
+    var staticMapCriteria = "https://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" + currentLat + "," + currentLng;
     
     // add the current location as red pin to the map
-    staticMapCriteria += "&markers=color:red%7C" +currentLocation.coords.latitude + "," + currentLocation.coords.longitude;
+    staticMapCriteria += "&markers=color:red%7C" +currentLat + "," + currentLng;
 
     // TODO: limit number of markers?
     reportsCollection.each(function(report, iterator) {
@@ -76,6 +76,7 @@ window.report = (function(report) {
     mapThumbnail.attr('src', staticMapCriteria);
     
     var thumbnailContainer = jQuery('#report-page .map-thumbnail-container');
+    thumbnailContainer.empty();
     thumbnailContainer.append(mapThumbnail);
 
     // add listener which leads to overlay map (for refining location)   START HERE
@@ -148,7 +149,8 @@ window.report = (function(report) {
 
 
 
-  function lookupLocationAddress (location) {
+  // perform a reverse geolocation lookup (convert latitude and longitude into a street address)
+  function lookupAddressForLatLng (location) {
     var geocoder = new google.maps.Geocoder();
     var latlng = new google.maps.LatLng(location.coords.latitude, location.coords.longitude);
     
@@ -163,16 +165,40 @@ window.report = (function(report) {
       }
     });
   }
+
+  // lookup longitude and latitude for a given street address
+  self.lookupLatLngForAddress = function (address) {
+  //function lookupLatLngForAddress (address) {
+    var geocoder = new google.maps.Geocoder();
+    var address = address;
+    
+    geocoder.geocode({'address': address}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        console.log("Reverse geocoding for address: " +address+ " returned this latitute: " +results[0].geometry.location.Ya+ " and longitude: " +results[0].geometry.location.Za);
+        
+        var r = new veos.model.Reports();
+        // adding listener for backbone.js reset event
+        r.on('reset', function(collection) {
+          createMapThumbnail(results[0].geometry.location.Ya, results[0].geometry.location.Za, collection);
+        });
+        // fetching will trigger reset event
+        r.fetch();
+        
+      } else {
+        console.error("Geocoder failed due to: " + status);
+      }
+    });
+  };
   
   function geolocationSuccess (currentLocation) {
     // do reverse geolocation address lookup with lat-lng
-    lookupLocationAddress(currentLocation);
+    lookupAddressForLatLng(currentLocation);
 
     var r = new veos.model.Reports();
 
     // adding listener for backbone.js reset event
     r.on('reset', function(collection) {
-      createMapThumbnail(currentLocation, collection);
+      createMapThumbnail(currentLocation.coords.latitude, currentLocation.coords.longitude, collection);
     });
     // fetching will trigger reset event
     r.fetch();

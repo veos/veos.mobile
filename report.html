@@ -130,6 +130,7 @@
 
                 jQuery('#locationAddress').change(function() {
                     alert('change in the address box');
+                    window.report.lookupLatLngForAddress(jQuery('#locationAddress').val());
                 });
             });
         </script>
