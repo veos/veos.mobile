@@ -30,6 +30,10 @@
     color: red;
 }
 
+.map-thumbnail {
+    max-width: 100%;
+}
+
 
 
 /***** OVERVIEW MAP *****/
@@ -109,7 +113,6 @@
 }
 
 #installation-details-page .map-thumbnail {
-    max-width: 100%;
     /*float: right;*/
 }
 
@@ -135,6 +138,4 @@
     clear: right;
 }
 
-#point-details-page .map-thumbnail {
-    max-width: 100%;
-}
+

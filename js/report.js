@@ -77,6 +77,11 @@ window.report = (function(report) {
     
     var thumbnailContainer = jQuery('#report-page .map-thumbnail-container');
     thumbnailContainer.append(mapThumbnail);
+
+    // add listener which leads to overlay map (for refining location)
+    mapThumbnail.click(function() {
+      alert('heya');
+    });
   }
 
   function lookupLocationAddress (location) {
