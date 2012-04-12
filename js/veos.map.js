@@ -24,7 +24,7 @@ window.veos = (function(veos) {
 
     // creating a new popup window (we can add way more formatting here, see https://developers.google.com/maps/documentation/javascript/overlays#InfoWindows)
     var infowindow = new google.maps.InfoWindow({
-      content: "You are here"
+      content: "<p><b>You are here</b></p>"
     });    
 
     // adding the listener for the previously created marker that binds the popup window
@@ -41,9 +41,12 @@ window.veos = (function(veos) {
     // To add the marker to the map, call setMap();
     marker.setMap(map);
 
+    addInstallationMarkers(map);
 
+  };
 
-    // adding markers for each point in the DB (we'll want to limit this at some point to decrease load time)
+  var addInstallationMarkers = function(map) {
+      // adding markers for each point in the DB (we'll want to limit this at some point to decrease load time)
     var r = new veos.model.Reports();
     // I'm not sure it makes sense to do this here (it will never be reset, ie). Just doing for consistency
     r.on('reset', function(collection) {
@@ -55,7 +58,7 @@ window.veos = (function(veos) {
         });
         // creating a new popup window that contains the location_name string (TODO: change to more relevant info)
         var infowindow = new google.maps.InfoWindow({
-          content: report.get('location_name')
+          content: '<b><p>' + report.get('location_name') + '</b></p>'    // we might want to pretty thisup at some point
         });
         // binding a popup click event to the marker
         google.maps.event.addListener(marker, 'click', function() {
@@ -66,7 +69,7 @@ window.veos = (function(veos) {
     });
     // @triggers reset on the collection
     r.fetch();
-  };
+  }
 
   var geolocationFailureHandler = function() {
     alert('Unable to retrieve your current GPS location, please enable GPS and reload!');
