@@ -189,7 +189,7 @@ window.installations = (function (installations) {
     var lat = currentLocation.coords.latitude;
   	var lon = currentLocation.coords.longitude;
   	// note: higher zoom level
-    var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=16&size=100x100&scale=2&sensor=true&center=" + lat + "," + lon;
+    var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=17&size=150x150&scale=2&sensor=true&center=" + lat + "," + lon;
     staticMapCriteria += "&markers=size:small%7C" + lat + ',' + lon;
     
     var mapThumbnail = jQuery('<img class="map-thumbnail" />');
