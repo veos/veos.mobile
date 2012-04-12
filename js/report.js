@@ -75,11 +75,24 @@ window.report = (function(report) {
     r.fetch();
 
     function createMapThumbnail () {
-      var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=13&size=200x100&scale=2&sensor=true&center=" + currentLocation.coords.latitude + "," + currentLocation.coords.longitude;
+      // creating static map that is centered around the current location
+      var staticMapCriteria = "https://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" + currentLocation.coords.latitude + "," + currentLocation.coords.longitude;
       
+      // add the current location as red pin to the map
+      staticMapCriteria += "&markers=color:red%7C" +currentLocation.coords.latitude + "," + currentLocation.coords.longitude;
+
       // TODO: limit number of markers?
-      r.each(function(report) {
-        staticMapCriteria += "&markers=size:mid%7C" + report.get('latitude') + ',' + report.get('longitude');
+      r.each(function(report, iterator) {
+        //staticMapCriteria += "&markers=size:mid%7C" + report.get('latitude') + ',' + report.get('longitude');
+        // in the first iteration set the color of markers to blue and add the first element
+        // note: %7C is the notation for |
+        if (iterator === 0) {
+          staticMapCriteria += "&markers=size:tiny%7Ccolor:blue%7C" + report.get('latitude') + ',' + report.get('longitude');
+        }
+        // add all additional elements with same marker style
+        else {
+          staticMapCriteria += "%7C" + report.get('latitude') + ',' + report.get('longitude');
+        }
       });
 
       var mapThumbnail = jQuery('<img class="map-thumbnail" />');

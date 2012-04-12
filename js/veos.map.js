@@ -3,6 +3,12 @@
 window.veos = (function(veos) {
   var self = {};
 
+  // adding an event listener to retrieve location once marker is dragged - CURRENT DISABLED (draggable != true in createMap function) AND WILL NOT BE USED ON THIS PAGE
+  google.maps.event.addListener(marker, 'dragend', function (event) {
+    console.log('Pin dragged to latitude: ' + event.latLng.lat() + ' longitude: ' + event.latLng.lng());
+    //alert('lat ' + event.latLng.lat() + ' lng ' + event.latLng.lng());
+  });  
+
   var createMap = function(currentLocation) {
     var currentLatLng = new google.maps.LatLng(currentLocation.coords.latitude,currentLocation.coords.longitude);
 
@@ -12,8 +18,6 @@ window.veos = (function(veos) {
         mapTypeId: google.maps.MapTypeId.ROADMAP //HYBRID is also an option?
     };
     var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-
-
 
     // adding a marker for the current location as determined by the browser/phone
     var marker = new google.maps.Marker({
