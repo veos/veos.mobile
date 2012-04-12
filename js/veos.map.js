@@ -7,19 +7,19 @@ window.veos = (function(veos) {
     var currentLatLng = new google.maps.LatLng(currentLocation.coords.latitude,currentLocation.coords.longitude);
 
     var myOptions = {
-        center: currentLatLng,
-        zoom: 14,
-        mapTypeId: google.maps.MapTypeId.ROADMAP //HYBRID is also an option?
+      center: currentLatLng,
+      zoom: 14,
+      mapTypeId: google.maps.MapTypeId.ROADMAP //HYBRID is also an option?
     };
 
     var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
     // adding a marker for the current location as determined by the browser/phone
     var marker = new google.maps.Marker({
-        position: currentLatLng,
-        //draggable: true,
-        icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-        title:"Current position"
+      position: currentLatLng,
+      //draggable: true,
+      icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+      title:"Current position"
     });
 
     // creating a new popup window (we can add way more formatting here, see https://developers.google.com/maps/documentation/javascript/overlays#InfoWindows)
