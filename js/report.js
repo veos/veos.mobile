@@ -140,4 +140,21 @@ center=current_position + &
 markers=installation_1_ll + &
 markers=installation_2_ll" />
 etc.
+
+
+
+Marker icon notes:
+http://www.geocodezip.com/v3_markers_colored.html
+http://www.geocodezip.com/v3_markers_normal_colored.html
+http://www.geocodezip.com/v3_markers_normal_colored_infowindows.html
+
+    var marker = new google.maps.Marker({
+        position: currentLatLng,
+        draggable: true,
+        icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+        title:"Current position"
+    });
+
+We may need vectors or something, these icons are shite - even the standard maps icon is jagged. Maybe Janette?
+
 */
