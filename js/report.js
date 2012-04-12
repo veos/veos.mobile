@@ -49,60 +49,67 @@ window.report = (function(report) {
     console.log('Capturing photo with options: ' + options);
     // Take picture using device camera and retrieve image as base64-encoded string
     navigator.camera.getPicture(cameraSuccess, cameraError, options);
+  };
+
+
+  function createMapThumbnail (currentLocation, reportsCollection) {
+    // creating static map that is centered around the current location
+    var staticMapCriteria = "https://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" + currentLocation.coords.latitude + "," + currentLocation.coords.longitude;
+    
+    // add the current location as red pin to the map
+    staticMapCriteria += "&markers=color:red%7C" +currentLocation.coords.latitude + "," + currentLocation.coords.longitude;
+
+    // TODO: limit number of markers?
+    reportsCollection.each(function(report, iterator) {
+      // in the first iteration set the color of markers to blue and add the first element
+      // note: %7C is the notation for |
+      if (iterator === 0) {
+        staticMapCriteria += "&markers=size:tiny%7Ccolor:blue%7C" + report.get('latitude') + ',' + report.get('longitude');
+      }
+      // add all additional elements with same marker style
+      else {
+        staticMapCriteria += "%7C" + report.get('latitude') + ',' + report.get('longitude');
+      }
+    });
+
+    var mapThumbnail = jQuery('<img class="map-thumbnail" />');
+    mapThumbnail.attr('src', staticMapCriteria);
+    
+    var thumbnailContainer = jQuery('#report-page .map-thumbnail-container');
+    thumbnailContainer.append(mapThumbnail);
   }
 
-
-  /*self.getPicture = function () {
-      console.log('before camera call');
-      // Take picture using device camera and retrieve image as base64-encoded string
-      navigator.camera.getPicture(onPhotoDataSuccess, onFail, {
-        quality: 50,
-        sourceType: Camera.Picture.SourceType.PHOTOLIBRARY,
-        destinationType: Camera.DestinationType.FILE_URI
-      });
-      alert('after camera call');
-      console.log('after camera call');
-  };*/
+  function lookupLocationAddress (location) {
+    var geocoder = new google.maps.Geocoder();
+    var latlng = new google.maps.LatLng(location.coords.latitude, location.coords.longitude);
+    
+    geocoder.geocode({'latLng': latlng}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        if (results[0]) {
+          console.log("Reverse geocoding for lat: " +location.coords.latitude+ " lng: " +location.coords.longitude+ " returned this address: " +results[0].formatted_address);
+          jQuery('#locationAddress').val(results[0].formatted_address);
+        }
+      } else {
+        console.error("Geocoder failed due to: " + status);
+      }
+    });
+  }
 
   // creating the map thumbnail
   navigator.geolocation.getCurrentPosition(geolocationSuccess, geolocationFailure);
   
   function geolocationSuccess (currentLocation) {
+    // do reverse geolocation address lookup with lat-lng
+    lookupLocationAddress(currentLocation);
+
     var r = new veos.model.Reports();
+
+    // adding listener for backbone.js reset event
     r.on('reset', function(collection) {
-      createMapThumbnail();
+      createMapThumbnail(currentLocation, collection);
     });
+    // fetching will trigger reset event
     r.fetch();
-
-    function createMapThumbnail () {
-      // creating static map that is centered around the current location
-      var staticMapCriteria = "https://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" + currentLocation.coords.latitude + "," + currentLocation.coords.longitude;
-      
-      // add the current location as red pin to the map
-      staticMapCriteria += "&markers=color:red%7C" +currentLocation.coords.latitude + "," + currentLocation.coords.longitude;
-
-      // TODO: limit number of markers?
-      r.each(function(report, iterator) {
-        //staticMapCriteria += "&markers=size:mid%7C" + report.get('latitude') + ',' + report.get('longitude');
-        // in the first iteration set the color of markers to blue and add the first element
-        // note: %7C is the notation for |
-        if (iterator === 0) {
-          staticMapCriteria += "&markers=size:tiny%7Ccolor:blue%7C" + report.get('latitude') + ',' + report.get('longitude');
-        }
-        // add all additional elements with same marker style
-        else {
-          staticMapCriteria += "%7C" + report.get('latitude') + ',' + report.get('longitude');
-        }
-      });
-
-      var mapThumbnail = jQuery('<img class="map-thumbnail" />');
-      mapThumbnail.attr('src', staticMapCriteria);
-      
-      var thumbnailContainer = jQuery('#report-page .map-thumbnail-container');
-      thumbnailContainer.append(mapThumbnail);
-
-      //TODO: adding reverse geocoding to #locationAddress. See https://developers.google.com/maps/documentation/javascript/geocoding
-    }
   }
 
   function geolocationFailure (errorMessage) {
