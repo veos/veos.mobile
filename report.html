@@ -52,9 +52,7 @@
                         </div>
                         <div data-role="fieldcontain">
                             <fieldset data-role="controlgroup">
-                                <label for="textinput1">
-                                    Address or Place
-                                </label>
+                                <label for="locationAddress">Address or Place</label>
                                 <input id="locationAddress" placeholder="15 Bloor St. W." value="" type="text" />
                             </fieldset>
                         </div>
@@ -117,7 +115,11 @@
                     alert('jump to refine-location-page');
                 });
                 jQuery('#cancel-report').click(function() {
-                    document.location.href="overview-map.html"
+                    document.location="overview-map.html";
+                });
+
+                jQuery('#locationAddress').change(function() {
+                    alert('change in the address box');
                 });
             });
         </script>

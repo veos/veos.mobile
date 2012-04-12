@@ -94,9 +94,6 @@ window.report = (function(report) {
       }
     });
   }
-
-  // creating the map thumbnail
-  navigator.geolocation.getCurrentPosition(geolocationSuccess, geolocationFailure);
   
   function geolocationSuccess (currentLocation) {
     // do reverse geolocation address lookup with lat-lng
@@ -116,6 +113,8 @@ window.report = (function(report) {
     alert('There was a problem determining your location due to: ' + error.message);
   }
 
+  // retrieve the GPS location in order to create the map thumbnail
+  navigator.geolocation.getCurrentPosition(geolocationSuccess, geolocationFailure);
 
   return self;
 })(window.report || {});
