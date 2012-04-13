@@ -12,7 +12,7 @@ window.veos = (function(veos) {
       mapTypeId: google.maps.MapTypeId.ROADMAP //HYBRID is also an option?
     };
 
-    var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+    var map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
 
     // adding a marker for the current location as determined by the browser/phone
     var marker = new google.maps.Marker({

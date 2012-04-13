@@ -52,12 +52,12 @@ window.report = (function(report) {
   };
 
 
-  function createMapThumbnail (currentLat, currentLng, reportsCollection) {
+  function createMapThumbnail (currentLat, currentLon, reportsCollection) {
     // creating static map that is centered around the current location
-    var staticMapCriteria = "https://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" + currentLat + "," + currentLng;
+    var staticMapCriteria = "https://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" + currentLat + "," + currentLon;
     
     // add the current location as red pin to the map
-    staticMapCriteria += "&markers=color:red%7C" +currentLat + "," + currentLng;
+    staticMapCriteria += "&markers=color:red%7C" + currentLat + "," + currentLon;
 
     // TODO: limit number of markers?
     reportsCollection.each(function(report, iterator) {
@@ -79,49 +79,58 @@ window.report = (function(report) {
     thumbnailContainer.empty();
     thumbnailContainer.append(mapThumbnail);
 
-    // add listener which leads to overlay map (for refining location)   START HERE
+    // add listener which leads to overlay map (for refining location)
     mapThumbnail.click(function() {
       document.location = "#refine-location-page";
-      // I almost feel like this will want it's own JS file... I guess we can see what performance is like
-      createRefiningMap(currentLocation, reportsCollection);
     });
   }
 
   // this is a near duplicate of a function in veos.map.js. Any way to use functions from the closure?
-  function createRefiningMap(currentLocation, reportsCollection) {
-    var currentLatLng = new google.maps.LatLng(currentLocation.coords.latitude,currentLocation.coords.longitude);
+  function createRefiningMap(currentLat, currentLon, collection) {
+    console.log("Initializing Google Map...")
+    var userSelectedLat = null;
+    var userSelectedLon = null;
+
+    var currentLatLng = new google.maps.LatLng(currentLat,currentLon);
 
     var myOptions = {
         center: currentLatLng,
         zoom: 14,
-        mapTypeId: google.maps.MapTypeId.ROADMAP //HYBRID is also an option?
+        mapTypeId: google.maps.MapTypeId.ROADMAP
     };
 
-    var map = new google.maps.Map(document.getElementById("refining_map_canvas"), myOptions);
+    var map = new google.maps.Map(document.getElementById("refining-map-canvas"), myOptions);
 
     // adding a marker for the current location as determined by the browser/phone
-/*    var marker = new google.maps.Marker({
+    var marker = new google.maps.Marker({
         position: currentLatLng,
         draggable: true,
         icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
         title:"Current position"
     }); 
-*/
-/*    // adding an event listener to retrieve location once marker is dragged
+
+    // adding an event listener to retrieve location once marker is dragged
     google.maps.event.addListener(marker, 'dragend', function (event) {
       //console.log('Pin dragged to latitude: ' + event.latLng.lat() + ' longitude: ' + event.latLng.lng());
       alert('lat ' + event.latLng.lat() + ' lng ' + event.latLng.lng());
-    });  
-*/
-    // To add the marker to the map, call setMap();
-    //marker.setMap(map);
+      userSelectedLat = event.latLng.lat();
+      userSelectedLon = event.latLng.lng();
+    });
 
-    //addInstallationMarkers(map);
+    jQuery('#refine-location-button').click(function() {
+        refineLocation(userSelectedLat, userSelectedLon);
+        document.location="#report-page";
+    });
 
+    // adding the marker to the map
+    marker.setMap(map);
+
+    //adding other installation markers drawn from DB
+    addInstallationMarkers(map, collection);
   };
 
   // this is a near duplicate of a veos.map.js
-  var addInstallationMarkers = function(map) {
+  var addInstallationMarkers = function(map, collection) {
       // adding markers for each point in the DB (we'll want to limit this at some point to decrease load time)
     var r = new veos.model.Reports();
     // I'm not sure it makes sense to do this here (it will never be reset, ie). Just doing for consistency
@@ -132,14 +141,6 @@ window.report = (function(report) {
           position: latLng,
           title: report.get('location_name')
         });
-        // creating a new popup window that contains the location_name string (TODO: change to more relevant info)
-        var infowindow = new google.maps.InfoWindow({
-          content: '<b><p>' + report.get('location_name') + '</b></p>'    // we might want to pretty thisup at some point
-        });
-        // binding a popup click event to the marker
-        google.maps.event.addListener(marker, 'click', function() {
-          infowindow.open(map,marker);
-        });        
         marker.setMap(map);
       });
     });
@@ -148,17 +149,16 @@ window.report = (function(report) {
   };
 
 
-
   // perform a reverse geolocation lookup (convert latitude and longitude into a street address)
-  function lookupAddressForLatLng (location) {
+  function lookupAddressForLatLng (lat, lon) {
     var geocoder = new google.maps.Geocoder();
-    var latlng = new google.maps.LatLng(location.coords.latitude, location.coords.longitude);
+    var latlng = new google.maps.LatLng(lat, lon);
     
     geocoder.geocode({'latLng': latlng}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
         if (results[0]) {
-          console.log("Reverse geocoding for lat: " +location.coords.latitude+ " lng: " +location.coords.longitude+ " returned this address: " +results[0].formatted_address);
-          jQuery('#locationAddress').val(results[0].formatted_address);
+          console.log("Reverse geocoding for lat: " +lat+ " lng: " +lon+ " returned this address: " +results[0].formatted_address);
+          jQuery('#location-address').val(results[0].formatted_address);
         }
       } else {
         console.error("Geocoder failed due to: " + status);
@@ -174,7 +174,7 @@ window.report = (function(report) {
     
     geocoder.geocode({'address': address}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
-        console.log("Reverse geocoding for address: " +address+ " returned this latitute: " +results[0].geometry.location.Ya+ " and longitude: " +results[0].geometry.location.Za);
+        console.log("Reverse geocoding for address: " + address + " returned this latitute: " + results[0].geometry.location.Ya + " and longitude: " + results[0].geometry.location.Za);
         
         var r = new veos.model.Reports();
         // adding listener for backbone.js reset event
@@ -189,16 +189,39 @@ window.report = (function(report) {
       }
     });
   };
-  
-  function geolocationSuccess (currentLocation) {
+
+  function refineLocation (userSelectedLat, userSelectedLon) {
     // do reverse geolocation address lookup with lat-lng
-    lookupAddressForLatLng(currentLocation);
+    lookupAddressForLatLng(userSelectedLat, userSelectedLon);
 
     var r = new veos.model.Reports();
 
     // adding listener for backbone.js reset event
     r.on('reset', function(collection) {
-      createMapThumbnail(currentLocation.coords.latitude, currentLocation.coords.longitude, collection);
+      // create static map for reports page
+      createMapThumbnail(userSelectedLat, userSelectedLon, collection);
+      // create the live map where the user can refine their location
+      createRefiningMap(userSelectedLat, userSelectedLon, collection);
+    });
+    // fetching will trigger reset event
+    r.fetch();    
+  }
+  
+  function geolocationSuccess (currentLocation) {
+    var currentLat = currentLocation.coords.latitude;
+    var currentLon = currentLocation.coords.longitude;
+
+    // do reverse geolocation address lookup with lat-lng
+    lookupAddressForLatLng(currentLat, currentLon);
+
+    var r = new veos.model.Reports();
+
+    // adding listener for backbone.js reset event
+    r.on('reset', function(collection) {
+      // create static map for reports page
+      createMapThumbnail(currentLat, currentLon, collection);
+      // create the live map where the user can refine their location
+      createRefiningMap(currentLat, currentLon, collection);
     });
     // fetching will trigger reset event
     r.fetch();
@@ -208,8 +231,12 @@ window.report = (function(report) {
     alert('There was a problem determining your location due to: ' + error.message);
   }
 
-  // retrieve the GPS location in order to create the map thumbnail
-  navigator.geolocation.getCurrentPosition(geolocationSuccess, geolocationFailure);
+
+  self.init = function() {
+    // retrieve the current position of the phone
+    navigator.geolocation.getCurrentPosition(geolocationSuccess, geolocationFailure);
+
+  } 
 
   return self;
 })(window.report || {});
