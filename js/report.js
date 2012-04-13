@@ -94,19 +94,19 @@ window.report = (function(report) {
     var currentLatLng = new google.maps.LatLng(currentLat,currentLon);
 
     var myOptions = {
-        center: currentLatLng,
-        zoom: 14,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
+      center: currentLatLng,
+      zoom: 14,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
     };
 
     var map = new google.maps.Map(document.getElementById("refining-map-canvas"), myOptions);
 
     // adding a marker for the current location as determined by the browser/phone
     var marker = new google.maps.Marker({
-        position: currentLatLng,
-        draggable: true,
-        icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-        title:"Current position"
+      position: currentLatLng,
+      draggable: true,
+      icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+      title:"Current position"
     }); 
 
     // adding an event listener to retrieve location once marker is dragged
@@ -118,8 +118,8 @@ window.report = (function(report) {
     });
 
     jQuery('#refine-location-button').click(function() {
-        createDynamicPageElements(userSelectedLat, userSelectedLon);
-        document.location="#report-page";
+      createDynamicPageElements(userSelectedLat, userSelectedLon);
+      document.location="#report-page";
     });
 
     // adding the marker to the map
