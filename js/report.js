@@ -81,13 +81,13 @@ window.report = (function(report) {
 
     // add listener which leads to overlay map (for refining location)
     mapThumbnail.click(function() {
-      document.location = "#refine-location-page";
+      document.location = "#refine-location-page";    // is this the right way to do this?
     });
   }
 
   // this is a near duplicate of a function in veos.map.js. Any way to use functions from the closure?
-  function createRefiningMap(currentLat, currentLon, collection) {
-    console.log("Initializing Google Map...")
+  var createRefiningMap = function (currentLat, currentLon, collection) {
+    console.log("Initializing Google Map...");
     var userSelectedLat = null;
     var userSelectedLon = null;
 
@@ -111,14 +111,14 @@ window.report = (function(report) {
 
     // adding an event listener to retrieve location once marker is dragged
     google.maps.event.addListener(marker, 'dragend', function (event) {
-      //console.log('Pin dragged to latitude: ' + event.latLng.lat() + ' longitude: ' + event.latLng.lng());
-      alert('lat ' + event.latLng.lat() + ' lng ' + event.latLng.lng());
+      console.log('Pin dragged to latitude: ' + event.latLng.lat() + ' longitude: ' + event.latLng.lng());
+      //alert('lat ' + event.latLng.lat() + ' lng ' + event.latLng.lng());
       userSelectedLat = event.latLng.lat();
       userSelectedLon = event.latLng.lng();
     });
 
     jQuery('#refine-location-button').click(function() {
-        refineLocation(userSelectedLat, userSelectedLon);
+        createDynamicPageElements(userSelectedLat, userSelectedLon);
         document.location="#report-page";
     });
 
@@ -129,7 +129,7 @@ window.report = (function(report) {
     addInstallationMarkers(map, collection);
   };
 
-  // this is a near duplicate of a veos.map.js
+  // a near duplicate of a veos.map.js function
   var addInstallationMarkers = function(map, collection) {
       // adding markers for each point in the DB (we'll want to limit this at some point to decrease load time)
     var r = new veos.model.Reports();
@@ -148,7 +148,6 @@ window.report = (function(report) {
     r.fetch();
   };
 
-
   // perform a reverse geolocation lookup (convert latitude and longitude into a street address)
   function lookupAddressForLatLng (lat, lon) {
     var geocoder = new google.maps.Geocoder();
@@ -157,7 +156,7 @@ window.report = (function(report) {
     geocoder.geocode({'latLng': latlng}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
         if (results[0]) {
-          console.log("Reverse geocoding for lat: " +lat+ " lng: " +lon+ " returned this address: " +results[0].formatted_address);
+          console.log("Reverse geocoding for lat: " + lat + " lng: " + lon + " returned this address: " + results[0].formatted_address);
           jQuery('#location-address').val(results[0].formatted_address);
         }
       } else {
@@ -170,7 +169,7 @@ window.report = (function(report) {
   self.lookupLatLngForAddress = function (address) {
   //function lookupLatLngForAddress (address) {
     var geocoder = new google.maps.Geocoder();
-    var address = address;
+    //var address = address;
     
     geocoder.geocode({'address': address}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
@@ -190,53 +189,32 @@ window.report = (function(report) {
     });
   };
 
-  function refineLocation (userSelectedLat, userSelectedLon) {
+  var createDynamicPageElements = function (lat, lon) {
     // do reverse geolocation address lookup with lat-lng
-    lookupAddressForLatLng(userSelectedLat, userSelectedLon);
+    lookupAddressForLatLng(lat, lon);
 
     var r = new veos.model.Reports();
 
     // adding listener for backbone.js reset event
     r.on('reset', function(collection) {
       // create static map for reports page
-      createMapThumbnail(userSelectedLat, userSelectedLon, collection);
+      createMapThumbnail(lat, lon, collection);
       // create the live map where the user can refine their location
-      createRefiningMap(userSelectedLat, userSelectedLon, collection);
+      createRefiningMap(lat, lon, collection);
     });
     // fetching will trigger reset event
     r.fetch();    
-  }
-  
-  function geolocationSuccess (currentLocation) {
-    var currentLat = currentLocation.coords.latitude;
-    var currentLon = currentLocation.coords.longitude;
-
-    // do reverse geolocation address lookup with lat-lng
-    lookupAddressForLatLng(currentLat, currentLon);
-
-    var r = new veos.model.Reports();
-
-    // adding listener for backbone.js reset event
-    r.on('reset', function(collection) {
-      // create static map for reports page
-      createMapThumbnail(currentLat, currentLon, collection);
-      // create the live map where the user can refine their location
-      createRefiningMap(currentLat, currentLon, collection);
-    });
-    // fetching will trigger reset event
-    r.fetch();
-  }
-
-  function geolocationFailure (errorMessage) {
-    alert('There was a problem determining your location due to: ' + error.message);
-  }
-
+  };
 
   self.init = function() {
     // retrieve the current position of the phone
-    navigator.geolocation.getCurrentPosition(geolocationSuccess, geolocationFailure);
-
-  } 
+    navigator.geolocation.getCurrentPosition(function geolocationSuccess (currentLocation) {
+      createDynamicPageElements(currentLocation.coords.latitude, currentLocation.coords.longitude);
+    },
+      function geolocationFailure () {
+        alert('There was a problem determining your location due to: ' + error.message);
+    });
+  };
 
   return self;
 })(window.report || {});
