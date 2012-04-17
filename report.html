@@ -114,11 +114,31 @@
         <script type="text/javascript" charset="utf-8" src="js/report.js"></script>
         <script>
             document.addEventListener('deviceready', function() {
+                var renderPhoto = function () {
+                        console.log("Rendering photo from URL: " + this.imageURL);
+
+                        // create empty image element
+                        var cameraImage = jQuery('<img />');
+                        // set image URI of image element
+                        cameraImage.attr('src', this.imageURL);
+                        
+                        // select div that will hold all image elements added
+                        var imageList = jQuery('#image-list');
+                        // add newly created image to image list
+                        imageList.append(cameraImage);
+
+                        this.upload();
+                };
+
                 jQuery('#add-photo-button').click(function() {
-                    window.report.capturePhoto();
+                    var photo = new veos.model.Photo();
+                    photo.on('image_capture', renderPhoto, photo);
+                    photo.captureFromCamera();
                 });
                 jQuery('#select-photo-button').click(function() {
-                    window.report.selectPhoto();
+                    var photo = new veos.model.Photo();
+                    photo.on('image_capture', renderPhoto, photo);
+                    photo.captureFromGallery();
                 });                
 
             });
