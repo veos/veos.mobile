@@ -10,99 +10,26 @@ window.veos = (function(veos) {
   //   (window.location.port ? ':' + window.location.port : '');
   
   ushahidi.baseURL = "http://veos.surveillancerights.ca";
-  //ushahidi.baseURL = "http://localhost:8000/veos"
+  // ushahidi.baseURL = "http://localhost:3000"
+
 
   /*** Report ***/
-
-  var methodMap = {
-    'create': 'POST',
-    'update': 'PUT',
-    'delete': 'DELETE',
-    'read':   'GET'
-  };
 
   jQuery.support.cors = true; // enable cross-domain AJAX requests
 
   self.Report = Backbone.Model.extend({
-    idAttribute: "incident_id",
-
-    url: function() {
+    url : function() {
+      var base = ushahidi.baseURL + '/reports';
       if (this.isNew()) 
-        return ushahidi.baseURL + '/api?task=report';
+        return base + '.json';
       else
-        return ushahidi.baseURL + '/api?task=incidents&by=incidentid&id='+encodeURIComponent(this.id);
-    },
-    parse: function(resp, xhr) {
-      if (resp.incident_id) {
-        return resp;
-      } else if (resp.code || (resp.payload.success === 'false')) {
-        var err;
-        if (resp.error && resp.error.code)
-          err = resp.error;
-        else
-          err = resp;
-        console.error(err.message, err.code);
-        this.trigger('error', this, err);
-      } else {
-        return resp.payload.incidents[0];
-      }
-    },
-    sync: function(method, model, options) {
-      var type = methodMap[method];
-
-      options = options || {};
-
-      // Default JSON-request options.
-      var params = {type: type, dataType: 'json'};
-
-      // Ensure that we have a URL.
-      if (!options.url) {
-        params.url = this.url();
-      }
-
-      if (!options.data && model && (method == 'create' || method == 'update')) {
-        // see http://stackoverflow.com/a/5976031/233370
-        params.contentType = 'application/x-www-form-urlencoded';
-        params.data = _.clone(this.attributes);
-
-        if (method == 'create')
-          params.data.task = 'report'; // report param in URL doesn't seem to work, so need to do it here
-      }
-
-      // Don't process data on a non-GET request.
-      // if (params.type !== 'GET' && !Backbone.emulateJSON) {
-      //   params.processData = false;
-      // }
-
-      // Make the request, allowing the user to override any Ajax options.
-      switch (method) {
-        case 'create':
-        case 'read':
-          return jQuery.ajax(_.extend(params, options));
-        default:
-          throw new Error('Cannot "'+method+'" this object because this operation is not implemented.');
-      }
+        return base + '/' + this.id + '.json';
     }
   });
 
   self.Reports = Backbone.Collection.extend({
       model: self.Report,
-      url: function() {
-          return ushahidi.baseURL + '/api?task=incidents';
-      },
-      parse: function(resp, xhr) {
-      if (resp.code || (resp.payload.success === 'false')) {
-        var err;
-        if (resp.error && resp.error.code)
-          err = resp.error;
-        else
-          err = resp;
-        console.error(err.message, err.code);
-        this.trigger('error', this, err);
-      } else {
-        return resp.payload.incidents;
-      }
-    },
+      url: ushahidi.baseURL + '/reports.json'
   });
 
   veos.model = self;
