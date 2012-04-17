@@ -4,54 +4,6 @@
 window.report = (function(report) {
   var self = report;
 
-  // Called when a photo is successfully retrieved
-  function cameraSuccess (imageURI) {
-    console.log("Got image: ", imageURI);
-
-    // create empty image element
-    var cameraImage = jQuery('<img />');
-    // set image URI of image element
-    cameraImage.attr('src', imageURI);
-    
-    // select div that will hold all image elements added
-    var imageList = jQuery('#image-list');
-    // add newly created image to image list
-    imageList.append(cameraImage);
-  }
-
-  function cameraError (message) {
-    //alert('Failed because: ' + message);
-    console.warn('Photo capture failed.');
-  }
-  
-
-  // Functions for report.html
-  // take a picture
-  self.capturePhoto = function () {
-    var options = {
-      quality: 50,
-      destinationType: Camera.DestinationType.FILE_URI,
-      sourceType: Camera.PictureSourceType.CAMERA
-    };
-
-    console.log('Capturing photo with options: ' + options);
-    // Take picture using device camera and retrieve image as base64-encoded string
-    navigator.camera.getPicture(cameraSuccess, cameraError, options);
-  };
-
-  self.selectPhoto = function () {
-    var options = {
-      quality: 50,
-      destinationType: Camera.DestinationType.FILE_URI,
-      sourceType: Camera.PictureSourceType.PHOTOLIBRARY
-    };
-
-    console.log('Capturing photo with options: ' + options);
-    // Take picture using device camera and retrieve image as base64-encoded string
-    navigator.camera.getPicture(cameraSuccess, cameraError, options);
-  };
-
-
   function createMapThumbnail (currentLat, currentLon, reportsCollection) {
     // creating static map that is centered around the current location
     var staticMapCriteria = "https://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" + currentLat + "," + currentLon;
