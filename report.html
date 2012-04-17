@@ -29,6 +29,7 @@
             </div>
             <div data-role="content">
                 <div data-role="collapsible-set" data-theme="" data-content-theme="">
+
                     <div data-role="collapsible" data-collapsed="false" id="photos-container">
                         <h3>
                             Photos
@@ -75,6 +76,14 @@
                                     Type
                                 </label>
                                 <input id="type" placeholder="" value="" type="text" />
+                            </fieldset>
+                        </div>
+                        <div data-role="fieldcontain">
+                            <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">
+                                <div id="radio">
+                                    <input type="radio" name="point-type-radio" value="Camera" id="camera-radio" class="radio-button" /><label for="camera-radio">Camera</label>
+                                    <input type="radio" name="point-type-radio" value="Sign" id="sign-radio" class="radio-button" /><label for="sign-radio">Sign</label>
+                                </div>
                             </fieldset>
                         </div>
                         <a data-role="button" data-transition="fade" href="#report-page" data-icon="arrow-r" data-iconpos="right">
@@ -151,8 +160,12 @@
                     alert('change in the address box');
                     window.report.lookupLatLngForAddress(jQuery('#location-address').val());
                 });
+                jQuery('#submit-report').click(function() {
+                    console.log('submitting report...');
+                    window.report.submitReport();
+                });
 
-                // this needs to go in here to make the refined map work, I believe
+                // this needs to go in here to make the refined map work, I believe. But it may also be causing the wierd viewport issues
                 report.init();
             });
         </script>
