@@ -86,6 +86,10 @@
     height: auto;
 }
 
+#report-page .radio-button {
+    /* TODO: set some kind of min-width here to make the buttons of equal size */
+}
+
 #refine-location-page #refining-map-canvas {
     position: absolute;
     width: 100%;

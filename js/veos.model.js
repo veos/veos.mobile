@@ -9,7 +9,7 @@ window.veos = (function(veos) {
   // ushahidi.baseURL = window.location.protocol + "://" + window.location.host + 
   //   (window.location.port ? ':' + window.location.port : '');
   
-  ushahidi.baseURL = "http://veos.surveillancerights.ca";
+  ushahidi.baseURL = "http://backend.veos.ca";
   // ushahidi.baseURL = "http://localhost:3000"
 
 

@@ -3,6 +3,10 @@
 
 window.report = (function(report) {
   var self = report;
+  var currentLat = null;
+  var currentLon = null;
+  var userDefinedLat = null;
+  var userDefinedLon = null;
 
   // Called when a photo is successfully retrieved
   function cameraSuccess (imageURI) {
@@ -22,8 +26,7 @@ window.report = (function(report) {
   function cameraError (message) {
     //alert('Failed because: ' + message);
     console.warn('Photo capture failed.');
-  }
-  
+  } 
 
   // Functions for report.html
   // take a picture
@@ -52,7 +55,7 @@ window.report = (function(report) {
   };
 
 
-  function createMapThumbnail (currentLat, currentLon, reportsCollection) {
+  function createMapThumbnail (reportsCollection) {
     // creating static map that is centered around the current location
     var staticMapCriteria = "https://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" + currentLat + "," + currentLon;
     
@@ -86,10 +89,8 @@ window.report = (function(report) {
   }
 
   // this is a near duplicate of a function in veos.map.js. Any way to use functions from the closure?
-  var createRefiningMap = function (currentLat, currentLon, collection) {
+  var createRefiningMap = function (collection) {
     console.log("Initializing Google Map...");
-    var userSelectedLat = null;
-    var userSelectedLon = null;
 
     var currentLatLng = new google.maps.LatLng(currentLat,currentLon);
 
@@ -113,12 +114,12 @@ window.report = (function(report) {
     google.maps.event.addListener(marker, 'dragend', function (event) {
       console.log('Pin dragged to latitude: ' + event.latLng.lat() + ' longitude: ' + event.latLng.lng());
       //alert('lat ' + event.latLng.lat() + ' lng ' + event.latLng.lng());
-      userSelectedLat = event.latLng.lat();
-      userSelectedLon = event.latLng.lng();
+      userDefinedLat = event.latLng.lat();
+      userDefinedLon = event.latLng.lng();
     });
 
     jQuery('#refine-location-button').click(function() {
-      createDynamicPageElements(userSelectedLat, userSelectedLon);
+      createDynamicPageElements(userDefinedLat, userDefinedLon);
       document.location="#report-page";
     });
 
@@ -198,18 +199,48 @@ window.report = (function(report) {
     // adding listener for backbone.js reset event
     r.on('reset', function(collection) {
       // create static map for reports page
-      createMapThumbnail(lat, lon, collection);
+      createMapThumbnail(collection);
       // create the live map where the user can refine their location
-      createRefiningMap(lat, lon, collection);
+      createRefiningMap(collection);
     });
     // fetching will trigger reset event
     r.fetch();    
   };
 
+  self.submitReport = function () {
+    // should I do another check for location with getCurrentPosition here?
+    var r = new veos.model.Report();
+
+    if (currentLat && currentLon) {
+      r.set('loc_lat_from_gps', currentLat);
+      r.set('loc_lng_from_gps', currentLon);
+    } else {
+      alert('Your GPS could not be determined');
+      console.log('missing GPS');
+      return true;
+    }
+    if (jQuery('#report-page .radio-button').is(':checked')) {
+      r.set('about_object', jQuery('input:radio[name=point-type-radio]:checked').val());
+    } else {
+      alert('Enter type of report before submitting - is this a camera or a sign?');
+      return true;
+    }
+    r.set('loc_description_from_google', jQuery('#location-address').val());
+    r.set('loc_lat_from_user', userDefinedLat);
+    r.set('loc_lng_from_user', userDefinedLon);
+    r.set('loc_description_from_user', 'this is our initial test with the new backend');
+    r.set('owner_name', jQuery('#owner').val());    // this will need a if/else wrapper eventually
+
+    r.save();
+    alert('Report submitted');
+  };
+
   self.init = function() {
     // retrieve the current position of the phone
     navigator.geolocation.getCurrentPosition(function geolocationSuccess (currentLocation) {
-      createDynamicPageElements(currentLocation.coords.latitude, currentLocation.coords.longitude);
+      currentLat = currentLocation.coords.latitude;
+      currentLon = currentLocation.coords.longitude;
+      createDynamicPageElements(currentLat, currentLon);
     },
       function geolocationFailure () {
         alert('There was a problem determining your location due to: ' + error.message);
@@ -220,6 +251,8 @@ window.report = (function(report) {
 })(window.report || {});
 
 
+
+// TODO: decide what we want to clear on page load/reload/submit - keeping some info might actually be right. Maybe the radio buttons?
 
 
 
