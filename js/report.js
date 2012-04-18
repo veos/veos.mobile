@@ -63,17 +63,21 @@ window.report = (function(report) {
     staticMapCriteria += "&markers=color:red%7C" + currentLat + "," + currentLon;
 
     // TODO: limit number of markers?
-    reportsCollection.each(function(report, iterator) {
-      // in the first iteration set the color of markers to blue and add the first element
-      // note: %7C is the notation for |
-      if (iterator === 0) {
-        staticMapCriteria += "&markers=size:tiny%7Ccolor:blue%7C" + report.get('latitude') + ',' + report.get('longitude');
-      }
-      // add all additional elements with same marker style
-      else {
-        staticMapCriteria += "%7C" + report.get('latitude') + ',' + report.get('longitude');
-      }
-    });
+    if (reportsCollection !== undefined) {
+      reportsCollection.each(function(report, iterator) {
+        // in the first iteration set the color of markers to blue and add the first element
+        // note: %7C is the notation for |
+        if (iterator === 0) {
+          staticMapCriteria += "&markers=size:tiny%7Ccolor:blue%7C" + report.get('latitude') + ',' + report.get('longitude');
+        }
+        // add all additional elements with same marker style
+        else {
+          staticMapCriteria += "%7C" + report.get('latitude') + ',' + report.get('longitude');
+        }
+      });
+    } else {
+      console.warn('reportsCollection is undefined, so there are no reports yet?')
+    }
 
     var mapThumbnail = jQuery('<img class="map-thumbnail" />');
     mapThumbnail.attr('src', staticMapCriteria);
