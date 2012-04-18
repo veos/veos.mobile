@@ -223,12 +223,12 @@ window.report = (function(report) {
       console.log('missing GPS');
       return true;
     }
-    if (jQuery('#report-page .radio-button').is(':checked')) {
+/*    if (jQuery('#report-page .radio-button').is(':checked')) {
       r.set('about_object', jQuery('input:radio[name=point-type-radio]:checked').val());
     } else {
       alert('Enter type of report before submitting - is this a camera or a sign?');
       return true;
-    }
+    }*/
     r.set('loc_description_from_google', jQuery('#location-address').val());
     r.set('loc_lat_from_user', userDefinedLat);
     r.set('loc_lng_from_user', userDefinedLon);
