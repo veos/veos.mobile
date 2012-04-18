@@ -6,7 +6,8 @@ window.veos = (function(veos) {
 
   // self.baseURL = window.location.protocol + "://" + window.location.host + 
   //   (window.location.port ? ':' + window.location.port : '');
-  self.baseURL = "http://backend.veos.ca";
+  //self.baseURL = "http://backend.veos.ca";
+  self.baseURL = "http://backend.veos.surveillancerights.ca";
   //self.baseURL = "http://192.168.222.108:3000";
 
   jQuery.support.cors = true; // enable cross-domain AJAX requests
