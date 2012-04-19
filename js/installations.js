@@ -1,50 +1,52 @@
 /*jshint browser: true, devel: true, debug: true, forin: true, noempty: true, eqeqeq: true, boss: true,
 loopfunc: true, bitwise: true, curly: true, indent: 2, maxerr:50, white:false */
 
+
+// some of the terminology here referring to installations is obviously a bit of a misnomer, but leaving it since we'll need it for phase 2
+
 window.installations = (function (installations) {
   var self = installations;
 
   MAX_DISTANCE_FROM_CURRENT_LOCATION = 2;
 
-
   var r = new veos.model.Reports(); // creates the "reports" collection proxy object
 
-	r.on('reset', function(collection) {
+  r.on('reset', function(collection) {
     navigator.geolocation.getCurrentPosition(function(currentLocation) {
-        var collectionFilter = function(installation) {
-          return isCloseBy(installation, currentLocation);
+        var collectionFilter = function(report) {
+          return isCloseBy(report, currentLocation);
         }
         var filteredReports = collection.filter(collectionFilter);
 
-        createInstallationGrid(filteredReports, currentLocation);
+        createPointsGrid(filteredReports, currentLocation);
 
       },
       geolocationFailureHandler
     )
-	});
+  });
 
-	// @triggers reset on the collection
-	r.fetch();
+  // @triggers reset on the collection
+  r.fetch();
 
-	// check if an installation is within X (currently 2) km from user's location
-	function isCloseBy(installation, currentLocation) {
-		if (distanceBetweenPoints(installation.get('latitude'), installation.get('longitude'), currentLocation.coords.latitude, currentLocation.coords.longitude) < MAX_DISTANCE_FROM_CURRENT_LOCATION) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
+  // check if a point is within X (currently 2) km from user's location
+  function isCloseBy(report, currentLocation) {
+    // TODO: which type of location marker overrides which? Maybe needs an if (loc_lat_from_user) else (loc_lat_from gps)? Easy to fix DO ME FIRST
+    if (distanceBetweenPoints(report.get('loc_lat_from_gps'), report.get('loc_lng_from_gps'), currentLocation.coords.latitude, currentLocation.coords.longitude) < MAX_DISTANCE_FROM_CURRENT_LOCATION) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
 
-  // retrieves all of the reports from the server TODO: should we restrict this to certain conditions? Reload on a subpage would reload this unnecessarily
-	function createInstallationGrid (filteredReports, currentLocation) {
+  function createPointsGrid (filteredReports, currentLocation) {
     _.each(filteredReports, function(report) {
-      // filles the installation-page.html grid
+      // fills the installation-page.html grid (although as of now they points, not installations)
       var installationGrid = jQuery('#installations-page .ui-grid-a');
       jQuery('#installation-page .ui-grid-a').empty(); // clear out previous grids. May not be necessary
 
       // creates the HTML for the jQuery button to be filled with returned content. Why are you so ugly jQuery?
-      var buttonText = report.get('location_name') + "<br/>" + report.get('latitude') + ', ' + report.get('longitude');  // TODO: location_name is a substitute for installation name, lat/long here is a substitute for actual address 
+      var buttonText = report.get('owner_name') + " - " + report.get('sign') + "<br/>" + report.get('loc_description_from_google');
       var divA = jQuery('<div class="ui-block-a">')
       var installationOuterButton = jQuery('<a data-role="button" data-transition="fade" href="#installation-details-page"data-icon="arrow-r" data-iconpos="left" data-theme="c" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-c" />');
       var installationInnerButton = jQuery('<span class="ui-btn-inner ui-btn-corner-all">' + buttonText + '</span>');
@@ -55,100 +57,26 @@ window.installations = (function (installations) {
       //installationInnerButton.text(report.get('location_name') + &#10; + report.get('latitude'));
       installationGrid.append(divA);
       installationOuterButton.click(function() {
-      	// this can't be right. Ask Armin/Matt how to unspaghetti this
-      	populateInstallationDetailsContent(report);
-      	createInstallationDetailsMapThumbnail(filteredReports, currentLocation);
-      	createInstallationDetailsGrid(report, currentLocation);
+        // this can't be right. Ask Armin/Matt how to unspaghetti this
+        populatePointDetailsContent(report);
+        createPointDetailsMap(currentLocation);         // stopped here cause there's something wrong with reports.js
       });
 
       // creates the HTML for the returned thumbnail
       // NOTE: I'm assuming the thumbnail is always in the same place (media[1])
-	    if (report.get('media')[1] && report.get('media')[1].link_url) {
-	      var divB = jQuery('<div class="ui-block-b">')
-	      var installationThumbnail = jQuery('<img class="photo-thumbnail" />');
-	      installationThumbnail.attr('src', report.get('media')[1].link_url);   // thumb_url may look better, check on phone
-	      divB.append(installationThumbnail);
-	      installationGrid.append(divB);
-			} else {
-				console.log('no picture');
-			}
+/*      if (report.get('media')[1] && report.get('media')[1].link_url) {
+        var divB = jQuery('<div class="ui-block-b">')
+        var installationThumbnail = jQuery('<img class="photo-thumbnail" />');
+        installationThumbnail.attr('src', report.get('media')[1].link_url);   // thumb_url may look better, check on phone
+        divB.append(installationThumbnail);
+        installationGrid.append(divB);
+      } else {
+        console.log('no picture');
+      }*/
     });
   }
 
-  function populateInstallationDetailsContent(report) {
-  	// replace all this with non-static data, of the form .text(report.get('title'))
-  	jQuery('#installation-details-page .installation-title').text('Eaton Centre');
-  	jQuery('#installation-details-page .city-location').text('Toronto');
-		jQuery('#installation-details-page .installation-owner').text('Chubb');
-		jQuery('#installation-details-page .installation-type').text('Private');
 
-		jQuery('#installation-details-page .compliance').removeClass('colorMeRed colorMeGreen');
-		if (report.get('compliance') === 'Compliant') {
-			jQuery('#installation-details-page .compliance').addClass('colorMeRed');
-			jQuery('#installation-details-page .compliance').text('non-compliant');
-		} else {
-			jQuery('#installation-details-page .compliance').addClass('colorMeGreen');
-			jQuery('#installation-details-page .compliance').text('compliant');
-		}
-  }
-
-  function createInstallationDetailsMapThumbnail (filteredReports, currentLocation) {
-  	var lat = currentLocation.coords.latitude;
-  	var lon = currentLocation.coords.longitude;
-    var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&type=hybrid&sensor=true&center=" + lat + "," + lon;
-
-    // TODO: remove when we switch off Ush, replace with the _.each below
-    staticMapCriteria += "&markers=size:mid%7C" + lat + ',' + lon;
-    
-    // TODO: can't get this working without a better idea of the data model
-/*    _.each(report.get('media'), function(point) {
-      staticMapCriteria += "&markers=" + report.get('latitude') + ',' + report.get('longitude');
-    });*/
-
-		//_.each(filteredReports, function()
-
-    var mapThumbnail = jQuery('<img class="map-thumbnail" />');
-    mapThumbnail.attr('src', staticMapCriteria);    
-    var thumbnailContainer = jQuery('#installation-details-page .map-thumbnail-container');
-    thumbnailContainer.append(mapThumbnail);
-  }
-
-  // TODO: will need to massively rewrite this later, also modularize the html grid creation code 
-  function createInstallationDetailsGrid (report, currentLocation) {
-		var installationGrid = jQuery('#installation-details-page .ui-grid-a');
-		// clear out all child elements (if it's users second time to the page)
-		jQuery('#installation-details-page .ui-grid-a').empty();
-
-		// for each camera/sign in the report, create a row in the grid
-		_.each(report.get('incident_category'), function (point) {
-		  // creates the HTML for the jQuery button to be filled with returned content. Why are you so ugly jQuery?
-		  var divA = jQuery('<div class="ui-block-a">')
-		  var installationOuterButton = jQuery('<a data-role="button" data-transition="fade" href="#point-details-page" data-icon="arrow-r" data-iconpos="left" data-theme="c" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-c"></a>');
-		  var installationInnerButton = jQuery('<span class="ui-btn-inner ui-btn-corner-all">');
-		  var installationButtonIcon = jQuery('<span class="ui-icon ui-icon-arrow-r ui-icon-shadow">');
-		  installationOuterButton.append(installationInnerButton);
-		  installationOuterButton.append(installationButtonIcon);
-		  divA.append(installationOuterButton);
-		  installationGrid.append(divA);
-
-		  installationInnerButton.text(point.category.title);
-		  installationOuterButton.click(function() {
-      	populatePointDetailsContent(point);
-      	createPointDetailsMap(currentLocation);
-		  });
-
-		  // TODO: I'm not even going to bother to rewrite this, as it will change
-/*		  if (report.get('media')[1] && report.get('media')[1].link_url) {
-		    var divB = jQuery('<div class="ui-block-b">')
-		    var installationThumbnail = jQuery('<img class="photo-thumbnail" />');
-		    installationThumbnail.attr('src', report.get('media')[1].link_url);   // thumb_url may look better, check on phone
-		    divB.append(installationThumbnail);
-		    installationGrid.append(divB);
-			} else {
-				console.log('no picture');
-			}*/
-		});
-  }
 	
   function populatePointDetailsContent(point) {
   	// replace all this with non-static data, of the form .text(report.get('title'))
@@ -229,3 +157,150 @@ window.installations = (function (installations) {
 
   return self;
 })(window.installations || {});
+
+
+
+
+/*
+
+  var r = new veos.model.Reports(); // creates the "reports" collection proxy object
+
+  r.on('reset', function(collection) {
+    navigator.geolocation.getCurrentPosition(function(currentLocation) {
+        var collectionFilter = function(installation) {
+          return isCloseBy(installation, currentLocation);
+        }
+        var filteredReports = collection.filter(collectionFilter);
+
+        createInstallationGrid(filteredReports, currentLocation);
+
+      },
+      geolocationFailureHandler
+    )
+  });
+
+  // @triggers reset on the collection
+  r.fetch();
+
+  // check if an installation is within X (currently 2) km from user's location
+  function isCloseBy(installation, currentLocation) {
+    if (distanceBetweenPoints(installation.get('latitude'), installation.get('longitude'), currentLocation.coords.latitude, currentLocation.coords.longitude) < MAX_DISTANCE_FROM_CURRENT_LOCATION) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  function createInstallationGrid (filteredReports, currentLocation) {
+    _.each(filteredReports, function(report) {
+      // filles the installation-page.html grid
+      var installationGrid = jQuery('#installations-page .ui-grid-a');
+      jQuery('#installation-page .ui-grid-a').empty(); // clear out previous grids. May not be necessary
+
+      // creates the HTML for the jQuery button to be filled with returned content. Why are you so ugly jQuery?
+      var buttonText = report.get('location_name') + "<br/>" + report.get('latitude') + ', ' + report.get('longitude');  // TODO: location_name is a substitute for installation name, lat/long here is a substitute for actual address 
+      var divA = jQuery('<div class="ui-block-a">')
+      var installationOuterButton = jQuery('<a data-role="button" data-transition="fade" href="#installation-details-page"data-icon="arrow-r" data-iconpos="left" data-theme="c" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-c" />');
+      var installationInnerButton = jQuery('<span class="ui-btn-inner ui-btn-corner-all">' + buttonText + '</span>');
+      var installationButtonIcon = jQuery('<span class="ui-icon ui-icon-arrow-r ui-icon-shadow" />');
+      installationOuterButton.append(installationInnerButton);
+      installationOuterButton.append(installationButtonIcon);
+      divA.append(installationOuterButton);
+      //installationInnerButton.text(report.get('location_name') + &#10; + report.get('latitude'));
+      installationGrid.append(divA);
+      installationOuterButton.click(function() {
+        // this can't be right. Ask Armin/Matt how to unspaghetti this
+        populateInstallationDetailsContent(report);
+        createInstallationDetailsMapThumbnail(filteredReports, currentLocation);
+        createInstallationDetailsGrid(report, currentLocation);
+      });
+
+      // creates the HTML for the returned thumbnail
+      // NOTE: I'm assuming the thumbnail is always in the same place (media[1])
+      if (report.get('media')[1] && report.get('media')[1].link_url) {
+        var divB = jQuery('<div class="ui-block-b">')
+        var installationThumbnail = jQuery('<img class="photo-thumbnail" />');
+        installationThumbnail.attr('src', report.get('media')[1].link_url);   // thumb_url may look better, check on phone
+        divB.append(installationThumbnail);
+        installationGrid.append(divB);
+      } else {
+        console.log('no picture');
+      }
+    });
+  }
+
+  function populateInstallationDetailsContent(report) {
+    // replace all this with non-static data, of the form .text(report.get('title'))
+    jQuery('#installation-details-page .installation-title').text('Eaton Centre');
+    jQuery('#installation-details-page .city-location').text('Toronto');
+    jQuery('#installation-details-page .installation-owner').text('Chubb');
+    jQuery('#installation-details-page .installation-type').text('Private');
+
+    jQuery('#installation-details-page .compliance').removeClass('colorMeRed colorMeGreen');
+    if (report.get('compliance') === 'Compliant') {
+      jQuery('#installation-details-page .compliance').addClass('colorMeRed');
+      jQuery('#installation-details-page .compliance').text('non-compliant');
+    } else {
+      jQuery('#installation-details-page .compliance').addClass('colorMeGreen');
+      jQuery('#installation-details-page .compliance').text('compliant');
+    }
+  }
+
+  function createInstallationDetailsMapThumbnail (filteredReports, currentLocation) {
+    var lat = currentLocation.coords.latitude;
+    var lon = currentLocation.coords.longitude;
+    var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&type=hybrid&sensor=true&center=" + lat + "," + lon;
+
+    // TODO: remove when we switch off Ush, replace with the _.each below
+    staticMapCriteria += "&markers=size:mid%7C" + lat + ',' + lon;
+    
+    // TODO: can't get this working without a better idea of the data model
+    _.each(report.get('media'), function(point) {
+      staticMapCriteria += "&markers=" + report.get('latitude') + ',' + report.get('longitude');
+    });
+
+    //_.each(filteredReports, function()
+
+    var mapThumbnail = jQuery('<img class="map-thumbnail" />');
+    mapThumbnail.attr('src', staticMapCriteria);    
+    var thumbnailContainer = jQuery('#installation-details-page .map-thumbnail-container');
+    thumbnailContainer.append(mapThumbnail);
+  }
+
+  // TODO: will need to massively rewrite this later, also modularize the html grid creation code 
+  function createInstallationDetailsGrid (report, currentLocation) {
+    var installationGrid = jQuery('#installation-details-page .ui-grid-a');
+    // clear out all child elements (if it's users second time to the page)
+    jQuery('#installation-details-page .ui-grid-a').empty();
+
+    // for each camera/sign in the report, create a row in the grid
+    _.each(report.get('incident_category'), function (point) {
+      // creates the HTML for the jQuery button to be filled with returned content. Why are you so ugly jQuery?
+      var divA = jQuery('<div class="ui-block-a">')
+      var installationOuterButton = jQuery('<a data-role="button" data-transition="fade" href="#point-details-page" data-icon="arrow-r" data-iconpos="left" data-theme="c" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-c"></a>');
+      var installationInnerButton = jQuery('<span class="ui-btn-inner ui-btn-corner-all">');
+      var installationButtonIcon = jQuery('<span class="ui-icon ui-icon-arrow-r ui-icon-shadow">');
+      installationOuterButton.append(installationInnerButton);
+      installationOuterButton.append(installationButtonIcon);
+      divA.append(installationOuterButton);
+      installationGrid.append(divA);
+
+      installationInnerButton.text(point.category.title);
+      installationOuterButton.click(function() {
+        populatePointDetailsContent(point);
+        createPointDetailsMap(currentLocation);
+      });
+
+      // TODO: I'm not even going to bother to rewrite this, as it will change
+      if (report.get('media')[1] && report.get('media')[1].link_url) {
+        var divB = jQuery('<div class="ui-block-b">')
+        var installationThumbnail = jQuery('<img class="photo-thumbnail" />');
+        installationThumbnail.attr('src', report.get('media')[1].link_url);   // thumb_url may look better, check on phone
+        divB.append(installationThumbnail);
+        installationGrid.append(divB);
+      } else {
+        console.log('no picture');
+      }
+    });
+  } */

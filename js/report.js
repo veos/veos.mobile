@@ -55,24 +55,29 @@ window.report = (function(report) {
   };
 
 
-  function createMapThumbnail (currentLat, currentLon, reportsCollection) {
+  function createMapThumbnail (lat, lon, reportsCollection) {
+    // passing in lat/lon here - this function is used to create initial map, and whenever the user defines their location (with pin or address)
     // creating static map that is centered around the current location
-    var staticMapCriteria = "https://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" + currentLat + "," + currentLon;
+    var staticMapCriteria = "https://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" + lat + "," + lon;
     
     // add the current location as red pin to the map
-    staticMapCriteria += "&markers=color:red%7C" + currentLat + "," + currentLon;
+    staticMapCriteria += "&markers=color:red%7C" + lat + "," + lon;
 
     // TODO: limit number of markers?
     if (reportsCollection !== undefined) {
       reportsCollection.each(function(report, iterator) {
         // in the first iteration set the color of markers to blue and add the first element
         // note: %7C is the notation for |
-        if (iterator === 0) {
-          staticMapCriteria += "&markers=size:tiny%7Ccolor:blue%7C" + report.get('latitude') + ',' + report.get('longitude');
-        }
-        // add all additional elements with same marker style
-        else {
-          staticMapCriteria += "%7C" + report.get('latitude') + ',' + report.get('longitude');
+        if (report.get('loc_lat_from_gps') && report.get('loc_lng_from_gps')) {
+          if (iterator === 0) {
+            staticMapCriteria += "&markers=size:tiny%7Ccolor:blue%7C" + report.get('loc_lat_from_gps') + ',' + report.get('loc_lng_from_gps');
+          }
+          // add all additional elements with same marker style
+          else {
+            staticMapCriteria += "%7C" + report.get('loc_lat_from_gps') + ',' + report.get('loc_lng_from_gps');
+          }
+        } else {
+          console.log("undefined lat or lon in the DB, skipping this entry");
         }
       });
     } else {
@@ -141,10 +146,10 @@ window.report = (function(report) {
     // I'm not sure it makes sense to do this here (it will never be reset, ie). Just doing for consistency
     r.on('reset', function(collection) {
       r.each(function(report) {
-        var latLng = new google.maps.LatLng(report.get('latitude'),report.get('longitude'));
+        var latLng = new google.maps.LatLng(report.get('loc_lat_from_gps'),report.get('loc_lng_from_gps'));
         var marker = new google.maps.Marker({
           position: latLng,
-          title: report.get('location_name')
+          title: report.get('owner_name')
         });
         marker.setMap(map);
       });
@@ -172,18 +177,18 @@ window.report = (function(report) {
 
   // lookup longitude and latitude for a given street address
   self.lookupLatLngForAddress = function (address) {
-  //function lookupLatLngForAddress (address) {
     var geocoder = new google.maps.Geocoder();
-    //var address = address;
+    // Armin, this is pretty baffling, but I needed to change results[0].geometry.location.Ya to results[0].geometry.location.$a to get this to work
+    // it used to by Ya, right? Did Google just change this?! That seems... insane
     
     geocoder.geocode({'address': address}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
-        console.log("Reverse geocoding for address: " + address + " returned this latitute: " + results[0].geometry.location.Ya + " and longitude: " + results[0].geometry.location.Za);
+        console.log("Reverse geocoding for address: " + address + " returned this latitute: " + results[0].geometry.location.Za + " and longitude: " + results[0].geometry.location.$a);
         
         var r = new veos.model.Reports();
         // adding listener for backbone.js reset event
         r.on('reset', function(collection) {
-          createMapThumbnail(results[0].geometry.location.Ya, results[0].geometry.location.Za, collection);
+          createMapThumbnail(results[0].geometry.location.Za, results[0].geometry.location.$a, collection);
         });
         // fetching will trigger reset event
         r.fetch();
@@ -203,7 +208,7 @@ window.report = (function(report) {
     // adding listener for backbone.js reset event
     r.on('reset', function(collection) {
       // create static map for reports page
-      createMapThumbnail(collection);
+      createMapThumbnail(lat, lon, collection);
       // create the live map where the user can refine their location
       createRefiningMap(collection);
     });
@@ -212,7 +217,7 @@ window.report = (function(report) {
   };
 
   self.submitReport = function () {
-    // should I do another check for location with getCurrentPosition here?
+    // should we do another check for location with getCurrentPosition here?
     var r = new veos.model.Report();
 
     if (currentLat && currentLon) {
@@ -223,12 +228,14 @@ window.report = (function(report) {
       console.log('missing GPS');
       return true;
     }
-/*    if (jQuery('#report-page .radio-button').is(':checked')) {
-      r.set('about_object', jQuery('input:radio[name=point-type-radio]:checked').val());
+    if (jQuery('input:radio[name=point-type-radio]:checked').val() === "Camera") {          // TODO do the advanced details
+        r.set('camera', {pointed_at: []});  
+    } else if (jQuery('input:radio[name=point-type-radio]:checked').val() === "Sign") {
+        r.set('sign', {text: "I'm a sign", visibility: "can you see me?"});
     } else {
       alert('Enter type of report before submitting - is this a camera or a sign?');
       return true;
-    }*/
+    }
     r.set('loc_description_from_google', jQuery('#location-address').val());
     r.set('loc_lat_from_user', userDefinedLat);
     r.set('loc_lng_from_user', userDefinedLon);
@@ -237,6 +244,7 @@ window.report = (function(report) {
 
     r.save();
     alert('Report submitted');
+    // do we want to clear some/all of the data
   };
 
   self.init = function() {
