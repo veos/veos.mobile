@@ -7,8 +7,8 @@ window.veos = (function(veos) {
   // self.baseURL = window.location.protocol + "://" + window.location.host + 
   //   (window.location.port ? ':' + window.location.port : '');
   //self.baseURL = "http://backend.veos.ca";
-  self.baseURL = "http://backend.veos.surveillancerights.ca";
-  //self.baseURL = "http://192.168.222.108:3000";
+  //self.baseURL = "http://backend.veos.surveillancerights.ca";
+  self.baseURL = "http://192.168.222.108:3000";
 
   jQuery.support.cors = true; // enable cross-domain AJAX requests
 
@@ -32,6 +32,9 @@ window.veos = (function(veos) {
   }
 
   var Base = Backbone.Model.extend({
+    initialize: function (attributes, options) {
+      this.bind("error", this.defaultErrorHandler);
+    },
     toJSON: function() {
       var attrs = _.clone( this.attributes );
       
@@ -41,12 +44,30 @@ window.veos = (function(veos) {
       wrap[this.singular] = attrs;
       return wrap;
     },
-    url : function () {
+    url: function () {
       var base = self.baseURL + '/' + this.plural;
       if (this.isNew()) 
         return base + '.json';
       else
         return base + '/' + this.id + '.json';
+    },
+    defaultErrorHandler: function (model, response, opts) {
+      console.error("Error on "+this.singular+" model: ", model, response);
+      
+      var msg;
+
+      if (response.status === 422)
+        msg = "Sorry, there is an error in your "+this.singular+". Please check your input and try again.";
+      else if (response.status >= 500 && response.status < 600)
+        msg = "Our apologies, the server responded with an error. There may be a problem with the system.";
+      else
+        msg = "Sorry, there was some sort of error while performing this action. The server may be temporarily unavailable.";
+
+      if (navigator === undefined || navigator.notification === undefined) {
+        alert(msg);
+      } else {
+        navigator.notification.alert(msg, null, "Error");
+      }
     }
   });
 
