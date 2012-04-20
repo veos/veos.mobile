@@ -93,7 +93,7 @@ window.report = (function(report) {
 
     // add listener which leads to overlay map (for refining location)
     mapThumbnail.click(function() {
-      document.location = "#refine-location-page";    // is this the right way to do this?
+      jQuery.mobile.changePage("#refine-location-page", { transition: "slideup"});    // is this the right way to do this?
     });
   }
 
@@ -129,7 +129,7 @@ window.report = (function(report) {
 
     jQuery('#refine-location-button').click(function() {
       createDynamicPageElements(userDefinedLat, userDefinedLon);
-      document.location="#report-page";
+      jQuery.mobile.changePage("report.html", { transition: "slideup"})
     });
 
     // adding the marker to the map
@@ -192,7 +192,7 @@ window.report = (function(report) {
         });
         // fetching will trigger reset event
         r.fetch();
-        
+
       } else {
         console.error("Geocoder failed due to: " + status);
       }
