@@ -3,8 +3,11 @@
 window.veos = (function(veos) {
   var self = {};
 
-  var createMap = function(currentLocation) {
+  var createMap = function(currentLocation, map) {
     var currentLatLng = new google.maps.LatLng(currentLocation.coords.latitude,currentLocation.coords.longitude);
+    
+    if (!map)
+      map = "#map-canvas";
 
     var myOptions = {
       center: currentLatLng,
@@ -12,7 +15,7 @@ window.veos = (function(veos) {
       mapTypeId: google.maps.MapTypeId.ROADMAP //HYBRID is also an option?
     };
 
-    var map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
+    var map = new google.maps.Map(jQuery(map)[0], myOptions);
 
     // adding a marker for the current location as determined by the browser/phone
     var marker = new google.maps.Marker({
@@ -82,6 +85,9 @@ window.veos = (function(veos) {
     navigator.geolocation.getCurrentPosition(createMap, geolocationFailureHandler);
 
   } 
+
+  self.createMap = createMap;
+  self.addInstallationMarkers = addInstallationMarkers;
 
   veos.map = self;
   return veos;
