@@ -28,7 +28,7 @@
                 </h3>
             </div>
             <div data-role="content">
-                <div data-role="collapsible-set" data-theme="" data-content-theme="">
+                <div data-role="collapsible-set" data-theme="" data-content-theme="" class="report">
 
                     <div data-role="collapsible" data-collapsed="false" id="photos-container">
                         <h3>
@@ -80,7 +80,7 @@
                         </div>
                         <div data-role="fieldcontain">
                             <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">
-                                <div id="radio">
+                                <div id="radio" class="field about_object"> <!-- do more of these -->
                                     <input type="radio" name="point-type-radio" value="Camera" id="camera-radio" class="radio-button" /><label for="camera-radio">Camera</label>
                                     <input type="radio" name="point-type-radio" value="Sign" id="sign-radio" class="radio-button" /><label for="sign-radio">Sign</label>
                                 </div>
@@ -121,24 +121,25 @@
 
         <script type="text/javascript" charset="utf-8" src="js/veos.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/veos.model.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/veos.map.js"></script>
 
         <script type="text/javascript" charset="utf-8" src="js/report.js"></script>
         <script>
             document.addEventListener('deviceready', function() {
                 var renderPhoto = function () {
-                        console.log("Rendering photo from URL: " + this.imageURL);
+                    console.log("Rendering photo from URL: " + this.imageURL);
 
-                        // create empty image element
-                        var cameraImage = jQuery('<img />');
-                        // set image URI of image element
-                        cameraImage.attr('src', this.imageURL);
-                        
-                        // select div that will hold all image elements added
-                        var imageList = jQuery('#image-list');
-                        // add newly created image to image list
-                        imageList.append(cameraImage);
+                    // create empty image element
+                    var cameraImage = jQuery('<img />');
+                    // set image URI of image element
+                    cameraImage.attr('src', this.imageURL);
+                    
+                    // select div that will hold all image elements added
+                    var imageList = jQuery('#image-list');
+                    // add newly created image to image list
+                    imageList.append(cameraImage);
 
-                        this.upload();
+                    this.upload();
                 };
 
                 jQuery('#add-photo-button').click(function() {
@@ -160,6 +161,7 @@
                 });
                 jQuery('#location-address').change(function() {
                     alert('change in the address box');
+                    window.veos.map.testFunction();
                     window.report.lookupLatLngForAddress(jQuery('#location-address').val());
                 });
                 jQuery('#submit-report').click(function() {

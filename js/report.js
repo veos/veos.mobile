@@ -18,7 +18,7 @@ window.report = (function(report) {
     staticMapCriteria += "&markers=color:red%7C" + lat + "," + lon;
 
     // TODO: limit number of markers?
-    if (reportsCollection !== undefined) {
+/*    if (reportsCollection !== undefined) {
       reportsCollection.each(function(report, iterator) {
         // in the first iteration set the color of markers to blue and add the first element
         // note: %7C is the notation for |
@@ -35,6 +35,45 @@ window.report = (function(report) {
         }
       });
     } else {
+      console.warn('reportsCollection is undefined, so there are no reports yet?')
+    }*/
+
+
+    if (reportsCollection !== undefined) {
+      reportsCollection.each(function(report, iterator) {
+        // in the first iteration set the color of markers to blue and add the first element
+        // note: %7C is the notation for |
+        if ( (report.get('loc_lat_from_user') || report.get('loc_lat_from_gps'))
+          && (report.get('loc_lng_from_user') || report.get('loc_lng_from_gps')) ) {
+          // user refined location should override gps location
+          var tempLat = null;
+          var tempLng = null;
+          if (report.get('loc_lat_from_user')) {
+            tempLat = report.get('loc_lat_from_user');
+            console.log('user');
+          } else {
+            tempLat = report.get('loc_lat_from_gps');
+            console.log('gps');
+          }
+          if (report.get('loc_lng_from_user')) {
+            tempLng = report.get('loc_lng_from_user');
+          } else {
+            tempLng = report.get('loc_lng_from_gps');
+          }
+
+          if (iterator === 0) {
+            staticMapCriteria += "&markers=size:tiny%7Ccolor:blue%7C" + tempLat + ',' + tempLng;
+          }
+          // add all additional elements with same marker style
+          else {
+            staticMapCriteria += "%7C" + tempLat + ',' + tempLng;
+          }
+        } else {
+          console.log("undefined lat or lon in the DB, skipping this entry");
+        }
+      });
+    }
+    else {
       console.warn('reportsCollection is undefined, so there are no reports yet?')
     }
 
@@ -132,17 +171,15 @@ window.report = (function(report) {
   // lookup longitude and latitude for a given street address
   self.lookupLatLngForAddress = function (address) {
     var geocoder = new google.maps.Geocoder();
-    // Armin, this is pretty baffling, but I needed to change results[0].geometry.location.Ya to results[0].geometry.location.$a to get this to work
-    // it used to by Ya, right? Did Google just change this?! That seems... insane
     
     geocoder.geocode({'address': address}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
-        console.log("Reverse geocoding for address: " + address + " returned this latitute: " + results[0].geometry.location.Za + " and longitude: " + results[0].geometry.location.$a);
+        console.log("Reverse geocoding for address: " + address + " returned this latitute: " + results[0].geometry.location.lat() + " and longitude: " + results[0].geometry.location.lng());
         
         var r = new veos.model.Reports();
         // adding listener for backbone.js reset event
         r.on('reset', function(collection) {
-          createMapThumbnail(results[0].geometry.location.Za, results[0].geometry.location.$a, collection);
+          createMapThumbnail(results[0].geometry.location.lat(), results[0].geometry.location.lng(), collection);
         });
         // fetching will trigger reset event
         r.fetch();
