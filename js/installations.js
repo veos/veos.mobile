@@ -1,4 +1,4 @@
-/*jshint browser: true, devel: true, debug: true, forin: true, noempty: true, eqeqeq: true, boss: true,
+/* jshint browser: true, devel: true, debug: true, forin: true, noempty: true, eqeqeq: true, boss: true,
 loopfunc: true, bitwise: true, curly: true, indent: 2, maxerr:50, white:false */
 
 
@@ -9,34 +9,36 @@ window.installations = (function (installations) {
 
   MAX_DISTANCE_FROM_CURRENT_LOCATION = 2;
 
-  var r = new veos.model.Reports(); // creates the "reports" collection proxy object
+  self.init = function() {
+    var r = new veos.model.Reports(); // creates the "reports" collection proxy object
 
-  r.on('reset', function(collection) {
-    navigator.geolocation.getCurrentPosition(function(currentLocation) {
-        var collectionFilter = function(report) {
-          return isCloseBy(report, currentLocation);
-        }
-        var filteredReports = collection.filter(collectionFilter);
+    r.on('reset', function(collection) {
+      navigator.geolocation.getCurrentPosition(function(currentLocation) {
+          var collectionFilter = function(report) {
+            return isCloseBy(report, currentLocation);
+          }
+          var filteredReports = collection.filter(collectionFilter);
 
-        createPointsGrid(filteredReports, currentLocation);
+          createPointsGrid(filteredReports, currentLocation);
 
-      },
-      geolocationFailureHandler
-    )
-  });
+        },
+        geolocationFailureHandler
+      )
+    });
 
-  // @triggers reset on the collection
-  r.fetch();
+    // @triggers reset on the collection
+    r.fetch();
+  };
 
-  // check if a point is within X (currently 2) km from user's location
+
   function isCloseBy(report, currentLocation) {
-    // TODO: which type of location marker overrides which? Maybe needs an if (loc_lat_from_user) else (loc_lat_from gps)? Easy to fix DO ME FIRST
-    if (distanceBetweenPoints(report.get('loc_lat_from_gps'), report.get('loc_lng_from_gps'), currentLocation.coords.latitude, currentLocation.coords.longitude) < MAX_DISTANCE_FROM_CURRENT_LOCATION) {
+    var latLng = chooseGPSType(report);
+    if (distanceBetweenPoints(latLng.lat, latLng.lng, currentLocation.coords.latitude, currentLocation.coords.longitude) < MAX_DISTANCE_FROM_CURRENT_LOCATION) {
       return true;
     }
     else {
       return false;
-    }
+    }    
   }
 
   function createPointsGrid (filteredReports, currentLocation) {
@@ -48,7 +50,7 @@ window.installations = (function (installations) {
       // creates the HTML for the jQuery button to be filled with returned content. Why are you so ugly jQuery?
       var buttonText = report.get('owner_name') + " - " + report.get('sign') + "<br/>" + report.get('loc_description_from_google');
       var divA = jQuery('<div class="ui-block-a">')
-      var installationOuterButton = jQuery('<a data-role="button" data-transition="fade" href="#installation-details-page"data-icon="arrow-r" data-iconpos="left" data-theme="c" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-c" />');
+      var installationOuterButton = jQuery('<a data-role="button" data-transition="fade" href="#point-details-page" data-icon="arrow-r" data-iconpos="left" data-theme="c" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-c" />');
       var installationInnerButton = jQuery('<span class="ui-btn-inner ui-btn-corner-all">' + buttonText + '</span>');
       var installationButtonIcon = jQuery('<span class="ui-icon ui-icon-arrow-r ui-icon-shadow" />');
       installationOuterButton.append(installationInnerButton);
@@ -59,7 +61,7 @@ window.installations = (function (installations) {
       installationOuterButton.click(function() {
         // this can't be right. Ask Armin/Matt how to unspaghetti this
         populatePointDetailsContent(report);
-        createPointDetailsMap(currentLocation);         // stopped here cause there's something wrong with reports.js
+        createPointDetailsMap(report);         // stopped here cause there's something wrong with reports.js
       });
 
       // creates the HTML for the returned thumbnail
@@ -78,7 +80,7 @@ window.installations = (function (installations) {
 
 
 	
-  function populatePointDetailsContent(point) {
+  function populatePointDetailsContent(report) {
   	// replace all this with non-static data, of the form .text(report.get('title'))
   	jQuery('#point-details-page .installation-title').text('Eaton Centre');
 
@@ -88,7 +90,7 @@ window.installations = (function (installations) {
     var photoContainer = jQuery('#point-details-page .photo-thumbnail-container');
     photoContainer.append(photoThumbnail); */ 
 
-  	if (point.category.title === "Camera") {
+  	if (report.attributes.camera) {
   		jQuery('#point-details-page .point-type').text('Camera');
   		jQuery('#point-details-page .point-title-1').text('Type of space surveilled: ');
   		jQuery('#point-details-page .point-content-1').text('parking lot');
@@ -96,7 +98,7 @@ window.installations = (function (installations) {
   		jQuery('#point-details-page .point-content-2').text('Accessible private space');
   		jQuery('#point-details-page .point-title-3').text('Camera type: ');
   		jQuery('#point-details-page .point-content-3').text('bullet');
-  	} else if (point.category.title === "Sign") {
+  	} else if (report.attributes.sign) {
   		jQuery('#point-details-page .point-type').text('Sign');
   		jQuery('#point-details-page .point-title-1').text('Visibility: ');
   		jQuery('#point-details-page .point-content-1').text('Obscure/High');
@@ -113,12 +115,11 @@ window.installations = (function (installations) {
   }
 
   // TODO: fix this so that it centers on the point, not the current location
-  function createPointDetailsMap(currentLocation) {
-    var lat = currentLocation.coords.latitude;
-  	var lon = currentLocation.coords.longitude;
+  function createPointDetailsMap(report) {
+    var latLng = chooseGPSType(report);
   	// note: higher zoom level
-    var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=17&size=150x150&scale=2&sensor=true&center=" + lat + "," + lon;
-    staticMapCriteria += "&markers=size:small%7C" + lat + ',' + lon;
+    var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=17&size=150x150&scale=2&sensor=true&center=" + latLng.lat + "," + latLng.lng;
+    staticMapCriteria += "&markers=size:small%7C" + latLng.lat + ',' + latLng.lng;
     
     var mapThumbnail = jQuery('<img class="map-thumbnail" />');
     mapThumbnail.attr('src', staticMapCriteria);    
@@ -128,9 +129,29 @@ window.installations = (function (installations) {
 
 	function geolocationFailureHandler (errorMessage) {
 		alert('There was a problem determining your location due to: ' + error.message);
-	}	
+	}
 
-  function distanceBetweenPoints(lat1, lon1, lat2, lon2) {
+  function chooseGPSType (report) {
+    // return user defined GPS if it exists
+    var tempLat = null;
+    var tempLng = null;
+    if (report.get('loc_lat_from_user')) {
+      tempLat = report.get('loc_lat_from_user');
+      console.log('user');
+    } else {
+      tempLat = report.get('loc_lat_from_gps');
+      console.log('gps');
+    }
+    if (report.get('loc_lng_from_user')) {
+      tempLng = report.get('loc_lng_from_user');
+    } else {
+      tempLng = report.get('loc_lng_from_gps');
+    }
+
+    return { lat: tempLat, lng: tempLng };
+  }
+
+  function distanceBetweenPoints(lat1, lng1, lat2, lng2) {
 		if (typeof(Number.prototype.toRad) === "undefined") {
   		Number.prototype.toRad = function() {
 		    return this * Math.PI / 180;
@@ -138,18 +159,18 @@ window.installations = (function (installations) {
 		}
 
 		lat1 = parseFloat(lat1);
-		lon1 = parseFloat(lon1);
+		lng1 = parseFloat(lng1);
 		lat2 = parseFloat(lat2);
-		lon2 = parseFloat(lon2);
+		lng2 = parseFloat(lng2);
 
 		var R = 6371; // km
 		var dLat = (lat2-lat1).toRad();
-		var dLon = (lon2-lon1).toRad();
+		var dLng = (lng2-lng1).toRad();
 		lat1 = lat1.toRad();
 		lat2 = lat2.toRad();
 
 		var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-		        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+		        Math.sin(dLng/2) * Math.sin(dLng/2) * Math.cos(lat1) * Math.cos(lat2); 
 		var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
 		d = R * c;
 		return d;
@@ -157,150 +178,3 @@ window.installations = (function (installations) {
 
   return self;
 })(window.installations || {});
-
-
-
-
-/*
-
-  var r = new veos.model.Reports(); // creates the "reports" collection proxy object
-
-  r.on('reset', function(collection) {
-    navigator.geolocation.getCurrentPosition(function(currentLocation) {
-        var collectionFilter = function(installation) {
-          return isCloseBy(installation, currentLocation);
-        }
-        var filteredReports = collection.filter(collectionFilter);
-
-        createInstallationGrid(filteredReports, currentLocation);
-
-      },
-      geolocationFailureHandler
-    )
-  });
-
-  // @triggers reset on the collection
-  r.fetch();
-
-  // check if an installation is within X (currently 2) km from user's location
-  function isCloseBy(installation, currentLocation) {
-    if (distanceBetweenPoints(installation.get('latitude'), installation.get('longitude'), currentLocation.coords.latitude, currentLocation.coords.longitude) < MAX_DISTANCE_FROM_CURRENT_LOCATION) {
-      return true;
-    }
-    else {
-      return false;
-    }
-  }
-
-  function createInstallationGrid (filteredReports, currentLocation) {
-    _.each(filteredReports, function(report) {
-      // filles the installation-page.html grid
-      var installationGrid = jQuery('#installations-page .ui-grid-a');
-      jQuery('#installation-page .ui-grid-a').empty(); // clear out previous grids. May not be necessary
-
-      // creates the HTML for the jQuery button to be filled with returned content. Why are you so ugly jQuery?
-      var buttonText = report.get('location_name') + "<br/>" + report.get('latitude') + ', ' + report.get('longitude');  // TODO: location_name is a substitute for installation name, lat/long here is a substitute for actual address 
-      var divA = jQuery('<div class="ui-block-a">')
-      var installationOuterButton = jQuery('<a data-role="button" data-transition="fade" href="#installation-details-page"data-icon="arrow-r" data-iconpos="left" data-theme="c" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-c" />');
-      var installationInnerButton = jQuery('<span class="ui-btn-inner ui-btn-corner-all">' + buttonText + '</span>');
-      var installationButtonIcon = jQuery('<span class="ui-icon ui-icon-arrow-r ui-icon-shadow" />');
-      installationOuterButton.append(installationInnerButton);
-      installationOuterButton.append(installationButtonIcon);
-      divA.append(installationOuterButton);
-      //installationInnerButton.text(report.get('location_name') + &#10; + report.get('latitude'));
-      installationGrid.append(divA);
-      installationOuterButton.click(function() {
-        // this can't be right. Ask Armin/Matt how to unspaghetti this
-        populateInstallationDetailsContent(report);
-        createInstallationDetailsMapThumbnail(filteredReports, currentLocation);
-        createInstallationDetailsGrid(report, currentLocation);
-      });
-
-      // creates the HTML for the returned thumbnail
-      // NOTE: I'm assuming the thumbnail is always in the same place (media[1])
-      if (report.get('media')[1] && report.get('media')[1].link_url) {
-        var divB = jQuery('<div class="ui-block-b">')
-        var installationThumbnail = jQuery('<img class="photo-thumbnail" />');
-        installationThumbnail.attr('src', report.get('media')[1].link_url);   // thumb_url may look better, check on phone
-        divB.append(installationThumbnail);
-        installationGrid.append(divB);
-      } else {
-        console.log('no picture');
-      }
-    });
-  }
-
-  function populateInstallationDetailsContent(report) {
-    // replace all this with non-static data, of the form .text(report.get('title'))
-    jQuery('#installation-details-page .installation-title').text('Eaton Centre');
-    jQuery('#installation-details-page .city-location').text('Toronto');
-    jQuery('#installation-details-page .installation-owner').text('Chubb');
-    jQuery('#installation-details-page .installation-type').text('Private');
-
-    jQuery('#installation-details-page .compliance').removeClass('colorMeRed colorMeGreen');
-    if (report.get('compliance') === 'Compliant') {
-      jQuery('#installation-details-page .compliance').addClass('colorMeRed');
-      jQuery('#installation-details-page .compliance').text('non-compliant');
-    } else {
-      jQuery('#installation-details-page .compliance').addClass('colorMeGreen');
-      jQuery('#installation-details-page .compliance').text('compliant');
-    }
-  }
-
-  function createInstallationDetailsMapThumbnail (filteredReports, currentLocation) {
-    var lat = currentLocation.coords.latitude;
-    var lon = currentLocation.coords.longitude;
-    var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&type=hybrid&sensor=true&center=" + lat + "," + lon;
-
-    // TODO: remove when we switch off Ush, replace with the _.each below
-    staticMapCriteria += "&markers=size:mid%7C" + lat + ',' + lon;
-    
-    // TODO: can't get this working without a better idea of the data model
-    _.each(report.get('media'), function(point) {
-      staticMapCriteria += "&markers=" + report.get('latitude') + ',' + report.get('longitude');
-    });
-
-    //_.each(filteredReports, function()
-
-    var mapThumbnail = jQuery('<img class="map-thumbnail" />');
-    mapThumbnail.attr('src', staticMapCriteria);    
-    var thumbnailContainer = jQuery('#installation-details-page .map-thumbnail-container');
-    thumbnailContainer.append(mapThumbnail);
-  }
-
-  // TODO: will need to massively rewrite this later, also modularize the html grid creation code 
-  function createInstallationDetailsGrid (report, currentLocation) {
-    var installationGrid = jQuery('#installation-details-page .ui-grid-a');
-    // clear out all child elements (if it's users second time to the page)
-    jQuery('#installation-details-page .ui-grid-a').empty();
-
-    // for each camera/sign in the report, create a row in the grid
-    _.each(report.get('incident_category'), function (point) {
-      // creates the HTML for the jQuery button to be filled with returned content. Why are you so ugly jQuery?
-      var divA = jQuery('<div class="ui-block-a">')
-      var installationOuterButton = jQuery('<a data-role="button" data-transition="fade" href="#point-details-page" data-icon="arrow-r" data-iconpos="left" data-theme="c" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-c"></a>');
-      var installationInnerButton = jQuery('<span class="ui-btn-inner ui-btn-corner-all">');
-      var installationButtonIcon = jQuery('<span class="ui-icon ui-icon-arrow-r ui-icon-shadow">');
-      installationOuterButton.append(installationInnerButton);
-      installationOuterButton.append(installationButtonIcon);
-      divA.append(installationOuterButton);
-      installationGrid.append(divA);
-
-      installationInnerButton.text(point.category.title);
-      installationOuterButton.click(function() {
-        populatePointDetailsContent(point);
-        createPointDetailsMap(currentLocation);
-      });
-
-      // TODO: I'm not even going to bother to rewrite this, as it will change
-      if (report.get('media')[1] && report.get('media')[1].link_url) {
-        var divB = jQuery('<div class="ui-block-b">')
-        var installationThumbnail = jQuery('<img class="photo-thumbnail" />');
-        installationThumbnail.attr('src', report.get('media')[1].link_url);   // thumb_url may look better, check on phone
-        divB.append(installationThumbnail);
-        installationGrid.append(divB);
-      } else {
-        console.log('no picture');
-      }
-    });
-  } */

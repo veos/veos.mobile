@@ -4,40 +4,18 @@
 window.report = (function(report) {
   var self = report;
   var currentLat = null;
-  var currentLon = null;
+  var currentLng = null;
   var userDefinedLat = null;
-  var userDefinedLon = null;
+  var userDefinedLng = null;
 
 
-  function createMapThumbnail (lat, lon, reportsCollection) {
-    // passing in lat/lon here - this function is used to create initial map, and whenever the user defines their location (with pin or address)
+  function createMapThumbnail (lat, lng, reportsCollection) {
+    // passing in lat/lng here - this function is used to create initial map, and whenever the user defines their location (with pin or address)
     // creating static map that is centered around the current location
-    var staticMapCriteria = "https://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" + lat + "," + lon;
+    var staticMapCriteria = "https://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" + lat + "," + lng;
     
     // add the current location as red pin to the map
-    staticMapCriteria += "&markers=color:red%7C" + lat + "," + lon;
-
-    // TODO: limit number of markers?
-/*    if (reportsCollection !== undefined) {
-      reportsCollection.each(function(report, iterator) {
-        // in the first iteration set the color of markers to blue and add the first element
-        // note: %7C is the notation for |
-        if (report.get('loc_lat_from_gps') && report.get('loc_lng_from_gps')) {
-          if (iterator === 0) {
-            staticMapCriteria += "&markers=size:tiny%7Ccolor:blue%7C" + report.get('loc_lat_from_gps') + ',' + report.get('loc_lng_from_gps');
-          }
-          // add all additional elements with same marker style
-          else {
-            staticMapCriteria += "%7C" + report.get('loc_lat_from_gps') + ',' + report.get('loc_lng_from_gps');
-          }
-        } else {
-          console.log("undefined lat or lon in the DB, skipping this entry");
-        }
-      });
-    } else {
-      console.warn('reportsCollection is undefined, so there are no reports yet?')
-    }*/
-
+    staticMapCriteria += "&markers=color:red%7C" + lat + "," + lng;
 
     if (reportsCollection !== undefined) {
       reportsCollection.each(function(report, iterator) {
@@ -69,7 +47,7 @@ window.report = (function(report) {
             staticMapCriteria += "%7C" + tempLat + ',' + tempLng;
           }
         } else {
-          console.log("undefined lat or lon in the DB, skipping this entry");
+          console.log("undefined lat or lng in the DB, skipping this entry");
         }
       });
     }
@@ -91,10 +69,10 @@ window.report = (function(report) {
   }
 
   // this is a near duplicate of a function in veos.map.js. Any way to use functions from the closure?
-  var createRefiningMap = function (collection) {
+/*  var createRefiningMap = function (collection) {
     console.log("Initializing Google Map...");
 
-    var currentLatLng = new google.maps.LatLng(currentLat,currentLon);
+    var currentLatLng = new google.maps.LatLng(currentLat,currentLng);
 
     var myOptions = {
       center: currentLatLng,
@@ -117,11 +95,11 @@ window.report = (function(report) {
       console.log('Pin dragged to latitude: ' + event.latLng.lat() + ' longitude: ' + event.latLng.lng());
       //alert('lat ' + event.latLng.lat() + ' lng ' + event.latLng.lng());
       userDefinedLat = event.latLng.lat();
-      userDefinedLon = event.latLng.lng();
+      userDefinedLng = event.latLng.lng();
     });
 
     jQuery('#refine-location-button').click(function() {
-      createDynamicPageElements(userDefinedLat, userDefinedLon);
+      createDynamicPageElements(userDefinedLat, userDefinedLng);
       jQuery.mobile.changePage("report.html", { transition: "slideup"})
     });
 
@@ -130,36 +108,19 @@ window.report = (function(report) {
 
     //adding other installation markers drawn from DB
     addInstallationMarkers(map, collection);
-  };
 
-  // a near duplicate of a veos.map.js function
-  var addInstallationMarkers = function(map, collection) {
-      // adding markers for each point in the DB (we'll want to limit this at some point to decrease load time)
-    var r = new veos.model.Reports();
-    // I'm not sure it makes sense to do this here (it will never be reset, ie). Just doing for consistency
-    r.on('reset', function(collection) {
-      r.each(function(report) {
-        var latLng = new google.maps.LatLng(report.get('loc_lat_from_gps'),report.get('loc_lng_from_gps'));
-        var marker = new google.maps.Marker({
-          position: latLng,
-          title: report.get('owner_name')
-        });
-        marker.setMap(map);
-      });
-    });
-    // @triggers reset on the collection
-    r.fetch();
-  };
+    veos.map.testFunction();
+  };*/
 
   // perform a reverse geolocation lookup (convert latitude and longitude into a street address)
-  function lookupAddressForLatLng (lat, lon) {
+  function lookupAddressForLatLng (lat, lng) {
     var geocoder = new google.maps.Geocoder();
-    var latlng = new google.maps.LatLng(lat, lon);
+    var latlng = new google.maps.LatLng(lat, lng);
     
     geocoder.geocode({'latLng': latlng}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
         if (results[0]) {
-          console.log("Reverse geocoding for lat: " + lat + " lng: " + lon + " returned this address: " + results[0].formatted_address);
+          console.log("Reverse geocoding for lat: " + lat + " lng: " + lng + " returned this address: " + results[0].formatted_address);
           jQuery('#location-address').val(results[0].formatted_address);
         }
       } else {
@@ -190,18 +151,27 @@ window.report = (function(report) {
     });
   };
 
-  var createDynamicPageElements = function (lat, lon) {
+  self.createDynamicPageElements = function (lat, lng, userDefined) {
+    // if this function is called with userDefined == true, update the userDefinedLat/Lng vars
+    if (userDefined === true) {
+      userDefinedLat = lat;
+      userDefinedLng = lng;
+    } else {
+      currentLat = lat;
+      currentLng = lng;
+    }
+
     // do reverse geolocation address lookup with lat-lng
-    lookupAddressForLatLng(lat, lon);
+    lookupAddressForLatLng(lat, lng);
 
     var r = new veos.model.Reports();
 
     // adding listener for backbone.js reset event
     r.on('reset', function(collection) {
       // create static map for reports page
-      createMapThumbnail(lat, lon, collection);
+      createMapThumbnail(lat, lng, collection);
       // create the live map where the user can refine their location
-      createRefiningMap(collection);
+      veos.map.createRefiningMap(lat, lng, collection);
     });
     // fetching will trigger reset event
     r.fetch();    
@@ -211,9 +181,9 @@ window.report = (function(report) {
     // should we do another check for location with getCurrentPosition here?
     var r = new veos.model.Report();
 
-    if (currentLat && currentLon) {
+    if (currentLat && currentLng) {
       r.set('loc_lat_from_gps', currentLat);
-      r.set('loc_lng_from_gps', currentLon);
+      r.set('loc_lng_from_gps', currentLng);
     } else {
       alert('Your GPS could not be determined');
       console.log('missing GPS');
@@ -229,8 +199,8 @@ window.report = (function(report) {
     }
     r.set('loc_description_from_google', jQuery('#location-address').val());
     r.set('loc_lat_from_user', userDefinedLat);
-    r.set('loc_lng_from_user', userDefinedLon);
-    r.set('loc_description_from_user', 'this is our initial test with the new backend');
+    r.set('loc_lng_from_user', userDefinedLng);
+    r.set('loc_description_from_user', 'this is our initial testing with the new backend');
     r.set('owner_name', jQuery('#owner').val());    // this will need a if/else wrapper eventually
 
     r.save();
@@ -242,8 +212,8 @@ window.report = (function(report) {
     // retrieve the current position of the phone
     navigator.geolocation.getCurrentPosition(function geolocationSuccess (currentLocation) {
       currentLat = currentLocation.coords.latitude;
-      currentLon = currentLocation.coords.longitude;
-      createDynamicPageElements(currentLat, currentLon);
+      currentLng = currentLocation.coords.longitude;
+      self.createDynamicPageElements(currentLat, currentLng, false);
     },
       function geolocationFailure () {
         alert('There was a problem determining your location due to: ' + error.message);
