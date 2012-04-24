@@ -44,7 +44,7 @@
 
 /***** OVERVIEW MAP *****/
 
-#overview-map-page #map-canvas {
+#overview-map-page #overview-map-canvas {
 	position: absolute;
 	width: 100%;
 	height: 100%;

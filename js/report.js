@@ -12,51 +12,10 @@ window.report = (function(report) {
   function createMapThumbnail (lat, lng, reportsCollection) {
     // passing in lat/lng here - this function is used to create initial map, and whenever the user defines their location (with pin or address)
     // creating static map that is centered around the current location
-    var staticMapCriteria = "https://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" + lat + "," + lng;
-    
-    // add the current location as red pin to the map
-    staticMapCriteria += "&markers=color:red%7C" + lat + "," + lng;
-
-    if (reportsCollection !== undefined) {
-      reportsCollection.each(function(report, iterator) {
-        // in the first iteration set the color of markers to blue and add the first element
-        // note: %7C is the notation for |
-        if ( (report.get('loc_lat_from_user') || report.get('loc_lat_from_gps'))
-          && (report.get('loc_lng_from_user') || report.get('loc_lng_from_gps')) ) {
-          // user refined location should override gps location
-          var tempLat = null;
-          var tempLng = null;
-          if (report.get('loc_lat_from_user')) {
-            tempLat = report.get('loc_lat_from_user');
-            console.log('user');
-          } else {
-            tempLat = report.get('loc_lat_from_gps');
-            console.log('gps');
-          }
-          if (report.get('loc_lng_from_user')) {
-            tempLng = report.get('loc_lng_from_user');
-          } else {
-            tempLng = report.get('loc_lng_from_gps');
-          }
-
-          if (iterator === 0) {
-            staticMapCriteria += "&markers=size:tiny%7Ccolor:blue%7C" + tempLat + ',' + tempLng;
-          }
-          // add all additional elements with same marker style
-          else {
-            staticMapCriteria += "%7C" + tempLat + ',' + tempLng;
-          }
-        } else {
-          console.log("undefined lat or lng in the DB, skipping this entry");
-        }
-      });
-    }
-    else {
-      console.warn('reportsCollection is undefined, so there are no reports yet?')
-    }
+    var myTemp = veos.map.generateStaticMap(lat, lng, reportsCollection);
 
     var mapThumbnail = jQuery('<img class="map-thumbnail" />');
-    mapThumbnail.attr('src', staticMapCriteria);
+    mapThumbnail.attr('src', myTemp);
     
     var thumbnailContainer = jQuery('#report-page .map-thumbnail-container');
     thumbnailContainer.empty();
@@ -67,50 +26,6 @@ window.report = (function(report) {
       jQuery.mobile.changePage("#refine-location-page", { transition: "slideup"});    // is this the right way to do this?
     });
   }
-
-  // this is a near duplicate of a function in veos.map.js. Any way to use functions from the closure?
-/*  var createRefiningMap = function (collection) {
-    console.log("Initializing Google Map...");
-
-    var currentLatLng = new google.maps.LatLng(currentLat,currentLng);
-
-    var myOptions = {
-      center: currentLatLng,
-      zoom: 14,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-
-    var map = new google.maps.Map(document.getElementById("refining-map-canvas"), myOptions);
-
-    // adding a marker for the current location as determined by the browser/phone
-    var marker = new google.maps.Marker({
-      position: currentLatLng,
-      draggable: true,
-      icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-      title:"Current position"
-    }); 
-
-    // adding an event listener to retrieve location once marker is dragged
-    google.maps.event.addListener(marker, 'dragend', function (event) {
-      console.log('Pin dragged to latitude: ' + event.latLng.lat() + ' longitude: ' + event.latLng.lng());
-      //alert('lat ' + event.latLng.lat() + ' lng ' + event.latLng.lng());
-      userDefinedLat = event.latLng.lat();
-      userDefinedLng = event.latLng.lng();
-    });
-
-    jQuery('#refine-location-button').click(function() {
-      createDynamicPageElements(userDefinedLat, userDefinedLng);
-      jQuery.mobile.changePage("report.html", { transition: "slideup"})
-    });
-
-    // adding the marker to the map
-    marker.setMap(map);
-
-    //adding other installation markers drawn from DB
-    addInstallationMarkers(map, collection);
-
-    veos.map.testFunction();
-  };*/
 
   // perform a reverse geolocation lookup (convert latitude and longitude into a street address)
   function lookupAddressForLatLng (lat, lng) {
@@ -130,17 +45,20 @@ window.report = (function(report) {
   }
 
   // lookup longitude and latitude for a given street address
-  self.lookupLatLngForAddress = function (address) {
+  self.lookupLatLngForAddress = function(address) {
     var geocoder = new google.maps.Geocoder();
     
     geocoder.geocode({'address': address}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
-        console.log("Reverse geocoding for address: " + address + " returned this latitute: " + results[0].geometry.location.lat() + " and longitude: " + results[0].geometry.location.lng());
-        
+        userDefinedLat = results[0].geometry.location.lat();
+        userDefinedLng = results[0].geometry.location.lng();
+
+        console.log("Reverse geocoding for address: " + address + " returned this latitute: " + userDefinedLat + " and longitude: " + userDefinedLng);        
+
         var r = new veos.model.Reports();
         // adding listener for backbone.js reset event
         r.on('reset', function(collection) {
-          createMapThumbnail(results[0].geometry.location.lat(), results[0].geometry.location.lng(), collection);
+          createMapThumbnail(userDefinedLat, userDefinedLng, collection);
         });
         // fetching will trigger reset event
         r.fetch();
@@ -151,33 +69,7 @@ window.report = (function(report) {
     });
   };
 
-  self.createDynamicPageElements = function (lat, lng, userDefined) {
-    // if this function is called with userDefined == true, update the userDefinedLat/Lng vars
-    if (userDefined === true) {
-      userDefinedLat = lat;
-      userDefinedLng = lng;
-    } else {
-      currentLat = lat;
-      currentLng = lng;
-    }
-
-    // do reverse geolocation address lookup with lat-lng
-    lookupAddressForLatLng(lat, lng);
-
-    var r = new veos.model.Reports();
-
-    // adding listener for backbone.js reset event
-    r.on('reset', function(collection) {
-      // create static map for reports page
-      createMapThumbnail(lat, lng, collection);
-      // create the live map where the user can refine their location
-      veos.map.createRefiningMap(lat, lng, collection);
-    });
-    // fetching will trigger reset event
-    r.fetch();    
-  };
-
-  self.submitReport = function () {
+  self.submitReport = function() {
     // should we do another check for location with getCurrentPosition here?
     var r = new veos.model.Report();
 
@@ -207,6 +99,36 @@ window.report = (function(report) {
     alert('Report submitted');
     // do we want to clear some/all of the data
   };
+
+  self.createDynamicPageElements = function(lat, lng, userDefined) {
+    // if this function is called with userDefined = true, update the userDefinedLat/Lng vars
+    if (userDefined === true) {
+      userDefinedLat = lat;
+      userDefinedLng = lng;
+    } else {
+      currentLat = lat;
+      currentLng = lng;
+    }
+
+    // do reverse geolocation address lookup with lat-lng
+    lookupAddressForLatLng(lat, lng);
+
+    var r = new veos.model.Reports();
+
+    // adding listener for backbone.js reset event
+    r.on('reset', function(collection) {
+      // create static map for reports page
+      createMapThumbnail(lat, lng, collection);
+      // create the live map where the user can refine their location
+      veos.map.createMap(lat, lng, "#refining-map-canvas");
+      jQuery('#refine-location-button').click(function() {
+        report.createDynamicPageElements(userDefinedLat, userDefinedLng, true);
+        jQuery.mobile.changePage("report.html", { transition: "slideup"})
+      });      
+    });
+    // fetching will trigger reset event
+    r.fetch();    
+  };  
 
   self.init = function() {
     // retrieve the current position of the phone

@@ -30,17 +30,6 @@ window.installations = (function (installations) {
     r.fetch();
   };
 
-
-  function isCloseBy(report, currentLocation) {
-    var latLng = chooseGPSType(report);
-    if (distanceBetweenPoints(latLng.lat, latLng.lng, currentLocation.coords.latitude, currentLocation.coords.longitude) < MAX_DISTANCE_FROM_CURRENT_LOCATION) {
-      return true;
-    }
-    else {
-      return false;
-    }    
-  }
-
   function createPointsGrid (filteredReports, currentLocation) {
     _.each(filteredReports, function(report) {
       // fills the installation-page.html grid (although as of now they points, not installations)
@@ -81,7 +70,6 @@ window.installations = (function (installations) {
 
 	
   function populatePointDetailsContent(report) {
-  	// replace all this with non-static data, of the form .text(report.get('title'))
   	jQuery('#point-details-page .installation-title').text('Eaton Centre');
 
     // TODO: replace with Matt's stuff
@@ -114,9 +102,8 @@ window.installations = (function (installations) {
   	}
   }
 
-  // TODO: fix this so that it centers on the point, not the current location
   function createPointDetailsMap(report) {
-    var latLng = chooseGPSType(report);
+    var latLng = veos.map.retrieveLatLng(report);
   	// note: higher zoom level
     var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=17&size=150x150&scale=2&sensor=true&center=" + latLng.lat + "," + latLng.lng;
     staticMapCriteria += "&markers=size:small%7C" + latLng.lat + ',' + latLng.lng;
@@ -131,24 +118,14 @@ window.installations = (function (installations) {
 		alert('There was a problem determining your location due to: ' + error.message);
 	}
 
-  function chooseGPSType (report) {
-    // return user defined GPS if it exists
-    var tempLat = null;
-    var tempLng = null;
-    if (report.get('loc_lat_from_user')) {
-      tempLat = report.get('loc_lat_from_user');
-      console.log('user');
-    } else {
-      tempLat = report.get('loc_lat_from_gps');
-      console.log('gps');
+  function isCloseBy(report, currentLocation) {
+    var latLng = veos.map.retrieveLatLng(report);
+    if (distanceBetweenPoints(latLng.lat, latLng.lng, currentLocation.coords.latitude, currentLocation.coords.longitude) < MAX_DISTANCE_FROM_CURRENT_LOCATION) {
+      return true;
     }
-    if (report.get('loc_lng_from_user')) {
-      tempLng = report.get('loc_lng_from_user');
-    } else {
-      tempLng = report.get('loc_lng_from_gps');
-    }
-
-    return { lat: tempLat, lng: tempLng };
+    else {
+      return false;
+    }    
   }
 
   function distanceBetweenPoints(lat1, lng1, lat2, lng2) {
