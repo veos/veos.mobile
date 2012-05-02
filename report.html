@@ -17,7 +17,7 @@
         <script type="text/javascript">$.noConflict();</script>
         
         <script type="text/javascript"
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyADosfr10Z0idZbNiRFtXKXzzOlwOar8vU&amp;sensor=true">
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyariX4O3T3hJnFrm9leXg8NqPluY68bU&amp;sensor=true">
         </script>
     </head>
     <body>
@@ -62,20 +62,37 @@
                         <h3>
                             Details
                         </h3>
+                        <div data-role="content">
+                            <b>Owner:</b> who do you think this surveillance belongs to?
+                        </div>
                         <div data-role="fieldcontain">
                             <fieldset data-role="controlgroup">
-                                <label for="owner">
-                                    Owner
+                                <label for="name">
+                                    Owner Name
                                 </label>
                                 <input id="owner" placeholder="" value="" type="text" />
+                                <!-- TODO: add checkbox for "can't identify owner" -->
                             </fieldset>
                         </div>
                         <div data-role="fieldcontain">
                             <fieldset data-role="controlgroup">
-                                <label for="type">
-                                    Type
+                                <label for="description">
+                                    Owner Description
                                 </label>
-                                <input id="type" placeholder="" value="" type="text" />
+                                <select>
+                                    <option value="null">...</option>
+                                    <option value="Banking">Banking</option>
+                                    <option value="Education">Education</option>
+                                    <option value="Government">Government</option>
+                                    <option value="Office Banking">Office Building</option>
+                                    <option value="Police">Police</option>
+                                    <option value="Public Transit">Public Transit</option>
+                                    <option value="Residential">Residential</option>
+                                    <option value="Retail / Restaurant / Bar">Retail / Restaurant / Bar</option>
+                                    <option value="Traffic">Traffic</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <!-- <input id="type" placeholder="" value="" type="text" /> -->
                             </fieldset>
                         </div>
                         <div data-role="fieldcontain">
