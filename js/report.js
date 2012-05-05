@@ -24,6 +24,7 @@ window.report = (function(report) {
     // add listener which leads to overlay map (for refining location)
     mapThumbnail.click(function() {
       jQuery.mobile.changePage("#refine-location-page", { transition: "slideup"});    // is this the right way to do this?
+      //document.location="report.html#refine-location-page";
     });
   }
 
@@ -33,7 +34,7 @@ window.report = (function(report) {
     var latlng = new google.maps.LatLng(lat, lng);
     
     geocoder.geocode({'latLng': latlng}, function(results, status) {
-      if (status == google.maps.GeocoderStatus.OK) {
+      if (status === google.maps.GeocoderStatus.OK) {
         if (results[0]) {
           console.log("Reverse geocoding for lat: " + lat + " lng: " + lng + " returned this address: " + results[0].formatted_address);
           jQuery('#location-address').val(results[0].formatted_address);
@@ -49,7 +50,7 @@ window.report = (function(report) {
     var geocoder = new google.maps.Geocoder();
     
     geocoder.geocode({'address': address}, function(results, status) {
-      if (status == google.maps.GeocoderStatus.OK) {
+      if (status === google.maps.GeocoderStatus.OK) {
         userDefinedLat = results[0].geometry.location.lat();
         userDefinedLng = results[0].geometry.location.lng();
 
@@ -130,7 +131,7 @@ window.report = (function(report) {
       veos.map.createMap(lat, lng, "#refining-map-canvas");
       jQuery('#refine-location-button').click(function() {
         report.createDynamicPageElements(userDefinedLat, userDefinedLng, true);
-        jQuery.mobile.changePage("report.html", { transition: "slideup"})
+        jQuery.mobile.changePage("report.html", { transition: "slideup"});
       });      
     });
     // fetching will trigger reset event

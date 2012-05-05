@@ -67,7 +67,7 @@
                         </div>
                         <div data-role="fieldcontain">
                             <fieldset data-role="controlgroup">
-                                <label for="name">
+                                <label for="owner">
                                     Owner Name
                                 </label>
                                 <input id="owner" placeholder="" value="" type="text" />
@@ -76,10 +76,10 @@
                         </div>
                         <div data-role="fieldcontain">
                             <fieldset data-role="controlgroup">
-                                <label for="description">
+                                <label for="owner-description">
                                     Owner Description
                                 </label>
-                                <select>
+                                <select id="owner-description">
                                     <option value="null">...</option>
                                     <option value="Banking">Banking</option>
                                     <option value="Education">Education</option>
@@ -96,7 +96,8 @@
                             </fieldset>
                         </div>
                         <div data-role="fieldcontain">
-                            <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">
+                            <!--<fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">-->
+                            <fieldset data-role="controlgroup" data-type="horizontal">
                                 <div id="radio" class="field about_object"> <!-- do more of these -->
                                     <input type="radio" name="point-type-radio" value="Camera" id="camera-radio" class="radio-button" /><label for="camera-radio">Camera</label>
                                     <input type="radio" name="point-type-radio" value="Sign" id="sign-radio" class="radio-button" /><label for="sign-radio">Sign</label>
