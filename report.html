@@ -34,10 +34,10 @@
                         <h3>
                             Photos
                         </h3>
-                        <a id="add-photo-button" data-role="button" data-transition="fade" href="#report-page" data-icon="plus" data-iconpos="left">
+                        <a id="add-photo-button" data-role="button" data-transition="fade" href="#report-page" data-icon="plus" data-iconpos="left" class="acquire-photo" data-acquire-from="camera">
                             Take Photo
                         </a>
-                        <a id="select-photo-button" data-role="button" data-transition="fade" data-icon="plus" data-iconpos="left">
+                        <a id="select-photo-button" data-role="button" data-transition="fade" data-icon="plus" data-iconpos="left" class="acquire-photo" data-acquire-from="gallery">
                             Select Photo from Gallery
                         </a>
                         <div id="image-list" class="photo-list">
@@ -150,6 +150,7 @@
                     var cameraImage = jQuery('<img />');
                     // set image URI of image element
                     cameraImage.attr('src', this.imageURL);
+                    cameraImage.data('photo', this);
                     
                     // select div that will hold all image elements added
                     var imageList = jQuery('#image-list');
@@ -162,17 +163,21 @@
                     this.upload();
                 };
 
-                jQuery('#add-photo-button').click(function() {
+                jQuery('.acquire-photo').click(function() {
                     var photo = new veos.model.Photo();
                     photo.on('image_capture', renderPhoto, photo);
-                    photo.captureFromCamera();
+                    
+                    switch (jQuery(this).data('acquire-from')) {
+                        case 'camera':
+                            photo.captureFromCamera();
+                            break;
+                        case 'gallery':
+                            photo.captureFromGallery();
+                            break;
+                        default:
+                            console.error("'"+jQuery(this).data('acquire-from')+"' is not a valid source for acquiring a photo.");
+                    }
                 });
-                jQuery('#select-photo-button').click(function() {
-                    var photo = new veos.model.Photo();
-                    photo.on('image_capture', renderPhoto, photo);
-                    photo.captureFromGallery();
-                });                
-
             });
 
             jQuery(document).ready(function() {
