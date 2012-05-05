@@ -63,11 +63,7 @@ window.veos = (function(veos) {
       else
         msg = "Sorry, there was some sort of error while performing this action. The server may be temporarily unavailable.";
 
-      if (navigator === undefined || navigator.notification === undefined) {
-        alert(msg);
-      } else {
-        navigator.notification.alert(msg, null, "Error");
-      }
+      veos.alert(msg, "Error");
     }
   });
 
