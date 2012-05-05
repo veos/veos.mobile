@@ -124,7 +124,7 @@
                     Drag the pin to refine your location
                 </h3>
             </div>                
-            <div data-role="content">
+            <div data-role="content" style="padding: 0px">
                 <div id="refining-map-canvas"></div>
             </div>
             <div class="map-button-container"> 
@@ -153,6 +153,9 @@
                     
                     // select div that will hold all image elements added
                     var imageList = jQuery('#image-list');
+                    // only one image
+                    imageList.empty();
+
                     // add newly created image to image list
                     imageList.append(cameraImage);
 
