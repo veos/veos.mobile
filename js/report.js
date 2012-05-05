@@ -24,6 +24,7 @@ window.report = (function(report) {
     // add listener which leads to overlay map (for refining location)
     mapThumbnail.click(function() {
       jQuery.mobile.changePage("#refine-location-page", { transition: "slideup"});    // is this the right way to do this?
+      //document.location="report.html#refine-location-page";
     });
   }
 
