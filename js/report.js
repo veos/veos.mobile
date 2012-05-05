@@ -95,9 +95,16 @@ window.report = (function(report) {
     r.set('loc_description_from_user', 'this is our initial testing with the new backend');
     r.set('owner_name', jQuery('#owner').val());    // this will need a if/else wrapper eventually
 
-    r.save();
-    alert('Report submitted');
-    // do we want to clear some/all of the data
+    r.save(null, {
+      success: function () {
+        jQuery('#image-list img').each(function () {
+          var photo = jQuery(this).data('photo');
+          console.log("Attaching photo to report.", photo)
+          r.attachPhoto(photo);
+        });
+        veos.alert('Report submitted');
+      }
+    });
   };
 
   self.createDynamicPageElements = function(lat, lng, userDefined) {
