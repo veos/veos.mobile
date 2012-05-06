@@ -67,11 +67,13 @@
                         </div>
                         <div data-role="fieldcontain">
                             <fieldset data-role="controlgroup">
-                                <label for="owner">
+                                <legend>
                                     Owner Name
-                                </label>
-                                <input id="owner" placeholder="" value="" type="text" />
+                                </legend>
+                                <input id="owner" placeholder="Owner name if identifiable" value="" type="text" />
                                 <!-- TODO: add checkbox for "can't identify owner" -->
+                                <input type="checkbox" name="unidentified-owner-checkbox" id="unidentified-owner-checkbox" class="custom" />
+                                <label for="unidentified-owner-checkbox">Cannot identify owner</label>
                             </fieldset>
                         </div>
                         <div data-role="fieldcontain">
@@ -195,6 +197,15 @@
                     console.log('submitting report...');
                     window.report.submitReport();
                 });
+
+                jQuery('#unidentified-owner-checkbox').click( function() {
+                    if (jQuery('#unidentified-owner-checkbox').attr("checked")) {
+                        jQuery('#owner').val('');
+                        jQuery('#owner').attr('disabled', true);
+                    } else {
+                        jQuery('#owner').removeAttr('disabled');    
+                    }
+               });
 
                 // this needs to go in here to make the refined map work, I believe. But it may also be causing the wierd viewport issues
                 report.init();
