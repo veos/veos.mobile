@@ -98,20 +98,27 @@ window.report = (function(report) {
       return true;
     } else {
       r.set('owner_description', jQuery('#owner-description').val());
-      //r.set('owner_description', '12345678890');
     }
 
     r.set('loc_description_from_google', jQuery('#location-address').val());
     r.set('loc_lat_from_user', userDefinedLat);
     r.set('loc_lng_from_user', userDefinedLng);
     r.set('loc_description_from_user', 'this is our initial testing with the new backend');
-    r.set('owner_name', jQuery('#owner').val());    // this will need a if/else wrapper eventually
+
+    if (jQuery('#unidentified-owner-checkbox').attr('checked')) {
+      r.set('owner_name', 'Cannot identify owner');
+    } else if (jQuery('#owner').val() !== '') {
+      r.set('owner_name', jQuery('#owner').val());    // this will need a if/else wrapper eventually
+    } else {
+      veos.alert('Either enter a owner or check "cannot identify owner"');
+      return true;
+    }
 
     r.save(null, {
       success: function () {
         jQuery('#image-list img').each(function () {
           var photo = jQuery(this).data('photo');
-          console.log("Attaching photo to report.", photo)
+          console.log("Attaching photo to report.", photo);
           r.attachPhoto(photo);
         });
         veos.alert('Report submitted');
