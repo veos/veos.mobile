@@ -74,22 +74,33 @@ window.report = (function(report) {
     // should we do another check for location with getCurrentPosition here?
     var r = new veos.model.Report();
 
+    // check if a location is available
     if (currentLat && currentLng) {
       r.set('loc_lat_from_gps', currentLat);
       r.set('loc_lng_from_gps', currentLng);
     } else {
-      alert('Your GPS could not be determined');
+      alert('Your GPS location could not be determined');
       console.log('missing GPS');
       return true;
     }
+    // check that camera or sign is selected
     if (jQuery('input:radio[name=point-type-radio]:checked').val() === "Camera") {          // TODO do the advanced details
-        r.set('camera', {pointed_at: []});  
+      r.set('camera', {pointed_at: []});  
     } else if (jQuery('input:radio[name=point-type-radio]:checked').val() === "Sign") {
-        r.set('sign', {text: "I'm a sign", visibility: "can you see me?"});
+      r.set('sign', {text: "I'm a sign", visibility: "can you see me?"});
     } else {
-      alert('Enter type of report before submitting - is this a camera or a sign?');
+      veos.alert('Enter type of report before submitting - is this a camera or a sign?');
       return true;
     }
+    // owner_description
+    if (jQuery('#owner-description').val() === "null") {
+      veos.alert('Please select a "Owner Description"');
+      return true;
+    } else {
+      r.set('owner_description', jQuery('#owner-description').val());
+      //r.set('owner_description', '12345678890');
+    }
+
     r.set('loc_description_from_google', jQuery('#location-address').val());
     r.set('loc_lat_from_user', userDefinedLat);
     r.set('loc_lng_from_user', userDefinedLng);
@@ -146,7 +157,8 @@ window.report = (function(report) {
       self.createDynamicPageElements(currentLat, currentLng, false);
     },
       function geolocationFailure () {
-        alert('There was a problem determining your location due to: ' + error.message);
+        veos.alert('There was a problem determining your location due to: ' + error.message);
+        console.warn('There was a problem determining your location due to: ' + error.message);
     });
   };
 

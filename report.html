@@ -186,7 +186,8 @@
                     document.location="overview-map.html";
                 });
                 jQuery('#location-address').change(function() {
-                    alert('change in the address box');
+                    console.log('change in the address box');
+                    veos.alert('Address change successful');
                     //window.veos.map.testFunction();
                     window.report.lookupLatLngForAddress(jQuery('#location-address').val());
                 });
