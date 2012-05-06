@@ -14,18 +14,54 @@ window.report = (function(report) {
     // creating static map that is centered around the current location
     var myTemp = veos.map.generateStaticMap(lat, lng, reportsCollection);
 
+    var mapThumbLink = jQuery('<a href="refine-location-page.html" />');
     var mapThumbnail = jQuery('<img class="map-thumbnail" />');
     mapThumbnail.attr('src', myTemp);
+
+    mapThumbLink.append(mapThumbnail);
     
     var thumbnailContainer = jQuery('#report-page .map-thumbnail-container');
     thumbnailContainer.empty();
-    thumbnailContainer.append(mapThumbnail);
+    thumbnailContainer.append(mapThumbLink);
+
+    /*jQuery('.page-map').live("pagecreate", function() {
+      veos.map.createMap(currentLat, currentLng, "#refining-map-canvas");
+      jQuery('#refine-location-button').click(function() {
+        report.createDynamicPageElements(currentLat, currentLng, true);
+        jQuery.mobile.changePage("report.html", { transition: "slideup"});
+      });
+    });*/
+
+    jQuery('.page-map').live("pagecreate", function() {
+      if(navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position){
+          initialize(position.coords.latitude,position.coords.longitude);
+        });
+      }
+    });
+
+    function initialize(lat,lng) {
+      var latlng = new google.maps.LatLng(lat, lng);
+      var myOptions = {
+        zoom: 8,
+        center: latlng,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById("refining-map-canvas"),myOptions);
+    }
 
     // add listener which leads to overlay map (for refining location)
-    mapThumbnail.click(function() {
-      jQuery.mobile.changePage("#refine-location-page", { transition: "slideup"});    // is this the right way to do this?
+    /*mapThumbnail.click(function() {
+      //jQuery.mobile.changePage("#refine-location-page", { transition: "slideup"});    // is this the right way to do this?
       //document.location="report.html#refine-location-page";
-    });
+      jQuery('.page-map').live("pagecreate", function() {
+        veos.map.createMap(currentLat, currentLng, "#refining-map-canvas");
+        jQuery('#refine-location-button').click(function() {
+          report.createDynamicPageElements(currentLat, currentLng, true);
+          jQuery.mobile.changePage("report.html", { transition: "slideup"});
+        });
+      });
+    });*/
   }
 
   // perform a reverse geolocation lookup (convert latitude and longitude into a street address)
@@ -128,11 +164,11 @@ window.report = (function(report) {
       // create static map for reports page
       createMapThumbnail(lat, lng, collection);
       // create the live map where the user can refine their location
-      veos.map.createMap(lat, lng, "#refining-map-canvas");
+      /*veos.map.createMap(lat, lng, "#refining-map-canvas");
       jQuery('#refine-location-button').click(function() {
         report.createDynamicPageElements(userDefinedLat, userDefinedLng, true);
         jQuery.mobile.changePage("report.html", { transition: "slideup"});
-      });      
+      });*/
     });
     // fetching will trigger reset event
     r.fetch();    
