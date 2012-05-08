@@ -92,7 +92,7 @@ window.installations = (function (installations) {
     photoContainer.append(photoThumbnail); */ 
 
     if (report.get('camera')) {
-      if (report.attributes.camera.hasOwnProperty("photos") && report.attributes.camera.photos[0].url !== null) {
+      if (report.attributes.camera.hasOwnProperty("photos") && report.attributes.camera.photos.length > 0 && report.attributes.camera.photos[0].url !== null) {
         photoThumbnail.attr('src', veos.model.baseURL + report.attributes.camera.photos[0].url);
       }
       jQuery('#point-details-page .point-type').text('Camera');
@@ -103,6 +103,9 @@ window.installations = (function (installations) {
       jQuery('#point-details-page .point-title-3').text('Owner description: ');
       jQuery('#point-details-page .point-content-3').text(report.attributes.owner_description);
     } else if (report.get('sign')) {
+      if (report.attributes.sign.hasOwnProperty("photos") && report.attributes.sign.photos.length > 0 && report.attributes.sign.photos[0].url !== null) {
+        photoThumbnail.attr('src', veos.model.baseURL + report.attributes.sign.photos[0].url);
+      }
       jQuery('#point-details-page .point-type').text('Sign');
       jQuery('#point-details-page .point-title-1').text('Visibility: ');
       jQuery('#point-details-page .point-content-1').text('Obscure/High');
