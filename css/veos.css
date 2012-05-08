@@ -137,8 +137,10 @@
 }
 
 .photo-thumbnail {
-    max-width: 100px;
-    max-height: 100px;
+    max-width: 50%;
+    /*max-height: 30%;*/
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 #installation-details-page .map-thumbnail {
