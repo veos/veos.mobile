@@ -43,6 +43,8 @@ window.installations = (function (installations) {
       }
       var divA = jQuery('<div class="ui-block-a">');
       var installationOuterButton = jQuery('<a data-role="button" data-transition="fade" href="#point-details-page" data-icon="arrow-r" data-iconpos="left" data-theme="c" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-c" />');
+      // attaching the report object to the HTML in data-report
+      installationOuterButton.data('report', report);
       var installationInnerButton = jQuery('<span class="ui-btn-inner ui-btn-corner-all">' + buttonText + '</span>');
       var installationButtonIcon = jQuery('<span class="ui-icon ui-icon-arrow-r ui-icon-shadow" />');
       installationOuterButton.append(installationInnerButton);
@@ -52,8 +54,13 @@ window.installations = (function (installations) {
       installationGrid.append(divA);
       installationOuterButton.click(function() {
         // this can't be right. Ask Armin/Matt how to unspaghetti this
-        populatePointDetailsContent(report);
-        createPointDetailsMap(report);         // stopped here cause there's something wrong with reports.js
+        // Colin this wasn't right since you have no reference to the right report in the click listener
+        // I store the report object in data-report as part of the installtionOuterButton element
+        // This way you can access the right report and pass it on
+        
+        // retrieve the report object from the HTML data-report field
+        populatePointDetailsContent(installationOuterButton.data('report'));
+        createPointDetailsMap(installationOuterButton.data('report'));         // stopped here cause there's something wrong with reports.js
       });
 
       // creates the HTML for the returned thumbnail
@@ -73,6 +80,9 @@ window.installations = (function (installations) {
 
 	
   function populatePointDetailsContent(report) {
+    var photoThumbnail = jQuery('<img class="photo-thumbnail" />');
+    var photoContainer = jQuery('#point-details-page .photo-thumbnail-container');
+
     jQuery('#point-details-page .installation-title').text('Eaton Centre');
 
     // TODO: replace with Matt's stuff
@@ -81,15 +91,18 @@ window.installations = (function (installations) {
     var photoContainer = jQuery('#point-details-page .photo-thumbnail-container');
     photoContainer.append(photoThumbnail); */ 
 
-    if (report.attributes.camera) {
+    if (report.get('camera')) {
+      if (report.attributes.camera.hasOwnProperty("photos") && report.attributes.camera.photos[0].url !== null) {
+        photoThumbnail.attr('src', veos.model.baseURL + report.attributes.camera.photos[0].url);
+      }
       jQuery('#point-details-page .point-type').text('Camera');
-      jQuery('#point-details-page .point-title-1').text('Type of space surveilled: ');
-      jQuery('#point-details-page .point-content-1').text('parking lot');
-      jQuery('#point-details-page .point-title-2').text('Camera\'s location: ');
-      jQuery('#point-details-page .point-content-2').text('Accessible private space');
-      jQuery('#point-details-page .point-title-3').text('Camera type: ');
-      jQuery('#point-details-page .point-content-3').text('bullet');
-    } else if (report.attributes.sign) {
+      jQuery('#point-details-page .point-title-1').text('Camera\'s location: ');
+      jQuery('#point-details-page .point-content-1').text(report.attributes.loc_description_from_google);
+      jQuery('#point-details-page .point-title-2').text('Owner name: ');
+      jQuery('#point-details-page .point-content-2').text(report.attributes.owner_name);
+      jQuery('#point-details-page .point-title-3').text('Owner description: ');
+      jQuery('#point-details-page .point-content-3').text(report.attributes.owner_description);
+    } else if (report.get('sign')) {
       jQuery('#point-details-page .point-type').text('Sign');
       jQuery('#point-details-page .point-title-1').text('Visibility: ');
       jQuery('#point-details-page .point-content-1').text('Obscure/High');
@@ -103,6 +116,7 @@ window.installations = (function (installations) {
     } else {
       console.log ('neither a camera or a sign');
     }
+    photoContainer.append(photoThumbnail);
   }
 
   function createPointDetailsMap(report) {
