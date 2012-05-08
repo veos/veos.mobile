@@ -22,7 +22,7 @@
     </head>
     <body>
         <div data-role="page" id="report-page">
-            <div data-theme="a" data-role="header">
+            <div data-theme="a" data-role="header" data-position="fixed">
                 <h3>
                     Filing a New Report
                 </h3>
@@ -106,13 +106,13 @@
                                 </div>
                             </fieldset>
                         </div>
-                        <a data-role="button" data-transition="fade" href="#report-page" data-icon="arrow-r" data-iconpos="right">
+                        <a data-role="button" data-transition="fade" href="#report-page" data-icon="arrow-r" data-iconpos="right" style="display: none">
                             Enter Advanced Details
                         </a>
                     </div>
                 </div>
             </div>
-            <div data-theme="a" data-role="footer" class="footer-with-buttons">
+            <div data-theme="a" data-role="footer" data-position="fixed" class="footer-with-buttons">
                 <a id="cancel-report" data-role="button" data-transition="fade" data-theme="f" data-icon="delete" data-iconpos="left">
                     Cancel
                 </a>

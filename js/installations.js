@@ -10,6 +10,9 @@ window.installations = (function (installations) {
   MAX_DISTANCE_FROM_CURRENT_LOCATION = 10;
 
   self.init = function() {
+    // set the distance in header range-from-pin
+    jQuery('#range-from-pin').text(MAX_DISTANCE_FROM_CURRENT_LOCATION);
+
     var r = new veos.model.Reports(); // creates the "reports" collection proxy object
 
     r.on('reset', function(collection) {
@@ -92,7 +95,7 @@ window.installations = (function (installations) {
     photoContainer.append(photoThumbnail); */ 
 
     if (report.get('camera')) {
-      if (report.attributes.camera.hasOwnProperty("photos") && report.attributes.camera.photos[0].url !== null) {
+      if (report.attributes.camera.hasOwnProperty("photos") && report.attributes.camera.photos.length > 0 && report.attributes.camera.photos[0].url !== null) {
         photoThumbnail.attr('src', veos.model.baseURL + report.attributes.camera.photos[0].url);
       }
       jQuery('#point-details-page .point-type').text('Camera');
@@ -103,15 +106,24 @@ window.installations = (function (installations) {
       jQuery('#point-details-page .point-title-3').text('Owner description: ');
       jQuery('#point-details-page .point-content-3').text(report.attributes.owner_description);
     } else if (report.get('sign')) {
+      if (report.attributes.sign.hasOwnProperty("photos") && report.attributes.sign.photos.length > 0 && report.attributes.sign.photos[0].url !== null) {
+        photoThumbnail.attr('src', veos.model.baseURL + report.attributes.sign.photos[0].url);
+      }
       jQuery('#point-details-page .point-type').text('Sign');
-      jQuery('#point-details-page .point-title-1').text('Visibility: ');
+      jQuery('#point-details-page .point-title-1').text('Sign location: ');
+      jQuery('#point-details-page .point-content-1').text(report.attributes.loc_description_from_google);
+      jQuery('#point-details-page .point-title-2').text('Owner name: ');
+      jQuery('#point-details-page .point-content-2').text(report.attributes.owner_name);
+      jQuery('#point-details-page .point-title-3').text('Owner description: ');
+      jQuery('#point-details-page .point-content-3').text(report.attributes.owner_description);
+      jQuery('#point-details-page .point-title-4').text('Visibility of sign: ');
+      jQuery('#point-details-page .point-content-4').text(report.get('sign').visibility);
+      jQuery('#point-details-page .point-title-5').text('Text of Sign: ');
+      jQuery('#point-details-page .point-content-5').text(report.get('sign').text);
+      /*jQuery('#point-details-page .point-title-1').text('Visibility: ');
       jQuery('#point-details-page .point-content-1').text('Obscure/High');
       jQuery('#point-details-page .point-title-2').text('Stated Purpose: ');
-      jQuery('#point-details-page .point-content-2').text('Public Safety');
-      jQuery('#point-details-page .point-title-3').text('Stated Properties: ');
-      jQuery('#point-details-page .point-content-3').text('Live monitoring');
-      jQuery('#point-details-page .point-title-4').text('Text of Sign: ');
-      jQuery('#point-details-page .point-content-4').text('loridium loripus ipsorino this could be a *lot* of text');
+      jQuery('#point-details-page .point-content-2').text('Public Safety');*/
       jQuery('#point-details-page .point-content-4').append(jQuery('<br />'));
     } else {
       console.log ('neither a camera or a sign');

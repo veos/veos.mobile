@@ -104,10 +104,18 @@ window.veos = (function(veos) {
         position: latLng,
         title: r.get('owner_name')
       });
-      // creating a new popup window that contains the location_name string (TODO: change to more relevant info)
+
+      var mapPopupContent;
+      if (r.get('camera')) {
+        mapPopupContent = '<p><b> Camera @ </b>' + r.get('owner_name') + '</p>';
+      } else if (r.get('sign')) {
+        mapPopupContent = '<p><b> Sign @ </b>' + r.get('owner_name') + '</p>';
+      }
+
       var infowindow = new google.maps.InfoWindow({
-        content: '<b><p>' + r.get('owner_name') + '</b></p>'    // we might want to pretty thisup at some point
+        content: mapPopupContent
       });
+      
       // binding a popup click event to the marker
       google.maps.event.addListener(marker, 'click', function() {
         infowindow.open(self.gmap, marker);
