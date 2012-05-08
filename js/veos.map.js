@@ -125,8 +125,15 @@ window.veos = (function(veos) {
           title: report.get('owner_name')
         });
         // creating a new popup window that contains the location_name string (TODO: change to more relevant info)
+        var mapPopupContent;
+        if (report.get('camera')) {
+          mapPopupContent = '<p><b> Camera @ </b>' + report.get('owner_name') + '</p>';
+        } else if (report.get('sign')) {
+          mapPopupContent = '<p><b> Sign @ </b>' + report.get('owner_name') + '</p>';
+        }
+
         var infowindow = new google.maps.InfoWindow({
-          content: '<b><p>' + report.get('owner_name') + '</b></p>'    // we might want to pretty thisup at some point
+          content: mapPopupContent
         });
         // binding a popup click event to the marker
         google.maps.event.addListener(marker, 'click', function() {
