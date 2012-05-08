@@ -24,8 +24,8 @@
         <div data-role="page" id="overview-map-page">
             <div id="overview-map-canvas"></div>
             <div class="map-button-container"> 
-                <button class="add-report-button" data-theme="b" data-inline="true" data-icon="plus">Add Report</button>
-                <button class="view-list-button" data-theme="b" data-inline="true" data-icon="grid">View As List</button>
+                <a href="report.html" class="add-report-button" data-role="button" data-theme="b" data-inline="true" data-icon="plus">Add Report</a>
+                <a href="installations.html" class="view-list-button" data-role="button" data-theme="b" data-inline="true" data-icon="grid">View As List</a>
             </div>
         </div>
 
@@ -51,13 +51,6 @@
 
                 // start following user
                 map.startFollowing();
-
-                jQuery('#overview-map-page .add-report-button').click(function() {
-                    document.location = "report.html";
-                });
-                jQuery('#overview-map-page .view-list-button').click(function() {
-                    document.location = "installations.html";
-                });
             });
         </script>
     </body>
