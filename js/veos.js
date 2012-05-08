@@ -13,11 +13,3 @@ window.veos = (function(veos) {
 
     return self;
 })(window.veos || {});
-
-
-
-
-jQuery(document).ready(function(){
-
-
-});
