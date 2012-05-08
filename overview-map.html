@@ -39,13 +39,25 @@
         <script type="text/javascript" charset="utf-8" src="js/veos.map.js"></script>
 
         <script type="text/javascript">
-            veos.map.init();
+            jQuery(window).load(function () {
+                var map = new veos.map.Map('#overview-map-canvas');
 
-            jQuery('#overview-map-page .add-report-button').click(function() {
-                document.location = "report.html";
-            });
-            jQuery('#overview-map-page .view-list-button').click(function() {
-                document.location = "installations.html";
+                // add all report markers
+                var reports = new veos.model.Reports();
+                reports.on('reset', function(collection) {
+                    map.addReportMarkers(collection);
+                });
+                reports.fetch();
+
+                // start following user
+                map.startFollowing();
+
+                jQuery('#overview-map-page .add-report-button').click(function() {
+                    document.location = "report.html";
+                });
+                jQuery('#overview-map-page .view-list-button').click(function() {
+                    document.location = "installations.html";
+                });
             });
         </script>
     </body>
