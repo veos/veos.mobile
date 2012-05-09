@@ -19,6 +19,12 @@ window.veos = (function(veos) {
         Initializes the whole app. This needs to be called at the bottom of every VEOS page.
     **/
     self.init = function () {
+        if (window.location.pathname == "/") {
+            console.log("Redirecting to /overview-map.html");
+            window.location.href = "/overview-map.html";
+            return;
+        }
+
         // FIXME: hacky... needs to be here for proper phongep init :(
         document.addEventListener('deviceready', function() {
             console.log("DEVICE READY!!!!");
