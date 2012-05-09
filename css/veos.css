@@ -1,5 +1,9 @@
 /***** ALL *****/
 
+.ui-content {
+    min-height: 100%;
+}
+
 .footer-with-buttons {
     display: -moz-box !important;
     display: -webkit-box !important;
@@ -39,6 +43,13 @@
 
 .map-thumbnail {
     max-width: 100%;
+}
+
+.loading {
+    text-align: center;
+    margin: auto;
+    margin-top: 10%;
+    margin-bottom: 10%;
 }
 
 
@@ -114,11 +125,11 @@
 }*/
 
 
-#installations-page .ui-block-a {
+#reports-list-page .ui-block-a {
     width: 100%;
 }
 
-#installations-page .ui-block-b {
+#reports-list-page .ui-block-b {
     width: 25%;
 }
 
@@ -129,29 +140,29 @@
     margin-bottom: 1em;
 }
 
-#installation-details-page .map-thumbnail {
+#report-details-page .map-thumbnail {
     /*float: right;*/
 }
 
-#installation-details-page .installation-details-text-container {
+#report-details-page .report-details-text-container {
     margin-left: 1%;
     margin-top: 1%;
 }
 
-#installation-details-page .compliance {
+#report-details-page .compliance {
     margin-left: 1%;
 }
 
 /* ask Matt about cascading here */
-#installation-details-page .ui-block-a {
+#report-details-page .ui-block-a {
     width: 75%;
 }
 
-#installation-details-page .ui-block-b {
+#report-details-page .ui-block-b {
     width: 25%;
 }
 
-#installation-details-page .ui-grid-a {
+#report-details-page .ui-grid-a {
     clear: right;
 }
 

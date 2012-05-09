@@ -1,5 +1,5 @@
 /*jshint browser: true, devel: true */
-/*globals jQuery */
+/*globals jQuery, google */
 
 window.veos = (function(veos) {
     var self = veos;
@@ -108,27 +108,37 @@ window.veos = (function(veos) {
                 if (!veos.reportForm) {
                     console.error("Cannot refine location because there is no report currently in progress.");
                     jQuery.mobile.changePage("report.html");
-                    return
+                    return;
                 }
                 
                 
                 var map = new veos.map.Map('#refine-location-canvas');
                 map.addReportRefinerMarker(self.reportForm.model, veos.lastLoc);
-                
-
-                
-
-                // start following user
-                // map.startFollowing();
             })
 
-        /** installations.html (installations-page) **/
-            .delegate("#installations-page", "pageshow", function() {
-                installations.init();
+        /** reports-list.html (reports-list-page) **/
+            .delegate("#reports-list-page", "pageshow", function(ev) {
+                var view = new veos.view.ReportList({
+                    el: ev.target
+                });
                 
+                view.fetchNearby();
+            })
 
-                // start following user
-                // map.startFollowing();
+        /** report-details.html (report-details-page) **/
+            .delegate("#report-details-page", "pageshow", function(ev) {
+                var reportId = window.location.search.match("id=(\\d+)")[1];
+                console.log("Showing details for report "+reportId);
+
+                var report = new veos.model.Report({id: reportId});
+
+                var view = new veos.view.ReportDetail({
+                    el: ev.target,
+                    model: report
+                });
+                
+                view.showLoader();
+                view.model.fetch();
             });
     };
 

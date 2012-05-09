@@ -97,6 +97,10 @@
       } else {
         return null;
       }
+    },
+
+    getLocDescription: function() {
+      return this.get('loc_description_from_user') || this.get('loc_description_from_google');
     }
   });
 
