@@ -14,61 +14,24 @@ window.report = (function(report) {
     // creating static map that is centered around the current location
     var myTemp = veos.map.generateStaticMap(lat, lng, reportsCollection);
 
-    var mapThumbnail = jQuery('<img class="map-thumbnail" />');
+    var mapThumbnail = jQuery('#static-report-map');
     mapThumbnail.attr('src', myTemp);
+    jQuery(".map-thumbnail-container .waiting").hide();
     
-    var thumbnailContainer = jQuery('#report-page .map-thumbnail-container');
-    thumbnailContainer.empty();
-    thumbnailContainer.append(mapThumbnail);
+    // var thumbnailContainer = jQuery('#report-page .map-thumbnail-container');
+    // thumbnailContainer.empty();
+    // thumbnailContainer.append(mapThumbnail);
 
     // add listener which leads to overlay map (for refining location)
-    mapThumbnail.click(function() {
-      jQuery.mobile.changePage("#refine-location-page", { transition: "slideup"});    // is this the right way to do this?
-      //document.location="report.html#refine-location-page";
-    });
+    // mapThumbnail.click(function() {
+    //   jQuery.mobile.changePage("#refine-location-page", { transition: "slideup"});    // is this the right way to do this?
+    //   //document.location="report.html#refine-location-page";
+    // });
   }
 
-  // perform a reverse geolocation lookup (convert latitude and longitude into a street address)
-  function lookupAddressForLatLng (lat, lng) {
-    var geocoder = new google.maps.Geocoder();
-    var latlng = new google.maps.LatLng(lat, lng);
-    
-    geocoder.geocode({'latLng': latlng}, function(results, status) {
-      if (status === google.maps.GeocoderStatus.OK) {
-        if (results[0]) {
-          console.log("Reverse geocoding for lat: " + lat + " lng: " + lng + " returned this address: " + results[0].formatted_address);
-          jQuery('#location-address').val(results[0].formatted_address);
-        }
-      } else {
-        console.error("Geocoder failed due to: " + status);
-      }
-    });
-  }
+  
 
-  // lookup longitude and latitude for a given street address
-  self.lookupLatLngForAddress = function(address) {
-    var geocoder = new google.maps.Geocoder();
-    
-    geocoder.geocode({'address': address}, function(results, status) {
-      if (status === google.maps.GeocoderStatus.OK) {
-        userDefinedLat = results[0].geometry.location.lat();
-        userDefinedLng = results[0].geometry.location.lng();
-
-        console.log("Reverse geocoding for address: " + address + " returned this latitute: " + userDefinedLat + " and longitude: " + userDefinedLng);        
-
-        var r = new veos.model.Reports();
-        // adding listener for backbone.js reset event
-        r.on('reset', function(collection) {
-          createMapThumbnail(userDefinedLat, userDefinedLng, collection);
-        });
-        // fetching will trigger reset event
-        r.fetch();
-
-      } else {
-        console.error("Geocoder failed due to: " + status);
-      }
-    });
-  };
+  
 
   self.submitReport = function() {
     // should we do another check for location with getCurrentPosition here?
@@ -157,6 +120,9 @@ window.report = (function(report) {
   };  
 
   self.init = function() {
+    self.report = new veos.model.Report();
+    jQuery('#report-page').data('report', self.report);
+
     // retrieve the current position of the phone
     navigator.geolocation.getCurrentPosition(function geolocationSuccess (currentLocation) {
       currentLat = currentLocation.coords.latitude;

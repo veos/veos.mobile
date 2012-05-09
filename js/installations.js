@@ -132,10 +132,11 @@ window.installations = (function (installations) {
   }
 
   function createPointDetailsMap(report) {
-    var latLng = veos.map.retrieveLatLng(report);
+    var latLng = report.getLatLng();
+    
     // note: higher zoom level
     var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=17&size=150x150&scale=2&sensor=true&center=" + latLng.lat + "," + latLng.lng;
-    staticMapCriteria += "&markers=size:small%7C" + latLng.lat + ',' + latLng.lng;
+    staticMapCriteria += "&markers=size:small%7C" + latLng.lat() + ',' + latLng.lng();
     
     var mapThumbnail = jQuery('<img class="map-thumbnail" />');
     mapThumbnail.attr('src', staticMapCriteria);    
@@ -148,8 +149,8 @@ window.installations = (function (installations) {
   }
 
   function isCloseBy(report, currentLocation) {
-    var latLng = veos.map.retrieveLatLng(report);
-    if (distanceBetweenPoints(latLng.lat, latLng.lng, currentLocation.coords.latitude, currentLocation.coords.longitude) < MAX_DISTANCE_FROM_CURRENT_LOCATION) {
+    var latLng = report.getLatLng();
+    if (latLng && distanceBetweenPoints(latLng.lat(), latLng.lng(), currentLocation.coords.latitude, currentLocation.coords.longitude) < MAX_DISTANCE_FROM_CURRENT_LOCATION) {
       return true;
     }
     else {

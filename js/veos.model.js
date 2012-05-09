@@ -1,14 +1,14 @@
 /*jshint browser: true, devel: true */
 /*global Backbone, _, jQuery, Camera, FileTransfer, FileUploadOptions */
 
-window.veos = (function(veos) {
+(function(veos) {
   var self = {};
 
   // self.baseURL = window.location.protocol + "://" + window.location.host + 
   //   (window.location.port ? ':' + window.location.port : '');
   //self.baseURL = "http://backend.veos.ca";
-  self.baseURL = "http://veos.surveillancerights.ca";
-  //self.baseURL = "http://192.168.222.108:3000";
+  //self.baseURL = "http://veos.surveillancerights.ca";
+  self.baseURL = "http://192.168.222.108:3000";
 
   jQuery.support.cors = true; // enable cross-domain AJAX requests
 
@@ -86,6 +86,16 @@ window.veos = (function(veos) {
         photo.save();
       } else {
         throw new Error("Cannot attach a photo to this report because it is not yet associated with a Camera or Sign!");
+      }
+    },
+
+    getLatLng: function() {
+      if (this.get('loc_lat_from_user')) {
+        return new google.maps.LatLng(this.get('loc_lat_from_user'), this.get('loc_lng_from_user'));
+      } else if (this.get('loc_lat_from_gps')) {
+        return new google.maps.LatLng(this.get('loc_lat_from_gps'), this.get('loc_lng_from_gps'));
+      } else {
+        return null;
       }
     }
   });
@@ -180,5 +190,4 @@ window.veos = (function(veos) {
 
 
   veos.model = self;
-  return veos;
-})(window.veos || {});
+})(window.veos);

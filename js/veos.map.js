@@ -1,27 +1,51 @@
 /*jshint browser: true, devel: true */
 /*globals jQuery, google */
 
-window.veos = (function(veos) {
+(function(veos) {
   var self = {};
 
-  self.Map = function (mapDiv) {
+  self.convertGeolocToGmapLatLng = function (geoloc) {
+    if (geoloc instanceof google.maps.LatLng) {
+      return geoloc; // TODO: should be _.clone() this just to be safe?
+    } else {
+      return new google.maps.LatLng(geoloc.coords.latitude, geoloc.coords.longitude);
+    }
+  }
+
+  self.Map = function (mapDiv, initLoc) {
+    console.log("initializing map in " + mapDiv);
+
+    var center;
+    if (!initLoc) {
+      center = new google.maps.LatLng(43.6621614579938, -79.39527873417967); // FIXME: default hard-coded to toronto; maybe make it based on last report?
+    } else {
+      center = veos.map.convertGeolocToGmapLatLng(initLoc);
+    }
+
     var mapOptions = {
       zoom: 13,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
-      center: new google.maps.LatLng(43.6481, -79.4042), // FIXME: hard-coded to Toronto,
+      center: center,
       streetViewControl: false,
       zoomControl: false // use pinch-zoom instead, controls are too small to use on phone
     };
 
+    jQuery(mapDiv).empty(); // empty out the div in case it was previously used to init another map...
+
     var mapElement = jQuery(mapDiv)[0];
 
-    this.gmap = new google.maps.Map(mapElement, mapOptions);
+    var gmap = new google.maps.Map(mapElement, mapOptions);
+
+    jQuery(document).bind("pageshow", function (ev) {
+        console.log("Triggering gmaps resize for page ", ev.target);
+        google.maps.event.trigger(gmap, 'resize');
+    });
+
+    this.gmap = gmap;
   };
 
   self.Map.prototype = {
-    convertGeolocToGmapLatLong: function (geoloc) {
-      return new google.maps.LatLng(geoloc.coords.latitude, geoloc.coords.longitude);
-    }
+    
   };
 
  
@@ -30,34 +54,37 @@ window.veos = (function(veos) {
     position based on incoming GPS data.
   **/
   self.Map.prototype.startFollowing = function () {
-    var self = this;
+    var map = this;
 
-    self.posWatcher = navigator.geolocation.watchPosition(function (geoloc) {
-      var glatlong = self.convertGeolocToGmapLatLong(geoloc);
+    map.posWatcher = navigator.geolocation.watchPosition(function (geoloc) {
+      jQuery(veos).trigger('haveloc', geoloc);
+
+      var glatlng = veos.map.convertGeolocToGmapLatLng(geoloc);
       var accuracy = geoloc.coords.accuracy;
 
-      if (!self.currentLocMarker) {
-        self.currentLocMarker = new google.maps.Marker({
-          position: glatlong,
+      if (!map.currentLocMarker) {
+        map.currentLocMarker = new google.maps.Marker({
+          position: glatlng,
           //draggable: true,
           //icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
           icon: 'http://maps.google.com/mapfiles/ms/micons/man.png',
           //icon: 'http://www.google.com/mapfiles/arrow.png',
-          title: "You are here"
+          title: "You are here",
+          zIndex: 99999 // half assed attempt at making sure the dude is on top
         });
 
         var infowindow = new google.maps.InfoWindow({
           content: "<p><b>You are here!</b></p>"
         });
 
-        google.maps.event.addListener(self.currentLocMarker, 'click', function() {
-          infowindow.open(self.gmap, self.currentLocMarker);
+        google.maps.event.addListener(map.currentLocMarker, 'click', function() {
+          infowindow.open(map.gmap, map.currentLocMarker);
         });
 
-        self.currentLocRadius = new google.maps.Circle({
-            center: glatlong,
+        map.currentLocRadius = new google.maps.Circle({
+            center: glatlng,
             radius: accuracy,
-            map: self.gmap,
+            map: map.gmap,
             fillColor: '#6991FD',
             fillOpacity: 0.4,
             strokeColor: 'black',
@@ -65,18 +92,18 @@ window.veos = (function(veos) {
             strokeWeight: 1
         });
 
-        self.currentLocMarker.setMap(self.gmap);
+        map.currentLocMarker.setMap(map.gmap);
 
-        self.gmap.panTo(glatlong);
+        map.gmap.panTo(glatlng);
       }
 
       // this would reframe the map to the accuracy circle
       //self.gmap.fitBounds(self.currentLocRadius.getBounds());
 
       
-      self.currentLocMarker.setPosition(glatlong);
-      self.currentLocRadius.setCenter(glatlong);
-      self.currentLocRadius.setRadius(accuracy);
+      map.currentLocMarker.setPosition(glatlng);
+      map.currentLocRadius.setCenter(glatlng);
+      map.currentLocRadius.setRadius(accuracy);
     });
   };
 
@@ -95,11 +122,17 @@ window.veos = (function(veos) {
   };
 
 
+  /**
+    Adds markers for a collection of Reports.
+    @param reports veos.model.Reports
+  **/
   self.Map.prototype.addReportMarkers = function (reports) {
-    var self = this;
+    console.log("Adding "+reports.length+" report markers to map...");
+
+    var map = this;
 
     reports.each(function(r) {
-      var latLng = new google.maps.LatLng(r.get('loc_lat_from_gps'),r.get('loc_lng_from_gps'));
+      var latLng = r.getLatLng();
       var marker = new google.maps.Marker({
         position: latLng,
         title: r.get('owner_name')
@@ -115,15 +148,59 @@ window.veos = (function(veos) {
       var infowindow = new google.maps.InfoWindow({
         content: mapPopupContent
       });
-      
+
       // binding a popup click event to the marker
       google.maps.event.addListener(marker, 'click', function() {
-        infowindow.open(self.gmap, marker);
+        infowindow.open(map.gmap, marker);
       });
-      marker.setMap(self.gmap);
+      marker.setMap(map.gmap);
     });
   };
 
+
+  /**
+    Adds a draggable report marker, used for refining report location.
+  **/
+  self.Map.prototype.addReportRefinerMarker = function (report, geoloc) {
+    var map = this;
+
+    var drawMarker = function(geoloc) {
+      var glatlng = veos.map.convertGeolocToGmapLatLng(geoloc);
+
+      var marker = new google.maps.Marker({
+        position: glatlng,
+        draggable: true,
+        icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+        title: "Report location"
+      });
+
+      // adding an event listener to retrieve location once marker is dragged
+      google.maps.event.addListener(marker, 'dragend', function (event) {
+        console.log('Pin dragged to latitude: ' + event.latLng.lat() + ' longitude: ' + event.latLng.lng());
+        report.set({
+          loc_lat_from_user: event.latLng.lat(),
+          loc_lng_from_user: event.latLng.lng()
+        });
+      });
+
+      marker.setMap(map.gmap);
+
+      map.gmap.setCenter(glatlng);
+
+      google.maps.event.addListenerOnce(map.gmap, 'tilesloaded', function () {
+        map.gmap.panTo(glatlng);
+      });
+    };
+
+    if (geoloc) {
+      drawMarker(geoloc);
+    } else {
+      navigator.geolocation.getCurrentPosition(function (geoloc) {
+        drawMarker(geoloc);
+      }, null, {enableHighAccuracy: true});
+    }
+
+  };
 
   // self.createMap = function(lat, lng, map) {
   //   // if map = overview-map-canvas, create the overview-map, else if map = refining-map-canvas, create refining map
@@ -244,51 +321,91 @@ window.veos = (function(veos) {
   //   r.fetch();
   // }
 
-  self.generateStaticMap = function(lat, lng, reportsCollection) {
-    var staticMapCriteria = "https://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" + lat + "," + lng;
+  self.generateStaticMapURL = function(geoloc) {
+    var glatlng = veos.map.convertGeolocToGmapLatLng(geoloc);
+
+    var url = "https://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" + 
+      glatlng.lat() + "," + glatlng.lng();
     
     // add the current location as red pin to the map
-    staticMapCriteria += "&markers=color:red%7C" + lat + "," + lng;
+    url += "&markers=color:blue%7C" + glatlng.lat() + "," + glatlng.lng();
 
-    if (reportsCollection !== undefined) {
-      reportsCollection.each(function(report, iterator) {
-        // in the first iteration set the color of markers to blue and add the first element
-        // note: %7C is the notation for |
-        if ( (report.get('loc_lat_from_user') || report.get('loc_lat_from_gps')) &&
-             (report.get('loc_lng_from_user') || report.get('loc_lng_from_gps')) ) {
-          // user refined location should override gps location
-          var tempLat = null;
-          var tempLng = null;
-          if (report.get('loc_lat_from_user')) {
-            tempLat = report.get('loc_lat_from_user');
-            console.log('user');
-          } else {
-            tempLat = report.get('loc_lat_from_gps');
-            console.log('gps');
-          }
-          if (report.get('loc_lng_from_user')) {
-            tempLng = report.get('loc_lng_from_user');
-          } else {
-            tempLng = report.get('loc_lng_from_gps');
-          }
+    // if (reportsCollection !== undefined) {
+    //   reportsCollection.each(function(report, iterator) {
+    //     // in the first iteration set the color of markers to blue and add the first element
+    //     // note: %7C is the notation for |
+    //     if ( (report.get('loc_lat_from_user') || report.get('loc_lat_from_gps')) &&
+    //          (report.get('loc_lng_from_user') || report.get('loc_lng_from_gps')) ) {
+    //       // user refined location should override gps location
+    //       var tempLat = null;
+    //       var tempLng = null;
+    //       if (report.get('loc_lat_from_user')) {
+    //         tempLat = report.get('loc_lat_from_user');
+    //         console.log('user');
+    //       } else {
+    //         tempLat = report.get('loc_lat_from_gps');
+    //         console.log('gps');
+    //       }
+    //       if (report.get('loc_lng_from_user')) {
+    //         tempLng = report.get('loc_lng_from_user');
+    //       } else {
+    //         tempLng = report.get('loc_lng_from_gps');
+    //       }
 
-          if (iterator === 0) {
-            staticMapCriteria += "&markers=size:tiny%7Ccolor:red%7C" + tempLat + ',' + tempLng;
-          }
-          // add all additional elements with same marker style
-          else {
-            staticMapCriteria += "%7C" + tempLat + ',' + tempLng;
-          }
-        } else {
-          console.log("undefined lat or lng in the DB, skipping this entry");
+    //       if (iterator === 0) {
+    //         staticMapCriteria += "&markers=size:tiny%7Ccolor:red%7C" + tempLat + ',' + tempLng;
+    //       }
+    //       // add all additional elements with same marker style
+    //       else {
+    //         staticMapCriteria += "%7C" + tempLat + ',' + tempLng;
+    //       }
+    //     } else {
+    //       console.log("undefined lat or lng in the DB, skipping this entry");
+    //     }
+    //   });
+    // }
+    // else {
+    //   console.warn('reportsCollection is undefined, so there are no reports yet?');
+    // }
+
+    return url;
+  };
+
+
+  // perform a reverse geolocation lookup (convert latitude and longitude into a street address)
+  self.lookupAddressForLoc = function(geoloc, successCallback) {
+    console.log("Looking up address for ", geoloc);
+    var geocoder = new google.maps.Geocoder();
+    var glatlng = veos.map.convertGeolocToGmapLatLng(geoloc);
+    
+    geocoder.geocode({'latLng': glatlng}, function(results, status) {
+      if (status === google.maps.GeocoderStatus.OK) {
+        if (results[0]) {
+          console.log("Reverse geocoding for: ", glatlng, " returned this address: ", results[0].formatted_address);
+          successCallback(results[0]);
         }
-      });
-    }
-    else {
-      console.warn('reportsCollection is undefined, so there are no reports yet?');
-    }
+      } else {
+        console.error("Geocoder failed due to: " + status);
+      }
+    });
+  };
 
-    return staticMapCriteria;
+  // lookup geolocation for a given street address
+  self.lookupLocForAddress = function(address, successCallback) {
+    console.log("Looking up loc for address ", address);
+    var geocoder = new google.maps.Geocoder();
+    
+    geocoder.geocode({'address': address}, function(results, status) {
+      if (status === google.maps.GeocoderStatus.OK) {
+        var lat = results[0].geometry.location.lat();
+        var lng = results[0].geometry.location.lng();
+
+        console.log("Reverse geocoding for address: " + address + " returned this latitute: " + lat + " and longitude: " + lng);        
+        successCallback(lat, lng);
+      } else {
+        console.error("Geocoder failed due to: " + status);
+      }
+    });
   };
 
 
@@ -333,5 +450,4 @@ window.veos = (function(veos) {
   // self.addInstallationMarkers = addInstallationMarkers;
 
   veos.map = self;
-  return veos;
-})(window.veos || {});
+})(window.veos);

@@ -1302,10 +1302,10 @@ div.ui-mobile-viewport { overflow-x: hidden; }
 
 /*orientations from js are available */
 @media screen and (orientation: portrait){
-.ui-mobile, .ui-mobile .ui-page { min-height: 420px; }
+.ui-mobile, .ui-mobile .ui-page { min-height: 100%; }
 }
 @media screen and (orientation: landscape){
-.ui-mobile, .ui-mobile .ui-page { min-height: 300px; }
+.ui-mobile, .ui-mobile .ui-page { min-height: 100%; }
 }
 
 /* native overflow scrolling */
