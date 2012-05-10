@@ -26,12 +26,26 @@
                     console.log("Setting "+f.attr("name")+" to "+f.val());
                     this.model.set(f.attr('name'), f.val());
                 },
+            'change [name="owner_name"].field': function (ev) {
+                    var f = jQuery(ev.target);
+
+                    var unidentified_owner_input = this.$el.find("#unidentified-owner-checkbox").parent();
+                    if (f.val() === "") {
+                        unidentified_owner_input.css('opacity', 1.0);
+                    } else {
+                        unidentified_owner_input.css('opacity', 0.4);
+                    }
+                },
             'change #unidentified-owner-checkbox': function (ev) {
                     var f = jQuery(ev.target);
+                    f.parent().css('opacity', 1.0);
                     if (f.is(':checked')) {
                         console.log("Setting owner_name and owner_description to null");
                         this.model.set('owner_name', null);
                         this.model.set('owner_description', null);
+                        this.$el.find('#owner').attr('disabled', true);
+                    } else {
+                        this.$el.find('#owner').removeAttr('disabled');
                     }
                 },
             'change input[name="point-type-radio"]': function (ev) { // FIXME: ugliness

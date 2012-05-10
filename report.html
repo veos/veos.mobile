@@ -41,6 +41,55 @@
                 </h3>
             </div>
             <div data-role="content">
+                <div data-role="fieldcontain">
+                    <!--<fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">-->
+                    <fieldset data-role="controlgroup" data-type="horizontal"  id="report-type">
+                        <legend>
+                            I am reporting a...
+                        </legend>
+                        <div>
+                            <input type="radio" name="point-type-radio" value="Camera" id="camera-radio" class="radio-button" /><label for="camera-radio">Camera</label>
+                            <input type="radio" name="point-type-radio" value="Sign" id="sign-radio" class="radio-button" /><label for="sign-radio">Sign</label>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div data-role="fieldcontain">
+                    <div>
+                        <b>Owner:</b> who do you think this surveillance belongs to?
+                    </div>
+
+                    <fieldset data-role="controlgroup">
+                        <legend>Owner Name</legend>
+                        <input class="field" name="owner_name" id="owner" placeholder="Owner name if identifiable" value="" type="text" />
+                        <!-- TODO: add checkbox for "can't identify owner" -->
+                        <input type="checkbox" name="unidentified-owner-checkbox" id="unidentified-owner-checkbox" class="custom" />
+                        <label for="unidentified-owner-checkbox">Cannot identify owner</label>
+                    </fieldset>
+                </div>
+                <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                        <label for="owner-description">
+                            Owner Type
+                        </label>
+                        <select id="owner-description" class="field" name="owner_description">
+                            <option value="null">...</option>
+                            <option value="Banking">Banking</option>
+                            <option value="Education">Education</option>
+                            <option value="Government">Government</option>
+                            <option value="Office Banking">Office Building</option>
+                            <option value="Police">Police</option>
+                            <option value="Public Transit">Public Transit</option>
+                            <option value="Residential">Residential</option>
+                            <option value="Retail / Restaurant / Bar">Retail / Restaurant / Bar</option>
+                            <option value="Traffic">Traffic</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <!-- <input id="type" placeholder="" value="" type="text" /> -->
+                    </fieldset>
+                </div>
+                
+
                 <div data-role="collapsible-set" data-theme="" data-content-theme="" class="report">
 
                     <div data-role="collapsible" data-collapsed="false" id="photos-container">
@@ -75,59 +124,6 @@
                         </div>
                     </div>
 
-                    <div data-role="collapsible" data-collapsed="false" id="details-container">
-                        <h3>
-                            Details
-                        </h3>
-                        <div data-role="fieldcontain">
-                            <div>
-                                <b>Owner:</b> who do you think this surveillance belongs to?
-                            </div>
-
-                            <fieldset data-role="controlgroup">
-                                <legend>
-                                    Owner Name
-                                </legend>
-                                <input class="field" name="owner_name" id="owner" placeholder="Owner name if identifiable" value="" type="text" />
-                                <!-- TODO: add checkbox for "can't identify owner" -->
-                                <input type="checkbox" name="unidentified-owner-checkbox" id="unidentified-owner-checkbox" class="custom" />
-                                <label for="unidentified-owner-checkbox">Cannot identify owner</label>
-                            </fieldset>
-                        </div>
-                        <div data-role="fieldcontain">
-                            <fieldset data-role="controlgroup">
-                                <label for="owner-description">
-                                    Owner Description
-                                </label>
-                                <select id="owner-description" class="field" name="owner_description">
-                                    <option value="null">...</option>
-                                    <option value="Banking">Banking</option>
-                                    <option value="Education">Education</option>
-                                    <option value="Government">Government</option>
-                                    <option value="Office Banking">Office Building</option>
-                                    <option value="Police">Police</option>
-                                    <option value="Public Transit">Public Transit</option>
-                                    <option value="Residential">Residential</option>
-                                    <option value="Retail / Restaurant / Bar">Retail / Restaurant / Bar</option>
-                                    <option value="Traffic">Traffic</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                                <!-- <input id="type" placeholder="" value="" type="text" /> -->
-                            </fieldset>
-                        </div>
-                        <div data-role="fieldcontain">
-                            <!--<fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">-->
-                            <fieldset data-role="controlgroup" data-type="horizontal">
-                                <div id="radio"> <!-- do more of these -->
-                                    <input type="radio" name="point-type-radio" value="Camera" id="camera-radio" class="radio-button" /><label for="camera-radio">Camera</label>
-                                    <input type="radio" name="point-type-radio" value="Sign" id="sign-radio" class="radio-button" /><label for="sign-radio">Sign</label>
-                                </div>
-                            </fieldset>
-                        </div>
-                        <a data-role="button" data-transition="fade" href="#report-page" data-icon="arrow-r" data-iconpos="right" style="display: none">
-                            Enter Advanced Details
-                        </a>
-                    </div>
                 </div>
             </div>
             <div data-theme="a" data-role="footer" class="footer-with-buttons">

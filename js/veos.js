@@ -103,15 +103,6 @@ window.veos = (function(veos) {
                 
                 self.reportForm.render();
 
-                jQuery('#unidentified-owner-checkbox').click( function() {
-                    if (jQuery('#unidentified-owner-checkbox').attr("checked")) {
-                        jQuery('#owner').val('');
-                        jQuery('#owner').attr('disabled', true);
-                    } else {
-                        jQuery('#owner').removeAttr('disabled');    
-                    }
-                });
-
                 // this needs to go in here to make the refined map work, I believe. But it may also be causing the wierd viewport issues
                 //report.init();
             })

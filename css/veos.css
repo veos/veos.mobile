@@ -91,6 +91,18 @@
     /* TODO: set some kind of min-width here to make the buttons of equal size */
 }
 
+#report-page #report-type {
+}
+
+#report-page #report-type .ui-radio {
+    width: 40%;
+}
+
+#report-page #report-type .ui-radio label {
+    width: 100%;
+    text-align: center;
+}
+
 /*#refine-location-page div[data-role="content"] {
     position: absolute;
 
