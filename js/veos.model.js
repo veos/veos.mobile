@@ -75,17 +75,19 @@
     plural: "reports",
     nested: [['sign', ['photos']], ['camera', ['photos']]],
 
-    attachPhoto: function (photo) {
+    attachPhoto: function (photo, successCallback) {
       if (this.has('sign') && this.get('sign').id) {
         photo.set('of_object_id', this.get('sign').id);
         photo.set('of_object_type', 'Sign');
-        photo.save();
+        photo.save(null, {success: successCallback});
       } else if (this.has('camera') && this.get('camera').id) {
         photo.set('of_object_id', this.get('camera').id);
         photo.set('of_object_type', 'Camera');
-        photo.save();
+        photo.save(null, {success: successCallback});
       } else {
-        throw new Error("Cannot attach a photo to this report because it is not yet associated with a Camera or Sign!");
+        err = "Cannot attach a photo to this report because it is not yet associated with a Camera or Sign!";
+        console.error(err);
+        throw new Error(err);
       }
     },
 
@@ -163,8 +165,11 @@
 
     upload: function () {
       var photo = this;
+
       if (!photo.imageURL)
         throw new Error("Cannot upload photo because it does not have an imageURL! You need to capture an image before uploading.");
+
+      console.log("Uploading photo: "+photo.imageURL)
 
       var options = new FileUploadOptions();
       options.fileKey = "photo[image]";
