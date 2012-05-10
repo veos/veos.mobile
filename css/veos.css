@@ -4,6 +4,15 @@
     min-height: 100%;
 }
 
+.error {
+    background: #fdd !important;
+    border-color: #f00 !important;
+}
+
+.error * {
+    background: inherit;
+}
+
 .footer-with-buttons {
     display: -moz-box !important;
     display: -webkit-box !important;
@@ -143,6 +152,14 @@
 
 #reports-list-page .ui-block-b {
     width: 25%;
+}
+
+#reports-list-page .owner_name {
+
+}
+
+#reports-list-page .owner_name.unknown {
+    font-style: italic;
 }
 
 .photo-thumbnail {

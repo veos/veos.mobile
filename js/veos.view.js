@@ -48,8 +48,8 @@
                         this.$el.find('#owner').removeAttr('disabled');
                     }
                 },
-            'change input[name="point-type-radio"]': function (ev) { // FIXME: ugliness
-                    var type = jQuery('input[name="point-type-radio"]:checked').val();
+            'change input[name="about"]': function (ev) { // FIXME: ugliness
+                    var type = jQuery('input[name="about"]:checked').val();
                     
                     if (type === 'Camera') {
                         console.log("Reporting a Camera");
@@ -278,12 +278,18 @@
 
             this.collection.each(function (report) {
                 var buttonText = '';
-
+                var ownerName;
+                if (report.get('owner_name')) {
+                    ownerName = "<span class='owner_name'>" + report.get('owner_name') + "</span>";
+                } else {
+                    ownerName = "<span class='owner_name unknown'>Unknown Owner</span>";
+                }
+                
                 // creates the HTML for the jQuery button to be filled with returned content. Why are you so ugly jQuery?
                 if (report.get('sign')) {
-                    buttonText =  "<span class='owner_name'>" + report.get('owner_name') + "</span> - Sign " + "<br/>" + report.getLocDescription();
+                    buttonText = ownerName + " - Sign " + "<br/>" + report.getLocDescription();
                 } else if (report.get('camera')) {
-                    buttonText = "<span class='owner_name'>" + report.get('owner_name') + "</span> - Camera " + "<br/>" + report.getLocDescription();
+                    buttonText = ownerName + " - Camera " + "<br/>" + report.getLocDescription();
                 }
                 
                 var divA = jQuery('<div class="ui-block-a">');
@@ -353,7 +359,13 @@
             var photoThumbnail = jQuery('<img class="photo-thumbnail" />');
             var photoContainer = this.$el.find('.photo-thumbnail-container');
 
-            this.$el.find('.installation-title').text(report.get('owner_name'));
+            if (report.get('owner_name')) {
+                ownerName = "<span class='owner_name'>" + report.get('owner_name') + "</span>";
+            } else {
+                ownerName = "<span class='owner_name unknown'>Unknown Owner</span>";
+            }
+
+            this.$el.find('.installation-title').html(ownerName);
 
             // TODO: replace with Matt's stuff
             /*    var photoThumbnail = jQuery('<img class="photo-thumbnail" />');
@@ -369,7 +381,7 @@
                 this.$el.find('.point-title-1').text('Camera\'s location: ');
                 this.$el.find('.point-content-1').text(report.attributes.loc_description_from_google);
                 this.$el.find('.point-title-2').text('Owner name: ');
-                this.$el.find('.point-content-2').text(report.attributes.owner_name);
+                this.$el.find('.point-content-2').html(ownerName);
                 this.$el.find('.point-title-3').text('Owner description: ');
                 this.$el.find('.point-content-3').text(report.attributes.owner_description);
             } else if (report.get('sign')) {
@@ -380,7 +392,7 @@
                 this.$el.find('.point-title-1').text('Sign location: ');
                 this.$el.find('.point-content-1').text(report.attributes.loc_description_from_google);
                 this.$el.find('.point-title-2').text('Owner name: ');
-                this.$el.find('.point-content-2').text(report.attributes.owner_name);
+                this.$el.find('.point-content-2').html(ownerName);
                 this.$el.find('.point-title-3').text('Owner description: ');
                 this.$el.find('.point-content-3').text(report.attributes.owner_description);
                 this.$el.find('.point-title-4').text('Visibility of sign: ');

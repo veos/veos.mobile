@@ -7,8 +7,9 @@
   // self.baseURL = window.location.protocol + "://" + window.location.host + 
   //   (window.location.port ? ':' + window.location.port : '');
   //self.baseURL = "http://backend.veos.ca";
-  self.baseURL = "http://veos.surveillancerights.ca";
+  //self.baseURL = "http://veos.surveillancerights.ca";
   //self.baseURL = "http://192.168.222.108:3000";
+  self.baseURL = "http://localhost:3000";
 
   jQuery.support.cors = true; // enable cross-domain AJAX requests
 
@@ -56,9 +57,27 @@
       
       var msg;
 
-      if (response.status === 422)
+      if (response.status === 422) {
         msg = "Sorry, there is an error in your "+this.singular+". Please check your input and try again.";
-      else if (response.status >= 500 && response.status < 600)
+        var errors = {};
+        try {
+          errors = JSON.parse(response.responseText).errors;
+        } catch (err) {
+          console.error("Couldn't parse response text: "+response.responseText+ " ("+err+")");
+        }
+        _.each(errors, function(v, k) {
+          var errField = jQuery("*[name='"+k+"'].field");
+          
+          if (errField.is(':checkbox, :radio'))
+            errField = errField.parent();
+
+          errField.addClass("error");
+          errField.one('change focus', function() {
+            errField.removeClass("error");
+          });
+        });
+
+      } else if (response.status >= 500 && response.status < 600)
         msg = "Our apologies, the server responded with an error. There may be a problem with the system.";
       else
         msg = "Sorry, there was some sort of error while performing this action. The server may be temporarily unavailable.";
