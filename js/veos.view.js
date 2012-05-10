@@ -312,11 +312,26 @@
             delete this.loader;
         },
 
+        createPointDetailsMap: function(report) {
+            var latLng = report.getLatLng();
+            
+            // note: higher zoom level
+            var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=17&size=150x150&scale=2&sensor=true&center=" + latLng.lat() + "," + latLng.lng();
+            staticMapCriteria += "&markers=size:small%7C" + latLng.lat() + ',' + latLng.lng();
+            
+            var mapThumbnail = jQuery('<img class="map-thumbnail" />');
+            mapThumbnail.attr('src', staticMapCriteria);    
+            var thumbnailContainer = this.$el.find('.map-thumbnail-container');
+            thumbnailContainer.append(mapThumbnail);    
+        },
+
         render: function () {
             var report = this.model;
 
             if (this.loader)
                 this.hideLoader();
+
+            this.createPointDetailsMap(report);
             
             var photoThumbnail = jQuery('<img class="photo-thumbnail" />');
             var photoContainer = this.$el.find('.photo-thumbnail-container');
