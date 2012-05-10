@@ -134,7 +134,8 @@ window.veos = (function(veos) {
 
         /** report-details.html (report-details-page) **/
             .delegate("#report-details-page", "pageshow", function(ev) {
-                var reportId = window.location.search.match("id=(\\d+)")[1];
+                console.log("Showing details page at "+window.location.href);
+                var reportId = window.location.href.match("[\\?&]id=(\\d+)")[1];
                 console.log("Showing details for report "+reportId);
 
                 var report = new veos.model.Report({id: reportId});
