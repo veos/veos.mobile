@@ -102,7 +102,7 @@
     },
 
     getLocDescription: function() {
-      return this.get('loc_description_from_user') || this.get('loc_description_from_google');
+      return this.get('loc_description_from_user') || this.get('loc_description_from_google') || "";
     }
   });
 
