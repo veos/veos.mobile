@@ -339,7 +339,7 @@
             var photoThumbnail = jQuery('<img class="photo-thumbnail" />');
             var photoContainer = this.$el.find('.photo-thumbnail-container');
 
-            this.$el.find('.installation-title').text('Eaton Centre');
+            this.$el.find('.installation-title').text(report.get('owner_name'));
 
             // TODO: replace with Matt's stuff
             /*    var photoThumbnail = jQuery('<img class="photo-thumbnail" />');
