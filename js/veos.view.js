@@ -47,7 +47,10 @@
                         console.error("Invalid report type: "+type);
                         veos.alert("Invalid report type! Must be a Camera or a Sign.");
                     }
-                }
+                },
+
+            'click #submit-report': 'submit',
+            'click #cancel-report': 'cancel'
         },
 
         initialize: function () {
@@ -64,6 +67,16 @@
                 delete veos.currentReport;
                 return true;
             });
+
+        submit: function () {
+            var self = this;
+
+            self.model.save(null, {
+                success: function () {
+                    console.log("Report saved successfully with id "+self.model.id);
+                    
+                    //var photos = self.$el.find('img.photo');
+                    var photos = self.photos;
 
             this.$el.find('#submit-report').click(function () {
                 console.log("Saving report...");
@@ -82,6 +95,14 @@
                 console.log("User submitted refined location");
                 return true;
             });
+        },
+
+        cancel: function () {
+            console.log("Cancelling report...");
+            this.clear();
+            delete veos.reportForm;
+            delete veos.currentReport;
+            return true; // will now redirect to clicked element's href
         },
 
         clear: function () {
@@ -138,7 +159,7 @@
         },
 
         updateChangedFields: function () {
-            console.log("updating changed fields in ReportForm!");
+            console.log("updating changed fields in ReportForm: "+_.keys(this.model.changed).join(", "));
             var self = this;
             _.each(this.model.changed, function(v, k) {
                 self.$el.find('*[name="'+k+'"].field').val(self.model.get(k));
