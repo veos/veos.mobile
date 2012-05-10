@@ -81,11 +81,17 @@ window.veos = (function(veos) {
                     self.currentReport = new veos.model.Report();
                 }
 
-                if (!self.reportForm || !jQuery(ev.target).data('initialized')) {
+                if (!self.reportForm) {
                     self.reportForm = new veos.view.ReportForm({
                         el: ev.target,
                         model: self.currentReport
                     });
+                }
+
+                if (!self.reportForm.$el.data('initialized')) {
+                    console.log("Pointing ReportForm to "+ev.target);
+                    self.reportForm.setElement(ev.target);
+                    self.reportForm.$el.data('initialized', true);
                 }
                 
                 self.reportForm.render();
