@@ -140,9 +140,9 @@
 
       var mapPopupContent;
       if (r.get('camera')) {
-        mapPopupContent = '<p><b> Camera @ </b>' + r.get('owner_name') + '</p>';
+        mapPopupContent = '<p><b> ' + r.get('owner_name') + ' </b> - Camera</p>';
       } else if (r.get('sign')) {
-        mapPopupContent = '<p><b> Sign @ </b>' + r.get('owner_name') + '</p>';
+        mapPopupContent = '<p><b> ' + r.get('owner_name') + ' </b> - Sign</p>';
       }
 
       var infowindow = new google.maps.InfoWindow({
