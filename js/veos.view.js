@@ -67,6 +67,7 @@
             // FIXME: this is kind of nasty... refine-location should get its own View to make this better
             jQuery(document).delegate("#refine-location-submit", "click", function () {
                 console.log("User submitted refined location");
+                veos.currentReport.set('loc_description_from_user', null); // we'll look it up again from geoloc
                 return true; // will now redirect to clicked element's href
             });
         },
@@ -83,7 +84,7 @@
 
                     var doneSubmit = function() {
                         delete veos.currentReport;
-                        delete self.model;
+                        delete veos.reportForm;
                         jQuery.mobile.changePage("overview-map.html");
                     };
 
@@ -164,7 +165,9 @@
             var self = this;
             veos.map.lookupAddressForLoc(geoloc, function (address) {
                 self.model.set('loc_description_from_google', address.formatted_address);
-                self.model.set('loc_description_from_user', address.formatted_address);
+                // only set user address from location if user hasn't manually entered it
+                if (!self.model.get('loc_description_from_user'))
+                    self.model.set('loc_description_from_user', address.formatted_address);
             });
         },
 

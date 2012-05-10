@@ -80,6 +80,12 @@ window.veos = (function(veos) {
             .delegate("#report-page", "pageshow", function(ev) {
                 if (!self.currentReport) {
                     self.currentReport = new veos.model.Report();
+
+                    if (veos.lastLoc) {
+                        var initLoc = veos.map.convertGeolocToGmapLatLng(veos.lastLoc);
+                        self.currentReport.set('loc_lng_from_gps', initLoc.lng());
+                        self.currentReport.set('loc_lat_from_gps', initLoc.lat());
+                    }
                 }
 
                 if (!self.reportForm) {
