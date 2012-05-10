@@ -60,13 +60,16 @@
 
             this.model.on('change', _.bind(this.updateChangedFields, this));
 
-            this.$el.find('#cancel-report').click(function () {
-                console.log("Cancelling report...");
-                self.clear();
-                delete veos.reportForm;
-                delete veos.currentReport;
-                return true;
+            this.photos = [];
+
+            this.$el.data('initialized', true); // check this later to prevent double-init
+
+            // FIXME: this is kind of nasty... refine-location should get its own View to make this better
+            jQuery(document).delegate("#refine-location-submit", "click", function () {
+                console.log("User submitted refined location");
+                return true; // will now redirect to clicked element's href
             });
+        },
 
         submit: function () {
             var self = this;
@@ -78,22 +81,36 @@
                     //var photos = self.$el.find('img.photo');
                     var photos = self.photos;
 
-            this.$el.find('#submit-report').click(function () {
-                console.log("Saving report...");
-                self.model.save(null, {
-                    success: function () {
+                    var doneSubmit = function() {
                         delete veos.currentReport;
-                        veos.alert("Report submitted successfully!");
+                        delete self.model;
                         jQuery.mobile.changePage("overview-map.html");
+                    };
+
+                    if (photos.length === 0) {
+                        console.log("No images to attach... we're done!");
+                        doneSubmit();
+                    } else {
+                        console.log("Found "+photos.length+" images to attach...");
+                        jQuery(photos).each(function (pidx) {
+                            var photo = this;
+                            console.log("Trying to attach Photo at "+photo.imageURL+" to Report with id "+self.model.id);
+                            self.model.attachPhoto(
+                                photo,
+                                function () {
+                                    console.log("Successfully attached Photo with id "+photo.id+" to Report with id "+self.model.id+".");
+                                    if (pidx >= photos.length - 1) {
+                                        console.log("All photos attached!");
+                                        doneSubmit();
+                                    }
+                                }
+                            );
+                        });
                     }
-                });
-            });
 
-            this.$el.data('initialized', true); // check this later to prevent double-init
-
-            jQuery(document).delegate("#refine-location-submit", "click", function () {
-                console.log("User submitted refined location");
-                return true;
+                    // FIXME: not actually sure since photos might not have gone up yet!
+                    veos.alert("Report submitted successfully!");
+                }
             });
         },
 
@@ -107,6 +124,8 @@
 
         clear: function () {
             console.log("Clearing ReportForm...");
+
+            // TODO: need to clear photos and stuff
 
             this.model = new veos.model.Report();
             this.render();
@@ -178,25 +197,37 @@
                 self.$el.find('.field[name="'+k+'"]').val(self.model.get(k));
             });
             self.updateLocFields();
+            self.renderPhotos();
         },
 
-        renderPhoto: function (photo) {
-            console.log(photo);
-            console.log("Rendering photo from URL: " + photo.imageURL);
+        renderPhotos: function () {
+            console.log("Rendering "+this.photos.length+" photos...");
+            var self = this;
+            _.each(this.photos, function(photo) {
+                if (!photo.imgTag || !jQuery.contains(self.el, photo.imgTag)) {
+                    delete photo.imgTag;
+                    console.log("Rendering photo from URL: " + photo.imageURL);
 
-            // create empty image element
-            var cameraImage = jQuery('<img />');
-            // set image URI of image element
-            cameraImage.attr('src', photo.imageURL);
-            cameraImage.data('photo', photo);
-            
-            // select div that will hold all image elements added
-            var imageList = jQuery('#image-list');
-            // only one image
-            imageList.empty();
+                    // create empty image element
+                    var cameraImage = jQuery('<img class="photo" />');
+                    // set image URI of image element
+                    cameraImage.attr('src', photo.imageURL);
+                    cameraImage.data('photo', photo);
+                    
+                    // select div that will hold all image elements added
+                    var imageList = self.$el.find('#image-list');
+                    // only one image
+                    
+                    console.log("Appending Photo to  "+
+                        (photo.id||cameraImage.attr('src'))+" to "+
+                        "#image-list" 
+                    );
+                    // add newly created image to image list
+                    imageList.append(cameraImage);
 
-            // add newly created image to image list
-            imageList.append(cameraImage);
+                    photo.imgTag = cameraImage.get(0);
+                }
+            });
         }
     });
 

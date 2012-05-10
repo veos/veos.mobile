@@ -32,8 +32,9 @@ window.veos = (function(veos) {
                 var photo = new veos.model.Photo();
 
                 var captureSuccess = function () {
-                    veos.reportForm.renderPhoto(photo);
+                    veos.reportForm.photos.push(photo);
                     photo.upload();
+                    veos.reportForm.renderPhotos();
                 };
 
                 photo.on('image_capture', captureSuccess, photo);
