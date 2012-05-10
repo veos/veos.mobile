@@ -267,9 +267,9 @@
 
                 // creates the HTML for the jQuery button to be filled with returned content. Why are you so ugly jQuery?
                 if (report.get('sign')) {
-                    buttonText =  report.get('owner_name') + " - Sign " +  + "<br/>" + report.getLocDescription();
+                    buttonText =  "<b>" + report.get('owner_name') + "</b> - Sign " +  + "<br/>" + report.getLocDescription();
                 } else if (report.get('camera')) {
-                    buttonText = report.get('owner_name') + " - Camera " + "<br/>" + report.getLocDescription();
+                    buttonText = "<b>" + report.get('owner_name') + "</b> - Camera " + "<br/>" + report.getLocDescription();
                 }
                 
                 var divA = jQuery('<div class="ui-block-a">');
