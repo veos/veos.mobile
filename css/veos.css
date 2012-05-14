@@ -163,13 +163,14 @@
 }
 
 .photo-thumbnail {
-    max-width: 50%;
+    max-width: 90%;
     /*max-height: 30%;*/
     margin-top: 1em;
     margin-bottom: 1em;
 }
 
 #report-details-page .map-thumbnail {
+    max-width: 75%;
     /*float: right;*/
 }
 
