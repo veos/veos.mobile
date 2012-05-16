@@ -5,20 +5,33 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>VEOS - Video Eyes On the Street</title>
 
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
         <link rel="stylesheet" href="themes/veos.css" />
-        <link rel="stylesheet" href="css/veos.css" />
+        <link rel="stylesheet" href="css/veos.css" /> 
+        
+        <link rel="icon" href="images/favicon.ico"/>
 
         <script type="text/javascript" charset="utf-8" src="js/libs/cordova-1.5.0.js"></script>
 
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+        <script type="text/javascript">
+            $.noConflict();
+            jQuery(document).bind("mobileinit", function(){
+              jQuery.mobile.defaultPageTransition = 'none'; // disable transitions
+            });
         </script>
-        <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.js">
-        </script>
-        <script type="text/javascript">$.noConflict();</script>
+        <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
         
         <script type="text/javascript"
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyariX4O3T3hJnFrm9leXg8NqPluY68bU&amp;sensor=true">
-        </script>
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB75fl3V3AXVEfejWZiIclVB73SuLESB8w&amp;sensor=true"></script>
+
+        <script type="text/javascript" charset="utf-8" src="js/libs/underscore-1.3.1.js"></script>     
+        <script type="text/javascript" charset="utf-8" src="js/libs/backbone-0.9.2.js"></script>        
+        <script type="text/javascript" charset="utf-8" src="js/veos.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/veos.map.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/veos.model.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/veos.view.js"></script>
+
     </head>
     <body>
         <div data-role="page" id="report-page">
@@ -28,89 +41,98 @@
                 </h3>
             </div>
             <div data-role="content">
+                <div data-role="fieldcontain">
+                    <!--<fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">-->
+                    <fieldset data-role="controlgroup" data-type="horizontal"  id="report-type">
+                        <legend>
+                            I am reporting a...
+                        </legend>
+                        <div>
+                            <input type="radio" name="about" value="Camera" id="camera-radio" class="radio-button field" /><label for="camera-radio">Camera</label>
+                            <input type="radio" name="about" value="Sign" id="sign-radio" class="radio-button field" /><label for="sign-radio">Sign</label>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div data-role="fieldcontain">
+                    <div>
+                        <b>Owner:</b> who do you think this surveillance belongs to?
+                    </div>
+
+                    <fieldset data-role="controlgroup">
+                        <legend>Owner Name</legend>
+                        <input class="field" name="owner_name" id="owner" placeholder="Owner name if identifiable" value="" type="text" />
+                        <!-- TODO: add checkbox for "can't identify owner" -->
+                        <input type="checkbox" name="unidentified-owner-checkbox" id="unidentified-owner-checkbox" class="custom" />
+                        <label for="unidentified-owner-checkbox">Cannot identify owner</label>
+                    </fieldset>
+                </div>
+                <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                        <label for="owner-description">
+                            Owner Type
+                        </label>
+                        <select id="owner-description" class="field" name="owner_description">
+                            <option value="null">...</option>
+                            <option value="Banking">Banking</option>
+                            <option value="Education">Education</option>
+                            <option value="Government">Government</option>
+                            <option value="Office Banking">Office Building</option>
+                            <option value="Police">Police</option>
+                            <option value="Public Transit">Public Transit</option>
+                            <option value="Residential">Residential</option>
+                            <option value="Retail / Restaurant / Bar">Retail / Restaurant / Bar</option>
+                            <option value="Traffic">Traffic</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <!-- <input id="type" placeholder="" value="" type="text" /> -->
+                    </fieldset>
+                </div>
+                
+
                 <div data-role="collapsible-set" data-theme="" data-content-theme="" class="report">
 
                     <div data-role="collapsible" data-collapsed="false" id="photos-container">
                         <h3>
                             Photos
                         </h3>
-                        <a id="add-photo-button" data-role="button" data-transition="fade" href="#report-page" data-icon="plus" data-iconpos="left">
+                        <a id="add-photo-button" data-role="button" data-transition="fade" href="#report-page" data-icon="plus" data-iconpos="left" class="acquire-photo" data-acquire-from="camera">
                             Take Photo
                         </a>
-                        <a id="select-photo-button" data-role="button" data-transition="fade" data-icon="plus" data-iconpos="left">
+                        <a id="select-photo-button" data-role="button" data-transition="fade" data-icon="plus" data-iconpos="left" class="acquire-photo" data-acquire-from="gallery">
                             Select Photo from Gallery
                         </a>
                         <div id="image-list" class="photo-list">
                             <!-- Images are added dynamically via camera or gallery selection -->
                         </div>
                     </div>
+
                     <div data-role="collapsible" data-collapsed="false" id="location-container">
                         <h3>
                             Location
                         </h3>
+
+                        <p style="text-align: center">
+                            Click map to refine location or enter a more accurate
+                            address or place name.
+                        </p>
                         <div class="map-thumbnail-container">
-                            <!-- filled in the JS -->
+                            <a href="refine-location.html"><img id="static-report-map" class="map-thumbnail" alt="Locating..." src="images/loading-64.gif" /></a>
+                            <div class="waiting">Locating...</div>
                         </div>
                         <div data-role="fieldcontain">
                             <fieldset data-role="controlgroup">
                                 <label for="location-address">Address or Place</label>
-                                <input id="location-address" placeholder="15 Bloor St. W." value="" type="text" />
+                                <input class="field" name="loc_description_from_user" id="location-address"  value="" type="text" />
+                                <input class="field" name="loc_description_from_google" value="" type="hidden" />
                             </fieldset>
                         </div>
                     </div>
-                    <div data-role="collapsible" data-collapsed="false" id="details-container">
-                        <h3>
-                            Details
-                        </h3>
-                        <div data-role="content">
-                            <b>Owner:</b> who do you think this surveillance belongs to?
-                        </div>
-                        <div data-role="fieldcontain">
-                            <fieldset data-role="controlgroup">
-                                <label for="name">
-                                    Owner Name
-                                </label>
-                                <input id="owner" placeholder="" value="" type="text" />
-                                <!-- TODO: add checkbox for "can't identify owner" -->
-                            </fieldset>
-                        </div>
-                        <div data-role="fieldcontain">
-                            <fieldset data-role="controlgroup">
-                                <label for="description">
-                                    Owner Description
-                                </label>
-                                <select>
-                                    <option value="null">...</option>
-                                    <option value="Banking">Banking</option>
-                                    <option value="Education">Education</option>
-                                    <option value="Government">Government</option>
-                                    <option value="Office Banking">Office Building</option>
-                                    <option value="Police">Police</option>
-                                    <option value="Public Transit">Public Transit</option>
-                                    <option value="Residential">Residential</option>
-                                    <option value="Retail / Restaurant / Bar">Retail / Restaurant / Bar</option>
-                                    <option value="Traffic">Traffic</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                                <!-- <input id="type" placeholder="" value="" type="text" /> -->
-                            </fieldset>
-                        </div>
-                        <div data-role="fieldcontain">
-                            <fieldset data-role="controlgroup" data-type="horizontal" data-role="fieldcontain">
-                                <div id="radio" class="field about_object"> <!-- do more of these -->
-                                    <input type="radio" name="point-type-radio" value="Camera" id="camera-radio" class="radio-button" /><label for="camera-radio">Camera</label>
-                                    <input type="radio" name="point-type-radio" value="Sign" id="sign-radio" class="radio-button" /><label for="sign-radio">Sign</label>
-                                </div>
-                            </fieldset>
-                        </div>
-                        <a data-role="button" data-transition="fade" href="#report-page" data-icon="arrow-r" data-iconpos="right">
-                            Enter Advanced Details
-                        </a>
-                    </div>
+
                 </div>
             </div>
             <div data-theme="a" data-role="footer" class="footer-with-buttons">
-                <a id="cancel-report" data-role="button" data-transition="fade" data-theme="f" data-icon="delete" data-iconpos="left">
+                <a id="cancel-report" data-role="button" data-transition="fade" data-theme="f" data-icon="delete" data-iconpos="left" href="overview-map.html">
                     Cancel
                 </a>
 
@@ -118,77 +140,9 @@
             </div>
         </div>
 
-        <div data-role="page" id="refine-location-page">
-            <div data-theme="a" data-role="header">
-                <h3>
-                    Drag the pin to refine your location
-                </h3>
-            </div>                
-            <div data-role="content">
-                <div id="refining-map-canvas"></div>
-            </div>
-            <div class="map-button-container"> 
-                <button id="refine-location-button" data-theme="b" data-inline="true" data-icon="check">Submit location</button>
-            </div>
-        </div>        
 
-        <script type="text/javascript" charset="utf-8" src="js/libs/underscore-1.3.1.js"></script>     
-        <script type="text/javascript" charset="utf-8" src="js/libs/backbone-0.9.2.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/libs/backbone.validations.js"></script>
-
-        <script type="text/javascript" charset="utf-8" src="js/veos.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/veos.model.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/veos.map.js"></script>
-
-        <script type="text/javascript" charset="utf-8" src="js/report.js"></script>
-        <script>
-            document.addEventListener('deviceready', function() {
-                var renderPhoto = function () {
-                    console.log("Rendering photo from URL: " + this.imageURL);
-
-                    // create empty image element
-                    var cameraImage = jQuery('<img />');
-                    // set image URI of image element
-                    cameraImage.attr('src', this.imageURL);
-                    
-                    // select div that will hold all image elements added
-                    var imageList = jQuery('#image-list');
-                    // add newly created image to image list
-                    imageList.append(cameraImage);
-
-                    this.upload();
-                };
-
-                jQuery('#add-photo-button').click(function() {
-                    var photo = new veos.model.Photo();
-                    photo.on('image_capture', renderPhoto, photo);
-                    photo.captureFromCamera();
-                });
-                jQuery('#select-photo-button').click(function() {
-                    var photo = new veos.model.Photo();
-                    photo.on('image_capture', renderPhoto, photo);
-                    photo.captureFromGallery();
-                });                
-
-            });
-
-            jQuery(document).ready(function() {
-                jQuery('#cancel-report').click(function() {
-                    document.location="overview-map.html";
-                });
-                jQuery('#location-address').change(function() {
-                    alert('change in the address box');
-                    window.veos.map.testFunction();
-                    window.report.lookupLatLngForAddress(jQuery('#location-address').val());
-                });
-                jQuery('#submit-report').click(function() {
-                    console.log('submitting report...');
-                    window.report.submitReport();
-                });
-
-                // this needs to go in here to make the refined map work, I believe. But it may also be causing the wierd viewport issues
-                report.init();
-            });
+        <script type="text/javascript">
+            veos.init();
         </script>
     </body>
 </html>

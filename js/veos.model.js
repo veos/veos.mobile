@@ -1,14 +1,15 @@
 /*jshint browser: true, devel: true */
 /*global Backbone, _, jQuery, Camera, FileTransfer, FileUploadOptions */
 
-window.veos = (function(veos) {
+(function(veos) {
   var self = {};
 
   // self.baseURL = window.location.protocol + "://" + window.location.host + 
   //   (window.location.port ? ':' + window.location.port : '');
   //self.baseURL = "http://backend.veos.ca";
-  self.baseURL = "http://backend.veos.surveillancerights.ca";
+  self.baseURL = "http://veos.surveillancerights.ca";
   //self.baseURL = "http://192.168.222.108:3000";
+  //self.baseURL = "http://localhost:3000";
 
   jQuery.support.cors = true; // enable cross-domain AJAX requests
 
@@ -56,18 +57,32 @@ window.veos = (function(veos) {
       
       var msg;
 
-      if (response.status === 422)
+      if (response.status === 422) {
         msg = "Sorry, there is an error in your "+this.singular+". Please check your input and try again.";
-      else if (response.status >= 500 && response.status < 600)
+        var errors = {};
+        try {
+          errors = JSON.parse(response.responseText).errors;
+        } catch (err) {
+          console.error("Couldn't parse response text: "+response.responseText+ " ("+err+")");
+        }
+        _.each(errors, function(v, k) {
+          var errField = jQuery("*[name='"+k+"'].field");
+
+          if (errField.is(':checkbox, :radio'))
+            errField = errField.parent();
+
+          errField.addClass("error");
+          errField.one('change focus', function() {
+            errField.removeClass("error");
+          });
+        });
+
+      } else if (response.status >= 500 && response.status < 600)
         msg = "Our apologies, the server responded with an error. There may be a problem with the system.";
       else
         msg = "Sorry, there was some sort of error while performing this action. The server may be temporarily unavailable.";
 
-      if (navigator === undefined || navigator.notification === undefined) {
-        alert(msg);
-      } else {
-        navigator.notification.alert(msg, null, "Error");
-      }
+      veos.alert(msg, "Error");
     }
   });
 
@@ -79,18 +94,34 @@ window.veos = (function(veos) {
     plural: "reports",
     nested: [['sign', ['photos']], ['camera', ['photos']]],
 
-    attachPhoto: function (photo) {
+    attachPhoto: function (photo, successCallback) {
       if (this.has('sign') && this.get('sign').id) {
         photo.set('of_object_id', this.get('sign').id);
         photo.set('of_object_type', 'Sign');
-        photo.save();
+        photo.save(null, {success: successCallback});
       } else if (this.has('camera') && this.get('camera').id) {
         photo.set('of_object_id', this.get('camera').id);
         photo.set('of_object_type', 'Camera');
-        photo.save();
+        photo.save(null, {success: successCallback});
       } else {
-        throw new Error("Cannot attach a photo to this report because it is not yet associated with a Camera or Sign!");
+        err = "Cannot attach a photo to this report because it is not yet associated with a Camera or Sign!";
+        console.error(err);
+        throw new Error(err);
       }
+    },
+
+    getLatLng: function() {
+      if (this.get('loc_lat_from_user')) {
+        return new google.maps.LatLng(this.get('loc_lat_from_user'), this.get('loc_lng_from_user'));
+      } else if (this.get('loc_lat_from_gps')) {
+        return new google.maps.LatLng(this.get('loc_lat_from_gps'), this.get('loc_lng_from_gps'));
+      } else {
+        return null;
+      }
+    },
+
+    getLocDescription: function() {
+      return this.get('loc_description_from_user') || this.get('loc_description_from_google') || "";
     }
   });
 
@@ -153,8 +184,11 @@ window.veos = (function(veos) {
 
     upload: function () {
       var photo = this;
+
       if (!photo.imageURL)
         throw new Error("Cannot upload photo because it does not have an imageURL! You need to capture an image before uploading.");
+
+      console.log("Uploading photo: "+photo.imageURL)
 
       var options = new FileUploadOptions();
       options.fileKey = "photo[image]";
@@ -184,5 +218,4 @@ window.veos = (function(veos) {
 
 
   veos.model = self;
-  return veos;
-})(window.veos || {});
+})(window.veos);

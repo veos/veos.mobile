@@ -14,90 +14,79 @@ window.report = (function(report) {
     // creating static map that is centered around the current location
     var myTemp = veos.map.generateStaticMap(lat, lng, reportsCollection);
 
-    var mapThumbnail = jQuery('<img class="map-thumbnail" />');
+    var mapThumbnail = jQuery('#static-report-map');
     mapThumbnail.attr('src', myTemp);
+    jQuery(".map-thumbnail-container .waiting").hide();
     
-    var thumbnailContainer = jQuery('#report-page .map-thumbnail-container');
-    thumbnailContainer.empty();
-    thumbnailContainer.append(mapThumbnail);
+    // var thumbnailContainer = jQuery('#report-page .map-thumbnail-container');
+    // thumbnailContainer.empty();
+    // thumbnailContainer.append(mapThumbnail);
 
     // add listener which leads to overlay map (for refining location)
-    mapThumbnail.click(function() {
-      jQuery.mobile.changePage("#refine-location-page", { transition: "slideup"});    // is this the right way to do this?
-    });
+    // mapThumbnail.click(function() {
+    //   jQuery.mobile.changePage("#refine-location-page", { transition: "slideup"});    // is this the right way to do this?
+    //   //document.location="report.html#refine-location-page";
+    // });
   }
 
-  // perform a reverse geolocation lookup (convert latitude and longitude into a street address)
-  function lookupAddressForLatLng (lat, lng) {
-    var geocoder = new google.maps.Geocoder();
-    var latlng = new google.maps.LatLng(lat, lng);
-    
-    geocoder.geocode({'latLng': latlng}, function(results, status) {
-      if (status == google.maps.GeocoderStatus.OK) {
-        if (results[0]) {
-          console.log("Reverse geocoding for lat: " + lat + " lng: " + lng + " returned this address: " + results[0].formatted_address);
-          jQuery('#location-address').val(results[0].formatted_address);
-        }
-      } else {
-        console.error("Geocoder failed due to: " + status);
-      }
-    });
-  }
+  
 
-  // lookup longitude and latitude for a given street address
-  self.lookupLatLngForAddress = function(address) {
-    var geocoder = new google.maps.Geocoder();
-    
-    geocoder.geocode({'address': address}, function(results, status) {
-      if (status == google.maps.GeocoderStatus.OK) {
-        userDefinedLat = results[0].geometry.location.lat();
-        userDefinedLng = results[0].geometry.location.lng();
-
-        console.log("Reverse geocoding for address: " + address + " returned this latitute: " + userDefinedLat + " and longitude: " + userDefinedLng);        
-
-        var r = new veos.model.Reports();
-        // adding listener for backbone.js reset event
-        r.on('reset', function(collection) {
-          createMapThumbnail(userDefinedLat, userDefinedLng, collection);
-        });
-        // fetching will trigger reset event
-        r.fetch();
-
-      } else {
-        console.error("Geocoder failed due to: " + status);
-      }
-    });
-  };
+  
 
   self.submitReport = function() {
     // should we do another check for location with getCurrentPosition here?
     var r = new veos.model.Report();
 
+    // check if a location is available
     if (currentLat && currentLng) {
       r.set('loc_lat_from_gps', currentLat);
       r.set('loc_lng_from_gps', currentLng);
     } else {
-      alert('Your GPS could not be determined');
+      alert('Your GPS location could not be determined');
       console.log('missing GPS');
       return true;
     }
+    // check that camera or sign is selected
     if (jQuery('input:radio[name=point-type-radio]:checked').val() === "Camera") {          // TODO do the advanced details
-        r.set('camera', {pointed_at: []});  
+      r.set('camera', {pointed_at: []});  
     } else if (jQuery('input:radio[name=point-type-radio]:checked').val() === "Sign") {
-        r.set('sign', {text: "I'm a sign", visibility: "can you see me?"});
+      r.set('sign', {text: "I'm a sign", visibility: "can you see me?"});
     } else {
-      alert('Enter type of report before submitting - is this a camera or a sign?');
+      veos.alert('Enter type of report before submitting - is this a camera or a sign?');
       return true;
     }
+    // owner_description
+    if (jQuery('#owner-description').val() === "null") {
+      veos.alert('Please select a "Owner Description"');
+      return true;
+    } else {
+      r.set('owner_description', jQuery('#owner-description').val());
+    }
+
     r.set('loc_description_from_google', jQuery('#location-address').val());
     r.set('loc_lat_from_user', userDefinedLat);
     r.set('loc_lng_from_user', userDefinedLng);
     r.set('loc_description_from_user', 'this is our initial testing with the new backend');
-    r.set('owner_name', jQuery('#owner').val());    // this will need a if/else wrapper eventually
 
-    r.save();
-    alert('Report submitted');
-    // do we want to clear some/all of the data
+    if (jQuery('#unidentified-owner-checkbox').attr('checked')) {
+      r.set('owner_name', 'Cannot identify owner');
+    } else if (jQuery('#owner').val() !== '') {
+      r.set('owner_name', jQuery('#owner').val());    // this will need a if/else wrapper eventually
+    } else {
+      veos.alert('Either enter a owner or check "cannot identify owner"');
+      return true;
+    }
+
+    r.save(null, {
+      success: function () {
+        jQuery('#image-list img').each(function () {
+          var photo = jQuery(this).data('photo');
+          console.log("Attaching photo to report.", photo);
+          r.attachPhoto(photo);
+        });
+        veos.alert('Report submitted');
+      }
+    });
   };
 
   self.createDynamicPageElements = function(lat, lng, userDefined) {
@@ -123,7 +112,7 @@ window.report = (function(report) {
       veos.map.createMap(lat, lng, "#refining-map-canvas");
       jQuery('#refine-location-button').click(function() {
         report.createDynamicPageElements(userDefinedLat, userDefinedLng, true);
-        jQuery.mobile.changePage("report.html", { transition: "slideup"})
+        jQuery.mobile.changePage("report.html", { transition: "slideup"});
       });      
     });
     // fetching will trigger reset event
@@ -131,6 +120,9 @@ window.report = (function(report) {
   };  
 
   self.init = function() {
+    self.report = new veos.model.Report();
+    jQuery('#report-page').data('report', self.report);
+
     // retrieve the current position of the phone
     navigator.geolocation.getCurrentPosition(function geolocationSuccess (currentLocation) {
       currentLat = currentLocation.coords.latitude;
@@ -138,7 +130,8 @@ window.report = (function(report) {
       self.createDynamicPageElements(currentLat, currentLng, false);
     },
       function geolocationFailure () {
-        alert('There was a problem determining your location due to: ' + error.message);
+        veos.alert('There was a problem determining your location due to: ' + error.message);
+        console.warn('There was a problem determining your location due to: ' + error.message);
     });
   };
 

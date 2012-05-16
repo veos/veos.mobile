@@ -1,5 +1,18 @@
 /***** ALL *****/
 
+.ui-content {
+    min-height: 100%;
+}
+
+.error {
+    background: #fdd !important;
+    border-color: #f00 !important;
+}
+
+.error * {
+    background: inherit;
+}
+
 .footer-with-buttons {
     display: -moz-box !important;
     display: -webkit-box !important;
@@ -41,23 +54,20 @@
     max-width: 100%;
 }
 
+.loading {
+    text-align: center;
+    margin: auto;
+    margin-top: 10%;
+    margin-bottom: 10%;
+}
+
 
 /***** OVERVIEW MAP *****/
 
 #overview-map-page #overview-map-canvas {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-}
-
-#overview-map-page html { 
-	height: 100%;
-}
-
-#overview-map-page body {
-	height: 100%;
-	margin: 0;
-	padding: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
 }
 
 /* WE NEED A SMALL FONT TO FIT THESE LATERALLY ON A PHONE SCREEN. SWITCH TO VERITCAL STACK? */
@@ -90,21 +100,29 @@
     /* TODO: set some kind of min-width here to make the buttons of equal size */
 }
 
-#refine-location-page #refining-map-canvas {
+#report-page #report-type {
+}
+
+#report-page #report-type .ui-radio {
+    width: 40%;
+}
+
+#report-page #report-type .ui-radio label {
+    width: 100%;
+    text-align: center;
+}
+
+/*#refine-location-page div[data-role="content"] {
+    position: absolute;
+
+}*/
+
+#refine-location-page #refine-location-canvas {
     position: absolute;
     width: 100%;
     height: 100%;
 }
 
-#refine-location-page html { 
-    height: 100%;
-}
-
-#refine-location-page body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
 /*
 #refine-location-page #refine-location-button {
     position: absolute;
@@ -128,42 +146,53 @@
 }*/
 
 
-#installations-page .ui-block-a {
-    width: 75%;
+#reports-list-page .ui-block-a {
+    width: 100%;
 }
 
-#installations-page .ui-block-b {
+#reports-list-page .ui-block-b {
     width: 25%;
 }
 
-.photo-thumbnail {
-    max-width: 100px;
-    max-height: 100px;
+#reports-list-page .owner_name {
+
 }
 
-#installation-details-page .map-thumbnail {
+#reports-list-page .owner_name.unknown {
+    font-style: italic;
+}
+
+.photo-thumbnail {
+    max-width: 90%;
+    /*max-height: 30%;*/
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+#report-details-page .map-thumbnail {
+    max-width: 75%;
     /*float: right;*/
 }
 
-#installation-details-page .installation-details-text-container {
+#report-details-page .report-details-text-container {
     margin-left: 1%;
     margin-top: 1%;
 }
 
-#installation-details-page .compliance {
+#report-details-page .compliance {
     margin-left: 1%;
 }
 
 /* ask Matt about cascading here */
-#installation-details-page .ui-block-a {
+#report-details-page .ui-block-a {
     width: 75%;
 }
 
-#installation-details-page .ui-block-b {
+#report-details-page .ui-block-b {
     width: 25%;
 }
 
-#installation-details-page .ui-grid-a {
+#report-details-page .ui-grid-a {
     clear: right;
 }
 
