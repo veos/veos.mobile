@@ -292,7 +292,20 @@
                     buttonText = ownerName + " - Camera " + "<br/>" + report.getLocDescription();
                 }
                 
-                var divA = jQuery('<div class="ui-block-a">');
+                var thumb;
+                var obj = report.get('sign') || report.get('camera');
+                if (obj && obj.photos && obj.photos[0] && obj.photos[0].thumb_url) {
+                    thumb = "<img src='"+veos.model.baseURL + obj.photos[0].thumb_url+"' />";
+                } else {
+                    thumb = "";
+                }
+
+                var item = jQuery("<li><a href='report-details.html?id="+report.id+"'>"+thumb+" "+buttonText+"</a></li>");
+                list.append(item);
+                list.listview('refresh');
+
+
+                /*var divA = jQuery('<div class="ui-block-a">');
                 var reportOuterButton = jQuery('<a href="report-details.html?id='+report.id+'" data-role="button" data-transition="fade" href="#point-details-page" data-icon="arrow-r" data-iconpos="left" data-theme="c" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-c" />');
                 reportOuterButton.button();
                 // attaching the report object to the HTML in data-report
@@ -303,7 +316,7 @@
                 reportOuterButton.append(reportButtonIcon);
                 divA.append(reportOuterButton);
                 //reportInnerButton.text(report.get('location_name') + &#10; + report.get('latitude'));
-                list.append(divA);
+                list.append(divA);*/
             });
         }
     });
@@ -374,8 +387,8 @@
             photoContainer.append(photoThumbnail); */ 
 
             if (report.get('camera')) {
-                if (report.get('camera').hasOwnProperty("photos") && report.get('camera').photos.length > 0 && report.get('camera').photos[0].url !== null) {
-                    photoThumbnail.attr('src', veos.model.baseURL + report.get('camera').photos[0].url);
+                if (report.get('camera').hasOwnProperty("photos") && report.get('camera').photos.length > 0 && report.get('camera').photos[0].big_url !== null) {
+                    photoThumbnail.attr('src', veos.model.baseURL + report.get('camera').photos[0].big_url);
                 }
                 this.$el.find('.point-type').text('Camera');
                 this.$el.find('.point-title-1').text('Camera\'s location: ');
@@ -385,8 +398,8 @@
                 this.$el.find('.point-title-3').text('Owner description: ');
                 this.$el.find('.point-content-3').text(report.attributes.owner_description);
             } else if (report.get('sign')) {
-                if (report.get('sign').hasOwnProperty("photos") && report.get('sign').photos.length > 0 && report.get('sign').photos[0].url !== null) {
-                    photoThumbnail.attr('src', veos.model.baseURL + report.get('sign').photos[0].url);
+                if (report.get('sign').hasOwnProperty("photos") && report.get('sign').photos.length > 0 && report.get('sign').photos[0].big_url !== null) {
+                    photoThumbnail.attr('src', veos.model.baseURL + report.get('sign').photos[0].big_url);
                 }
                 this.$el.find('.point-type').text('Sign');
                 this.$el.find('.point-title-1').text('Sign location: ');
