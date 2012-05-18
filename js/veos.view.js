@@ -53,10 +53,10 @@
                     if (checked) {
                         jQuery("#camera-buttons").hide();
                         // TODO: also hide camera detail fields here
-                        this.model.get('camera').not_visible = true;
+                        this.cameraNotVisible = true;
                     } else {
                         jQuery("#camera-buttons").show();
-                        delete this.model.get('camera').not_visible;
+                        delete this.cameraNotVisible;
                     }
                 },
             'change #no-sign': function (ev) {
@@ -64,10 +64,10 @@
                     if (checked) {
                         jQuery("#sign-buttons").hide();
                         // TODO: also hide sign detail fields here
-                        this.model.get('sign').not_visible = true;
+                        this.signNotVisible = true;
                     } else {
                         jQuery("#sign-buttons").show();
-                        delete this.model.get('sign').not_visible;
+                        delete this.signNotVisible;
                     }
                 },
 
@@ -102,6 +102,13 @@
 
         submit: function () {
             var self = this;
+
+            if (this.signNotVisible) {
+                self.model.unset('sign', {silent: false});
+            }
+            if (this.cameraNotVisible) {
+                self.model.unset('camera', {silent: false});
+            }
 
             self.model.save(null, {
                 success: function () {
