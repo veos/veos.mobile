@@ -94,17 +94,13 @@
     plural: "reports",
     nested: [['sign', ['photos']], ['camera', ['photos']]],
 
-    attachPhoto: function (photo, successCallback) {
-      if (this.has('sign') && this.get('sign').id) {
-        photo.set('of_object_id', this.get('sign').id);
-        photo.set('of_object_type', 'Sign');
-        photo.save(null, {success: successCallback});
-      } else if (this.has('camera') && this.get('camera').id) {
-        photo.set('of_object_id', this.get('camera').id);
-        photo.set('of_object_type', 'Camera');
+    attachPhoto: function (photo, of, successCallback) {
+      if (this.has(of) && this.get(of).id) {
+        photo.set('of_object_id', this.get(of).id);
+        photo.set('of_object_type', of.charAt(0).toUpperCase() + of.slice(1));
         photo.save(null, {success: successCallback});
       } else {
-        err = "Cannot attach a photo to this report because it is not yet associated with a Camera or Sign!";
+        err = "Cannot attach a photo to this report's "+of+" because it is not yet been saved!";
         console.error(err);
         throw new Error(err);
       }

@@ -30,9 +30,12 @@ window.veos = (function(veos) {
             console.log("DEVICE READY!!!!");
             jQuery(document).delegate('.acquire-photo', 'click', function() {
                 var photo = new veos.model.Photo();
+                var of = jQuery(this).data('photo-of');
 
                 var captureSuccess = function () {
-                    veos.reportForm.photos.push(photo);
+                    console.log("Acquired photo of '"+of+'".')
+
+                    veos.reportForm.photos[of].push(photo);
                     photo.upload();
                     veos.reportForm.renderPhotos();
                 };

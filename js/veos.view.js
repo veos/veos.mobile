@@ -48,18 +48,26 @@
                         this.$el.find('#owner').removeAttr('disabled');
                     }
                 },
-            'change input[name="about"]': function (ev) { // FIXME: ugliness
-                    var type = jQuery('input[name="about"]:checked').val();
-                    
-                    if (type === 'Camera') {
-                        console.log("Reporting a Camera");
-                        this.model.set('camera', {pointed_at: []});  
-                    } else if (type == 'Sign') {
-                        console.log("Reporting a Sign");
-                        this.model.set('sign', {text: "I'm a sign", visibility: "can you see me?"});
+            'change #no-camera': function (ev) {
+                    var checked = jQuery('#no-camera').is(":checked");
+                    if (checked) {
+                        jQuery("#camera-buttons").hide();
+                        // TODO: also hide camera detail fields here
+                        this.model.get('camera').not_visible = true;
                     } else {
-                        console.error("Invalid report type: "+type);
-                        veos.alert("Invalid report type! Must be a Camera or a Sign.");
+                        jQuery("#camera-buttons").show();
+                        delete this.model.get('camera').not_visible;
+                    }
+                },
+            'change #no-sign': function (ev) {
+                    var checked = jQuery('#no-sign').is(":checked");
+                    if (checked) {
+                        jQuery("#sign-buttons").hide();
+                        // TODO: also hide sign detail fields here
+                        this.model.get('sign').not_visible = true;
+                    } else {
+                        jQuery("#sign-buttons").show();
+                        delete this.model.get('sign').not_visible;
                     }
                 },
 
@@ -68,13 +76,19 @@
         },
 
         initialize: function () {
-            var self = this;
+            //var self = this;
 
             console.log("Initializing ReportForm...");
 
             this.model.on('change', _.bind(this.updateChangedFields, this));
 
-            this.photos = [];
+            this.photos = {
+                camera: [], // photos of the camera go here
+                sign: [] // photos of the sign go here
+            };
+
+            this.model.set('camera', {});
+            this.model.set('sign', {});
 
             this.$el.data('initialized', true); // check this later to prevent double-init
 
@@ -92,9 +106,6 @@
             self.model.save(null, {
                 success: function () {
                     console.log("Report saved successfully with id "+self.model.id);
-                    
-                    //var photos = self.$el.find('img.photo');
-                    var photos = self.photos;
 
                     var doneSubmit = function() {
                         delete veos.currentReport;
@@ -102,26 +113,29 @@
                         jQuery.mobile.changePage("overview-map.html");
                     };
 
-                    if (photos.length === 0) {
-                        console.log("No images to attach... we're done!");
-                        doneSubmit();
-                    } else {
-                        console.log("Found "+photos.length+" images to attach...");
-                        jQuery(photos).each(function (pidx) {
-                            var photo = this;
-                            console.log("Trying to attach Photo at "+photo.imageURL+" to Report with id "+self.model.id);
-                            self.model.attachPhoto(
-                                photo,
-                                function () {
-                                    console.log("Successfully attached Photo with id "+photo.id+" to Report with id "+self.model.id+".");
-                                    if (pidx >= photos.length - 1) {
-                                        console.log("All photos attached!");
-                                        doneSubmit();
+                    //var photos = self.$el.find('img.photo');
+
+                    _.each(self.photos, function (photos, of) {
+                    
+                        if (photos.length >= 0) {
+                            console.log("Found "+photos.length+" photos of "+of+" to attach...");
+                            jQuery(photos).each(function (pidx) {
+                                var photo = this;
+                                console.log("Trying to attach Photo at "+photo.imageURL+" to Report with id "+self.model.id);
+                                self.model.attachPhoto(
+                                    photo,
+                                    of,
+                                    function () {
+                                        console.log("Successfully attached Photo of "+of+" with id "+photo.id+" to Report with id "+self.model.id+".");
+                                        if (pidx >= photos.length - 1) {
+                                            console.log("All photos of "+of+" attached!");
+                                            doneSubmit();
+                                        }
                                     }
-                                }
-                            );
-                        });
-                    }
+                                );
+                            });
+                        }
+                    });
 
                     // FIXME: not actually sure since photos might not have gone up yet!
                     veos.alert("Report submitted successfully!");
@@ -150,7 +164,7 @@
         },
 
         updateLocFields: function () {
-            var self = this;
+            //var self = this;
             var geoloc;
             if (this.model.getLatLng()) {
                 console.log("Using location from report model...", this.model.getLatLng());
@@ -218,33 +232,36 @@
         },
 
         renderPhotos: function () {
-            console.log("Rendering "+this.photos.length+" photos...");
             var self = this;
-            _.each(this.photos, function(photo) {
-                if (!photo.imgTag || !jQuery.contains(self.el, photo.imgTag)) {
-                    delete photo.imgTag;
-                    console.log("Rendering photo from URL: " + photo.imageURL);
+            _.each(self.photos, function (photos, of) {
+                console.log("Rendering "+photos.length+" photos of "+of+"...");
+            
+                _.each(photos, function(photo) {
+                    if (!photo.imgTag || !jQuery.contains(self.el, photo.imgTag)) {
+                        delete photo.imgTag;
+                        console.log("Rendering photo from URL: " + photo.imageURL);
 
-                    // create empty image element
-                    var cameraImage = jQuery('<img class="photo" />');
-                    // set image URI of image element
-                    cameraImage.attr('src', photo.imageURL);
-                    cameraImage.data('photo', photo);
-                    
-                    // select div that will hold all image elements added
-                    var imageList = self.$el.find('#image-list');
-                    // only one image
-                    
-                    console.log("Appending Photo to  "+
-                        (photo.id||cameraImage.attr('src'))+" to "+
-                        "#image-list" 
-                    );
-                    // add newly created image to image list
-                    imageList.append(cameraImage);
+                        // create empty image element
+                        var cameraImage = jQuery('<img class="photo" />');
+                        // set image URI of image element
+                        cameraImage.attr('src', photo.imageURL);
+                        cameraImage.data('photo', photo);
+                        
+                        // select div that will hold all image elements added
+                        var imageList = self.$el.find('#'+of+'-image-list');
+                        // only one image
+                        
+                        console.log("Appending Photo "+
+                            (photo.id||cameraImage.attr('src'))+" to "+
+                            "#"+of+"image-list" 
+                        );
+                        // add newly created image to image list
+                        imageList.append(cameraImage);
 
-                    photo.imgTag = cameraImage.get(0);
-                }
-            });
+                        photo.imgTag = cameraImage.get(0);
+                    }
+                });
+            });     
         }
     });
 
@@ -263,7 +280,7 @@
                 this.collection = new veos.model.Reports();
 
             // TODO: consider binding 'add' and 'remove' to pick up added/removed Reports too?
-            this.collection.on('reset', _.bind(this.render, this)); 
+            this.collection.on('reset', _.bind(this.render, self)); 
         },
 
         fetchNearby: function () {
@@ -330,7 +347,7 @@
             var self = this;
 
             // TODO: consider binding 'add' and 'remove' to pick up added/removed Reports too?
-            this.model.on('change sync', _.bind(this.render, this)); 
+            this.model.on('change sync', _.bind(this.render, self)); 
         },
 
         showLoader: function () {
@@ -372,6 +389,7 @@
             var photoThumbnail = jQuery('<img class="photo-thumbnail" />');
             var photoContainer = this.$el.find('.photo-thumbnail-container');
 
+            var ownerName;
             if (report.get('owner_name')) {
                 ownerName = "<span class='owner_name'>" + report.get('owner_name') + "</span>";
             } else {

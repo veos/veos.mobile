@@ -46,7 +46,7 @@
     color: green;
 }
 
-.colorMeRed {
+.colorMeRed { /* seriously?? :) */
     color: red;
 }
 
@@ -60,6 +60,8 @@
     margin-top: 10%;
     margin-bottom: 10%;
 }
+
+
 
 
 /***** OVERVIEW MAP *****/
@@ -110,6 +112,48 @@
 #report-page #report-type .ui-radio label {
     width: 100%;
     text-align: center;
+}
+
+#report-page #photos-container .ui-collapsible-content {
+    text-align: center;
+    white-space: nowrap;
+}
+
+#report-page .photo-box {
+    border: 3px dashed #bbb;
+    border-radius: 10px 10px 10px 10px;
+    display: inline-block;
+    padding: 6px;
+    width: 46%;
+    vertical-align: top;
+}
+
+@media only screen and (max-device-width: 800px) {
+    /* phone screens can't fit camera + sign box side by side 
+        so we show them one above the other */
+
+    #report-page #photos-container .ui-collapsible-content {
+        white-space: normal;
+        padding: 2px;
+    }
+
+    #report-page .photo-box {
+        margin-bottom: 10px;
+        width: 95%;
+    }
+}
+
+#report-page .photo-box legend {
+    color: #999;
+    font-size: 21px;
+    font-weight: bold;
+    padding-left: 9px;
+    padding-right: 9px;
+    margin-left: 8%;
+}
+
+#report-page .photo-box:first-child {
+    margin-right: 8px;
 }
 
 /*#refine-location-page div[data-role="content"] {
