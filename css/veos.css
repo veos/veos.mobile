@@ -152,6 +152,10 @@
     margin-left: 8%;
 }
 
+#report-page .photo-box label {
+    text-align: center;
+}
+
 #report-page .photo-box:first-child {
     margin-right: 8px;
 }

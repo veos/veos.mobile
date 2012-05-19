@@ -110,13 +110,22 @@
                 self.model.unset('camera', {silent: false});
             }
 
+            jQuery.mobile.showPageLoadingMsg();
+            jQuery('.ui-loader h1').text('Submitting...');
+            // use this once we upgrade to jQuery Mobile 1.2
+            //jQuery.mobile.loading( 'show', { theme: "b", text: "Submitting...", textonly: false });
+
             self.model.save(null, {
+                complete: function () {
+                    jQuery.mobile.hidePageLoadingMsg();
+                },
                 success: function () {
                     console.log("Report saved successfully with id "+self.model.id);
-
+                    
                     var doneSubmit = function() {
                         delete veos.currentReport;
                         delete veos.reportForm;
+                        veos.alert("Report submitted successfully!");
                         jQuery.mobile.changePage("overview-map.html");
                     };
 
@@ -144,8 +153,9 @@
                         }
                     });
 
-                    // FIXME: not actually sure since photos might not have gone up yet!
-                    veos.alert("Report submitted successfully!");
+                    if (self.photos.sign.length == 0 && self.photos.camera.length == 0) {
+                        doneSubmit();
+                    }
                 }
             });
         },
