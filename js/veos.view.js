@@ -134,6 +134,7 @@
                     _.each(self.photos, function (photos, of) {
                     
                         if (photos.length >= 0) {
+                            jQuery('.ui-loader h1').text('Uploading Photos...');
                             console.log("Found "+photos.length+" photos of "+of+" to attach...");
                             jQuery(photos).each(function (pidx) {
                                 var photo = this;
