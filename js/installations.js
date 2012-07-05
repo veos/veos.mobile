@@ -105,7 +105,9 @@ window.installations = (function (installations) {
       jQuery('#point-details-page .point-content-2').text(report.attributes.owner_name);
       jQuery('#point-details-page .point-title-3').text('Owner description: ');
       jQuery('#point-details-page .point-content-3').text(report.attributes.owner_description);
-    } else if (report.get('sign')) {
+    } 
+
+    if (report.get('sign')) {
       if (report.attributes.sign.hasOwnProperty("photos") && report.attributes.sign.photos.length > 0 && report.attributes.sign.photos[0].url !== null) {
         photoThumbnail.attr('src', veos.model.baseURL + report.attributes.sign.photos[0].url);
       }
