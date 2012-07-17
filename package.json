@@ -1,0 +1,11 @@
+{
+  "name": "veos.mobile",
+  "version": "0.2.0",
+  "description": "Mobile website for VEOS",
+  "author": "Matt Zukowski, Colin McCann, Armin Krauss",
+  "dependencies": {
+    "http-proxy": ">= 0.7.6",
+    "node-static": ">= 0.5.9"
+  },
+  "engine": "node 0.8.2"
+}
