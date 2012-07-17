@@ -1,15 +1,16 @@
 /*jshint browser: true, devel: true */
-/*global Backbone, _, jQuery, Camera, FileTransfer, FileUploadOptions */
+/*global Backbone, _, jQuery, Camera, FileTransfer, FileUploadOptions, google */
 
 (function(veos) {
-  var self = {};
+  var model = {};
 
-  // self.baseURL = window.location.protocol + "://" + window.location.host + 
+  // model.baseURL = window.location.protocol + "://" + window.location.host + 
   //   (window.location.port ? ':' + window.location.port : '');
-  //self.baseURL = "http://backend.veos.ca";
-  self.baseURL = "http://veos.surveillancerights.ca";
-  //self.baseURL = "http://192.168.222.108:3000";
-  //self.baseURL = "http://localhost:3000";
+  //model.baseURL = "http://backend.veos.ca";
+  //model.baseURL = "http://veos.surveillancerights.ca";
+  //model.baseURL = "http://192.168.222.108:3000";
+  //model.baseURL = "http://192.168.43.221:3000";
+  model.baseURL = "http://backend.test.veos.ca";
 
   jQuery.support.cors = true; // enable cross-domain AJAX requests
 
@@ -37,7 +38,7 @@
       this.bind("error", this.defaultErrorHandler);
     },
     toJSON: function() {
-      var attrs = _.clone( this.attributes );
+      var attrs = _.clone( this.attributes ); // WARNING: shallow clone only!
       
       wrapNested(this.nested, attrs);
 
@@ -46,14 +47,14 @@
       return wrap;
     },
     url: function () {
-      var base = self.baseURL + '/' + this.plural;
+      var base = model.baseURL + '/' + this.plural;
       if (this.isNew()) 
         return base + '.json';
       else
         return base + '/' + this.id + '.json';
     },
     defaultErrorHandler: function (model, response, opts) {
-      console.error("Error on "+this.singular+" model: ", model, response);
+      console.error("Error on "+this.singular+" model: " + JSON.stringify(model) + " --- " + JSON.stringify(response));
       
       var msg;
 
@@ -89,21 +90,48 @@
 
   /*** Report ***/
 
-  self.Report = Base.extend({
+  model.Report = Base.extend({
     singular: "report",
     plural: "reports",
-    nested: [['sign', ['photos']], ['camera', ['photos']]],
+    nested: ['sign_tags', ['photos', ['tags']], ['installation', ['organization']]],
 
-    attachPhoto: function (photo, of, successCallback) {
-      if (this.has(of) && this.get(of).id) {
-        photo.set('of_object_id', this.get(of).id);
-        photo.set('of_object_type', of.charAt(0).toUpperCase() + of.slice(1));
-        photo.save(null, {success: successCallback});
-      } else {
-        err = "Cannot attach a photo to this report's "+of+" because it is not yet been saved!";
-        console.error(err);
-        throw new Error(err);
-      }
+    attachPhoto: function (photo, successCallback) {
+      var report = this;
+      photo.save({'report_id': report.id}, {success: function () {
+        if (!report.photos)
+          report.photos = [];
+
+        report.photos.push(photo);
+        photo.report = report; // in case we need to later refer to the report we're attached to from the photo
+
+        report.updatePhotosAttribute();
+
+        photo.on('change sync', report.updatePhotosAttribute, report);
+        
+        console.log("Photo "+photo.id+" attached to report "+ report.id);
+
+        if (successCallback)
+          successCallback(report, photo);
+      }});
+    },
+
+    updatePhotosAttribute: function () {
+      if (!this.photos)
+        this.photos = [];
+
+      var photos = [];
+
+      _.each(this.photos, function (photo) {
+        photos.push(photo.toJSON()['photo']);
+      });
+
+      this.set('photos', photos);
+      this.trigger('change');
+    },
+
+    // return attached photos as Photo model objects
+    getPhotos: function () {
+      return _.map(this.get('photos'), function (data) { return new model.Photo(data)});
     },
 
     getLatLng: function() {
@@ -121,32 +149,31 @@
     }
   });
 
-  self.Reports = Backbone.Collection.extend({
-      model: self.Report,
-      url: self.baseURL + '/reports.json'
+  model.Reports = Backbone.Collection.extend({
+      model: model.Report,
+      url: model.baseURL + '/reports.json'
   });
 
-  /*** Sign ***/
+  /*** Installation ***/
 
-  self.Sign = Base.extend({
-    singular: "sign",
-    plural: "signs",
-    nested: ['photos']
+  model.Installation = Base.extend({
+    singular: "installation",
+    plural: "installations"
   });
 
-  /*** Camera ***/
+  /*** Organization ***/
 
-  self.Camera = Base.extend({
-    singular: "camera",
-    plural: "cameras",
-    nested: ['photos']
+  model.Organization = Base.extend({
+    singular: "organization",
+    plural: "organizations"
   });
 
   /*** Photo ***/
 
-  self.Photo = Base.extend({
+  model.Photo = Base.extend({
     singular: "photo",
     plural: "photos",
+    nested: ['tags'],
 
     captureFromCamera: function () {
       this.capture(Camera.PictureSourceType.CAMERA);
@@ -171,7 +198,7 @@
           photo.trigger('image_capture', imageURL);
         }, 
         function (error) { 
-          console.error("Image capture failed: " + error);
+          console.error("Image capture failed: " + JSON.stringify(error));
           photo.trigger('image_capture_error', error);
         }, 
         options
@@ -184,7 +211,7 @@
       if (!photo.imageURL)
         throw new Error("Cannot upload photo because it does not have an imageURL! You need to capture an image before uploading.");
 
-      console.log("Uploading photo: "+photo.imageURL)
+      console.log("Uploading photo: "+photo.imageURL);
 
       var options = new FileUploadOptions();
       options.fileKey = "photo[image]";
@@ -199,19 +226,44 @@
 
         console.log("Assigned id to photo: "+photo.id);
 
+        photo.set(res.photo);
+
         photo.trigger('image_upload', res);
       };
 
       var failure = function (error) {
-        console.error("Image upload failed: " + error);
+        console.error("Image upload failed: " + JSON.stringify(error));
         photo.trigger('image_upload_error', error);
       };
 
       var transfer = new FileTransfer();
       transfer.upload(photo.imageURL, photo.url(), success, failure, options);
+    },
+
+    addTag: function (tag) {
+      var tags = this.get('tags');
+      if (!tags)
+          tags = [];
+
+      tags.push({tag: tag});
+
+      this.set('tags', tags);
+      this.trigger('change');
+    },
+
+    thumbUrl: function () {
+      return model.baseURL + "/" + this.get('thumb_url');
+    },
+
+    bigUrl: function () {
+      return model.baseURL + "/" + this.get('big_url');
+    },
+
+    originalUrl: function () {
+      return model.baseURL + "/" + this.get('original_url');
     }
   });
 
 
-  veos.model = self;
+  veos.model = model;
 })(window.veos);
