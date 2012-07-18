@@ -24,34 +24,9 @@ window.veos = (function(veos) {
             return;
         }
 
-        // FIXME: hacky... needs to be here for proper phongep init :(
         document.addEventListener('deviceready', function() {
-            console.log("DEVICE READY!!!!");
-            jQuery(document).delegate('.acquire-photo', 'click', function() {
-                var photo = new veos.model.Photo();
-                var of = jQuery(this).data('photo-of');
-
-                var captureSuccess = function () {
-                    console.log("Acquired photo of '"+of+'".');
-
-                    veos.reportForm.photos[of].push(photo);
-                    photo.upload();
-                    veos.reportForm.renderPhotos();
-                };
-
-                photo.on('image_capture', captureSuccess, photo);
-                
-                switch (jQuery(this).data('acquire-from')) {
-                    case 'camera':
-                        photo.captureFromCamera();
-                        break;
-                    case 'gallery':
-                        photo.captureFromGallery();
-                        break;
-                    default:
-                        console.error("'"+jQuery(this).data('acquire-from')+"' is not a valid source for acquiring a photo.");
-                }
-            });
+            console.log("PhoneGap: DEVICE READY!!!!");
+            self.initPhonegapStuff();
         });
 
 
@@ -156,6 +131,28 @@ window.veos = (function(veos) {
                 view.showLoader();
                 view.model.fetch();
             });
+    };
+
+    self.initPhonegapStuff = function () {
+        veos.captureImage = function (from, photo) {
+            var captureSuccess = function () {
+                console.log("Acquired photo.");
+                photo.upload();
+            };
+
+            photo.on('image_capture', captureSuccess, photo);
+            
+            switch (from) {
+                case 'camera':
+                    photo.captureFromCamera();
+                    break;
+                case 'gallery':
+                    photo.captureFromGallery();
+                    break;
+                default:
+                    console.error("'"+from+"' is not a valid source for acquiring a photo.");
+            }
+        };
     };
 
     return self;
