@@ -194,6 +194,8 @@
 }*/
 
 
+/***** REPORTS LIST PAGE, TO BE CHANGED TO INSTALLATIONS-LIST-PAGE, EXPANDED FOR REPORT-SELECTION-PAGE *****/
+
 #reports-list-page .ui-block-a {
     width: 100%;
 }
@@ -217,6 +219,39 @@
     margin-bottom: 1em;
 }
 
+#reports-list-page .compliance {
+    width: 5%;
+}
+
+/*.compliance-high {
+    float: left;
+    max-width: 40px;
+    max-height: 80px;
+    background-color: #87BA1A;
+}
+Arg, I dunno - may be best to do this with little boxes instead of a colored div
+*/
+
+#reports-list-page .compliance.1 {
+    background-color: #87BA1A;                  /* green */
+}
+
+#reports-list-page .compliance.2 {
+    background-color: #E6CC1C;                  /* amber */
+}
+
+#reports-list-page .compliance.3 {
+    background-color: #BE1D23;                  /* red */
+}
+
+#reports-list-page .compliance.unknown {
+    background-color: white;
+}
+
+
+
+
+
 #report-details-page .map-thumbnail {
     max-width: 75%;
     /*float: right;*/
@@ -227,9 +262,9 @@
     margin-top: 1%;
 }
 
-#report-details-page .compliance {
+/*#report-details-page .compliance {
     margin-left: 1%;
-}
+}*/
 
 /* ask Matt about cascading here */
 #report-details-page .ui-block-a {

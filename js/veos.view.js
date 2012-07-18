@@ -154,7 +154,7 @@
                         }
                     });
 
-                    if (self.photos.sign.length == 0 && self.photos.camera.length == 0) {
+                    if (self.photos.sign.length === 0 && self.photos.camera.length === 0) {
                         doneSubmit();
                     }
                 }
@@ -285,6 +285,73 @@
 
 
     /**
+        InstallationList (to replace ReportList)
+        Shows a list of Installations.
+    **/
+    self.InstallationList = Backbone.View.extend({
+        initialize: function () {
+            var self = this;
+
+            if (!this.collection)
+                this.collection = new veos.model.Installations();
+
+            // TODO: consider binding 'add' and 'remove' to pick up added/removed Installations too?
+            this.collection.on('reset', _.bind(this.render, self)); 
+        },
+
+        render: function () {
+            var list = this.$el.find('.installations-list');
+            list.empty();
+
+            this.collection.each(function (installation) {
+                var buttonText = '';
+                var ownerName;
+                if (installation.get('owner_name')) {
+                    buttonText = "<span class='owner_name'>" + installation.get('owner_name') + "</span<br/>" + installation.getLocDescription();  // this may no longer be required here, if installations only have the one type of locdescription
+                } else {
+                    buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/>" + installation.getLocDescription();
+                }
+                
+                var complianceLevel;
+                if (installation.get('compliance_level_override')) {
+                    complianceLevel = "<span class='compliance "+installation.get('compliance_level_override')+"'></span>";
+                } else if (installation.get('compliance_level')) {
+                    complianceLevel = "<span class='compliance "+installation.get('compliance_level')+"'></span>";
+                } else {
+                    complianceLevel = "<span class='compliance unknown'></span>";
+                }
+                
+/*                var thumb;
+                var obj = report.get('sign') || report.get('camera');                       // FIXME when we know how photos are going to look
+                if (obj && obj.photos && obj.photos[0] && obj.photos[0].thumb_url) {
+                    thumb = "<img src='"+veos.model.baseURL + obj.photos[0].thumb_url+"' />";
+                } else {
+                    thumb = "";
+                }*/
+
+                var item = jQuery("<li><a href='report-details.html?id="+installation.id+"'>"+complianceLevel+thumb+" "+buttonText+"</a></li>");
+                list.append(item);
+                list.listview('refresh');
+            });
+        }
+    });
+
+    /**
+        Extending InstallaionList for add-or-edit.html
+    **/
+    self.InstallationSelectionList = self.InstallationList.extend({
+        'click a.arrowbutton': function () {
+            // go to editable version of installation-list.html
+        }
+    });
+
+    self.InstallationViewList = self.InstallationList.extend({
+        'click a.arrowbutton': function () {
+            // go to installation-list.html
+        }
+    });
+
+    /**
         ReportList
         Shows a list of Reports.
     **/
@@ -335,23 +402,10 @@
                     thumb = "";
                 }
 
+
                 var item = jQuery("<li><a href='report-details.html?id="+report.id+"'>"+thumb+" "+buttonText+"</a></li>");
                 list.append(item);
                 list.listview('refresh');
-
-
-                /*var divA = jQuery('<div class="ui-block-a">');
-                var reportOuterButton = jQuery('<a href="report-details.html?id='+report.id+'" data-role="button" data-transition="fade" href="#point-details-page" data-icon="arrow-r" data-iconpos="left" data-theme="c" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-c" />');
-                reportOuterButton.button();
-                // attaching the report object to the HTML in data-report
-                reportOuterButton.data('report', report);
-                var reportInnerButton = jQuery('<span class="ui-btn-inner ui-btn-corner-all">' + buttonText + '</span>');
-                var reportButtonIcon = jQuery('<span class="ui-icon ui-icon-arrow-r ui-icon-shadow" />');
-                reportOuterButton.append(reportInnerButton);
-                reportOuterButton.append(reportButtonIcon);
-                divA.append(reportOuterButton);
-                //reportInnerButton.text(report.get('location_name') + &#10; + report.get('latitude'));
-                list.append(divA);*/
             });
         }
     });

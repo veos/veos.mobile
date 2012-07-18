@@ -16,14 +16,17 @@
     console.log("initializing map in " + mapDiv);
 
     var center;
+    var zoom;
     if (!initLoc) {
-      center = new google.maps.LatLng(43.6621614579938, -79.39527873417967); // FIXME: default hard-coded to toronto; maybe make it based on last report?
+      center = new google.maps.LatLng(43.6621614579938, -79.39527873417967);
+      zoom = 3;
     } else {
       center = veos.map.convertGeolocToGmapLatLng(initLoc);
+      zoom = 13;
     }
 
     var mapOptions = {
-      zoom: 13,
+      zoom: zoom,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       center: center,
       streetViewControl: false,
@@ -82,15 +85,17 @@
         });
 
         map.currentLocRadius = new google.maps.Circle({
-            center: glatlng,
-            radius: accuracy,
-            map: map.gmap,
-            fillColor: '#6991FD',
-            fillOpacity: 0.4,
-            strokeColor: 'black',
-            strokeOpacity: 0.0, // 0.8,
-            strokeWeight: 1
+          center: glatlng,
+          radius: accuracy,
+          map: map.gmap,
+          fillColor: '#6991FD',
+          fillOpacity: 0.4,
+          strokeColor: 'black',
+          strokeOpacity: 0.0, // 0.8,
+          strokeWeight: 1
         });
+
+        map.gmap.setZoom(13);             // sets zoom back to default level (relevant if user does not gps and !initLoc in line 21)
 
         map.currentLocMarker.setMap(map.gmap);
 
