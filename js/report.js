@@ -17,20 +17,7 @@ window.report = (function(report) {
     var mapThumbnail = jQuery('#static-report-map');
     mapThumbnail.attr('src', myTemp);
     jQuery(".map-thumbnail-container .waiting").hide();
-    
-    // var thumbnailContainer = jQuery('#report-page .map-thumbnail-container');
-    // thumbnailContainer.empty();
-    // thumbnailContainer.append(mapThumbnail);
-
-    // add listener which leads to overlay map (for refining location)
-    // mapThumbnail.click(function() {
-    //   jQuery.mobile.changePage("#refine-location-page", { transition: "slideup"});    // is this the right way to do this?
-    //   //document.location="report.html#refine-location-page";
-    // });
   }
-
-  
-
   
 
   self.submitReport = function() {
@@ -56,11 +43,11 @@ window.report = (function(report) {
       return true;
     }
     // owner_description
-    if (jQuery('#owner-description').val() === "null") {
+    if (jQuery('#owner-type').val() === "null") {
       veos.alert('Please select a "Owner Description"');
       return true;
     } else {
-      r.set('owner_description', jQuery('#owner-description').val());
+      r.set('owner_description', jQuery('#owner-type').val());
     }
 
     r.set('loc_description_from_google', jQuery('#location-address').val());

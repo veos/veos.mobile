@@ -48,18 +48,17 @@
 
                     <fieldset data-role="controlgroup">
                         <legend>Owner Name</legend>
-                        <input class="field" name="owner_name" id="owner" placeholder="Owner name if identifiable" value="" type="text" />
-                        <!-- TODO: add checkbox for "can't identify owner" -->
+                        <input class="field" name="owner_name" id="owner" placeholder="Owner name if identifiable..." value="" type="text" />
                         <input type="checkbox" name="unidentified-owner-checkbox" id="unidentified-owner-checkbox" class="custom" />
                         <label for="unidentified-owner-checkbox" data-theme="e">Cannot identify owner</label>
                     </fieldset>
                 </div>
                 <div data-role="fieldcontain">
                     <fieldset data-role="controlgroup">
-                        <label for="owner-description">
+                        <label for="owner-type">
                             Owner Type
                         </label>
-                        <select id="owner-description" class="field" name="owner_description">
+                        <select id="owner-type" class="field" name="owner_type">
                             <option value="null">...</option>
                             <option value="Banking">Banking</option>
                             <option value="Education">Education</option>
@@ -76,75 +75,142 @@
                     </fieldset>
                 </div>
                 
+                <div data-role="collapsible" data-collapsed="false" id="location-container">
+                    <h3>
+                        Location
+                    </h3>
+
+                    <p style="text-align: center">
+                        Click map to refine location or enter a more accurate
+                        address or place name.
+                    </p>
+                    <div class="map-thumbnail-container">
+                        <a href="refine-location.html"><img id="static-report-map" class="map-thumbnail" alt="Locating..." src="images/loading-64.gif" /></a>
+                        <div class="waiting">Locating...</div>
+                    </div>
+                    <div data-role="fieldcontain">
+                        <fieldset data-role="controlgroup">
+                            <label for="location-address">Address or Place</label>
+                            <input class="field" name="loc_description_from_user" id="location-address"  value="" type="text" />
+                            <input class="field" name="loc_description_from_google" value="" type="hidden" />
+                        </fieldset>
+                    </div>
+                </div>
+
 
                 <div data-role="collapsible-set" data-theme="" data-content-theme="" class="report">
 
-                    <div data-role="collapsible" data-collapsed="false" id="photos-container">
+                    <div data-role="collapsible" data-collapsed="true" id="photos-container">
                         <h3>
-                            Surveillance
+                            Take a photo
                         </h3>
                         <fieldset id="camera-box" class="photo-box">
                             <legend>Camera</legend>
-                            
-                            <input type="checkbox" id="no-camera" data-theme="e" />
-                            <label for="no-camera">No camera visible</label>
 
                             <div id="camera-buttons">
                                 <a id="add-camera-photo-button" data-role="button" data-transition="fade" href="#report-page" data-icon="plus" data-iconpos="left" class="acquire-photo" data-acquire-from="camera" data-photo-of="camera">
-                                    Take Photo of <u>Camera</u>
+                                    Take Photo
                                 </a>
                                 <a id="select-camera-photo-button" data-role="button" data-transition="fade" data-icon="plus" data-iconpos="left" class="acquire-photo" data-acquire-from="gallery" data-photo-of="camera">
                                     Select Photo from Gallery
                                 </a>
                                 <div id="camera-image-list" class="photo-list">
-                                    <!-- Images are added dynamically via camera or gallery selection -->
+                                    Images are added dynamically via camera or gallery selection
                                 </div>
                             </div>
                         </fieldset>
-                        <fieldset id="sign-box" class="photo-box">
-                            <legend>Sign</legend>
 
-                            <input type="checkbox" id="no-sign" data-theme="e" />
-                            <label for="no-sign">No sign visible</label>
-
-                            <div id="sign-buttons">
-                                <a id="add-sign-photo-button" data-role="button" data-transition="fade" href="#report-page" data-icon="plus" data-iconpos="left" class="acquire-photo" data-acquire-from="camera" data-photo-of="sign">
-                                    Take Photo of <u>Sign</u>
-                                </a>
-                                <a id="select-sign-photo-button" data-role="button" data-transition="fade" data-icon="plus" data-iconpos="left" class="acquire-photo" data-acquire-from="gallery" data-photo-of="sign">
-                                    Select Photo from Gallery
-                                </a>
-                                <div id="sign-image-list" class="photo-list">
-                                    <!-- Images are added dynamically via sign or gallery selection -->
-                                </div>
-                            </div>
-                        </fieldset>
-                    </div>
-
-                    <div data-role="collapsible" data-collapsed="false" id="location-container">
-                        <h3>
-                            Location
-                        </h3>
-
-                        <p style="text-align: center">
-                            Click map to refine location or enter a more accurate
-                            address or place name.
-                        </p>
-                        <div class="map-thumbnail-container">
-                            <a href="refine-location.html"><img id="static-report-map" class="map-thumbnail" alt="Locating..." src="images/loading-64.gif" /></a>
-                            <div class="waiting">Locating...</div>
+                        <div data-role="fieldcontain">
+                            <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                                <legend>What is the installation looking at?</legend>
+                                <input name="camera-view-checkbox-1" id="camera-view-checkbox-1" type="checkbox">
+                                <label for="camera-view-checkbox-1">Public space</label>
+                                <input name="camera-view-checkbox-2" id="camera-view-checkbox-2" type="checkbox">
+                                <label for="camera-view-checkbox-2">Semi-public space</label>
+                                <input name="camera-view-checkbox-3" id="camera-view-checkbox-3" type="checkbox">
+                                <label for="camera-view-checkbox-3">Private space</label>
+                                <input name="camera-view-checkbox-4" id="camera-view-checkbox-4" type="checkbox">
+                                <label for="camera-view-checkbox-4">Other type of space</label>
+                            </fieldset>
                         </div>
                         <div data-role="fieldcontain">
+                            <fieldset data-role="controlgroup" data-mini="true">
+                                <label for="number-of-cameras">How many cameras do you see?</label>
+                                <input id="number-of-cameras" placeholder="#" value="" type="number">
+                            </fieldset>
+                        </div>                        
+                    </div>
+                </div>
+
+
+                <!-- TODO - Radio buttons are balls - let's change this to buttons -->
+                <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <legend><b>I see a sign</b></legend>
+                        <input name="sign-present" class="sign-present" id="sign-yes" value="yes" type="radio">
+                        <label for="sign-yes">Yes</label>
+                        <input name="sign-present" class="sign-present" id="sign-no" value="no" type="radio">
+                        <label for="sign-no">No</label>
+                    </fieldset>
+                </div>
+
+
+                <div data-role="collapsible-set" data-theme="" data-content-theme="">
+                    <div data-role="collapsible" data-collapsed="true" id="sign-details-container">
+                        <h3>
+                            Sign details
+                        </h3>                
+                        <div data-role="fieldcontain">
                             <fieldset data-role="controlgroup">
-                                <label for="location-address">Address or Place</label>
-                                <input class="field" name="loc_description_from_user" id="location-address"  value="" type="text" />
-                                <input class="field" name="loc_description_from_google" value="" type="hidden" />
+                                <label for="sign-text">Text of sign</label>
+                                <input id="sign-text" placeholder="Text of sign if it exists..." value="" type="text">
+                            </fieldset>
+                        </div>
+
+                        <div class="ui-grid-b">
+                            <div class="ui-block-a">
+                                <div data-role="fieldcontain">
+                                    <label for="sign-visibility">Visibility of sign</label>
+                                    <select name="sign-visibility" id="sign-visibility" data-mini="true">
+                                        <option value="null">...</option>
+                                        <option value="clear">Clear</option>
+                                        <option value="Hard to see">Hard to see</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="ui-block-b">
+                                <div data-role="fieldcontain">
+                                    <label for="sign-purpose">Stated purpose</label>
+                                    <select name="sign-purpose" id="sign-purpose" data-mini="true">
+                                        <option value="null">...</option>
+                                        <option value="Some value">Some value</option>
+                                        <option value="Other value">Other value</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="ui-block-c">
+                                <div data-role="fieldcontain">
+                                    <label for="sign-properties">Stated properties</label>
+                                    <select name="sign-properties" id="sign-properties" data-mini="true">
+                                        <option value="null">...</option>
+                                        <option value="Some prop">Some prop</option>
+                                        <option value="other prop">Other prop</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div data-role="fieldcontain">
+                            <fieldset data-role="controlgroup">
+                                <label for="report-note">Note:</label>
+                                <textarea id="report-note" placeholder="Any other observations..."></textarea>
                             </fieldset>
                         </div>
                     </div>
-
                 </div>
+
             </div>
+            
             <div data-theme="a" data-role="footer" class="footer-with-buttons">
                 <a id="cancel-report" data-role="button" data-transition="fade" data-theme="f" data-icon="delete" data-iconpos="left" href="overview-map.html">
                     Cancel

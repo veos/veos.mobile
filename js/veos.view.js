@@ -17,59 +17,50 @@
     self.ReportForm = Backbone.View.extend({
         events: {
             'change .field': function (ev) {
-                    var f = jQuery(ev.target);
+                var f = jQuery(ev.target);
 
-                    if (f.attr('name') === 'loc_description_from_user') {
-                        this.updateLocFromAddress(f.val());
-                    }
+                if (f.attr('name') === 'loc_description_from_user') {
+                    this.updateLocFromAddress(f.val());
+                }
 
-                    console.log("Setting "+f.attr("name")+" to "+f.val());
-                    this.model.set(f.attr('name'), f.val());
-                },
+                console.log("Setting "+f.attr("name")+" to "+f.val());
+                this.model.set(f.attr('name'), f.val());
+            },
             'change [name="owner_name"].field': function (ev) {
-                    var f = jQuery(ev.target);
+                var f = jQuery(ev.target);
 
-                    var unidentified_owner_input = this.$el.find("#unidentified-owner-checkbox").parent();
-                    if (f.val() === "") {
-                        unidentified_owner_input.css('opacity', 1.0);
-                    } else {
-                        unidentified_owner_input.css('opacity', 0.4);
-                    }
-                },
+                var unidentified_owner_input = this.$el.find("#unidentified-owner-checkbox").parent();
+                if (f.val() === "") {
+                    unidentified_owner_input.css('opacity', 1.0);
+                } else {
+                    unidentified_owner_input.css('opacity', 0.4);
+                }
+            },
             'change #unidentified-owner-checkbox': function (ev) {
-                    var f = jQuery(ev.target);
-                    f.parent().css('opacity', 1.0);
-                    if (f.is(':checked')) {
-                        console.log("Setting owner_name and owner_description to null");
-                        this.model.set('owner_name', null);
-                        this.model.set('owner_description', null);
-                        this.$el.find('#owner').attr('disabled', true);
-                    } else {
-                        this.$el.find('#owner').removeAttr('disabled');
-                    }
-                },
-            'change #no-camera': function (ev) {
-                    var checked = jQuery('#no-camera').is(":checked");
-                    if (checked) {
-                        jQuery("#camera-buttons").hide();
-                        // TODO: also hide camera detail fields here
-                        this.cameraNotVisible = true;
-                    } else {
-                        jQuery("#camera-buttons").show();
-                        delete this.cameraNotVisible;
-                    }
-                },
-            'change #no-sign': function (ev) {
-                    var checked = jQuery('#no-sign').is(":checked");
-                    if (checked) {
-                        jQuery("#sign-buttons").hide();
-                        // TODO: also hide sign detail fields here
-                        this.signNotVisible = true;
-                    } else {
-                        jQuery("#sign-buttons").show();
-                        delete this.signNotVisible;
-                    }
-                },
+                var f = jQuery(ev.target);
+                f.parent().css('opacity', 1.0);
+                if (f.is(':checked')) {
+                    console.log("Setting owner_name and owner_type to null");
+                    this.model.set('owner_name', null);
+                    this.model.set('owner_type', null);
+                    this.$el.find('#owner').attr('disabled', true);
+                } else {
+                    this.$el.find('#owner').removeAttr('disabled');
+                }
+            },
+
+            'change #sign-yes': function (ev) {
+                console.log('sign-yes button clicked');
+                jQuery('#sign-details-container').trigger('expand');
+                this.model.set('has_sign', true);               
+            },  
+
+            'change #sign-no': function (ev) {
+                console.log('sign-no button clicked');
+                jQuery('#sign-details-container').trigger('collapse');
+                this.model.set('has_sign', false);
+            },      
+
 
             'click #submit-report': 'submit',
             'click #cancel-report': 'cancel'
@@ -82,13 +73,13 @@
 
             this.model.on('change', _.bind(this.updateChangedFields, this));
 
-            this.photos = {
+/*            this.photos = {
                 camera: [], // photos of the camera go here
                 sign: [] // photos of the sign go here
-            };
+            };*/
 
-            this.model.set('camera', {});
-            this.model.set('sign', {});
+/*            this.model.set('camera', {});
+            this.model.set('sign', {});*/
 
             this.$el.data('initialized', true); // check this later to prevent double-init
 
@@ -103,12 +94,12 @@
         submit: function () {
             var self = this;
 
-            if (this.signNotVisible) {
+/*            if (this.signNotVisible) {
                 self.model.unset('sign', {silent: false});
             }
             if (this.cameraNotVisible) {
                 self.model.unset('camera', {silent: false});
-            }
+            }*/
 
             jQuery.mobile.showPageLoadingMsg();
             jQuery('.ui-loader h1').text('Submitting...');
@@ -129,7 +120,7 @@
                         jQuery.mobile.changePage("overview-map.html");
                     };
 
-                    //var photos = self.$el.find('img.photo');
+/*                    var photos = self.$el.find('img.photo');
 
                     _.each(self.photos, function (photos, of) {
                     
@@ -152,11 +143,11 @@
                                 );
                             });
                         }
-                    });
+                    });*/
 
-                    if (self.photos.sign.length === 0 && self.photos.camera.length === 0) {
+                    //if (self.photos.sign.length === 0 && self.photos.camera.length === 0) {
                         doneSubmit();
-                    }
+                    //}
                 }
             });
         },
@@ -486,7 +477,7 @@
                 this.$el.find('.point-title-2').text('Owner name: ');
                 this.$el.find('.point-content-2').html(ownerName);
                 this.$el.find('.point-title-3').text('Owner description: ');
-                this.$el.find('.point-content-3').text(report.attributes.owner_description);
+                this.$el.find('.point-content-3').text(report.attributes.owner_type);
             } else if (report.get('sign')) {
                 if (report.get('sign').hasOwnProperty("photos") && report.get('sign').photos.length > 0 && report.get('sign').photos[0].big_url !== null) {
                     photoThumbnail.attr('src', veos.model.baseURL + report.get('sign').photos[0].big_url);
@@ -497,7 +488,7 @@
                 this.$el.find('.point-title-2').text('Owner name: ');
                 this.$el.find('.point-content-2').html(ownerName);
                 this.$el.find('.point-title-3').text('Owner description: ');
-                this.$el.find('.point-content-3').text(report.attributes.owner_description);
+                this.$el.find('.point-content-3').text(report.attributes.owner_type);
                 this.$el.find('.point-title-4').text('Visibility of sign: ');
                 this.$el.find('.point-content-4').text(report.get('sign').visibility);
                 this.$el.find('.point-title-5').text('Text of Sign: ');
