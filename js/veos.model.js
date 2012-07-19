@@ -129,6 +129,17 @@
       this.trigger('change');
     },
 
+    addSignTag: function (tag, tagType) {
+      var tags = this.get('sign_tags');
+      if (!tags)
+          tags = [];
+
+      tags.push({tag: tag, tag_type: tagType});
+
+      this.set('sign_tags', tags);
+      this.trigger('change');
+    },
+
     // return attached photos as Photo model objects
     getPhotos: function () {
       return _.map(this.get('photos'), function (data) { return new model.Photo(data)});

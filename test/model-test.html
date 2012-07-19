@@ -54,20 +54,8 @@
                     },
 
                     'click .add-sign-tags': function (ev) {
-                        if (!this.model.get('sign_tags'))
-                            this.model.set('sign_tags', []);
-
-                        this.model.get('sign_tags').push({
-                            tag: 'face recognition',
-                            tag_type: 'stated_property' 
-                        });
-                        this.model.get('sign_tags').push({
-                            tag: 'crime prevention',
-                            tag_type: 'purpose' 
-                        });
-
-                        // need to trigger this manually since pushing onto sign_tags won't do it
-                        this.model.trigger('change');
+                        this.model.addSignTag("face recognition", "stated_property");
+                        this.model.addSignTag("crime preventions", "stated_purpose");
                     },
 
                     'click .acquire-photo': function (ev) {
