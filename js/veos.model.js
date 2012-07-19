@@ -22,7 +22,9 @@
   function wrapNested(nested, attrs) {
     _.each(nested, function (k) {
       if (k instanceof Array) {
-        if (attrs[k[0]]) wrapNested(k[1], attrs[k[0]]);
+        if (attrs[k[0]]) {
+          wrapNested(k[1], attrs[k[0]]);
+        }
         k = k[0];
       }
 
@@ -48,10 +50,12 @@
     },
     url: function () {
       var base = model.baseURL + '/' + this.plural;
-      if (this.isNew()) 
+      if (this.isNew()) {
         return base + '.json';
-      else
+      }
+      else {
         return base + '/' + this.id + '.json';
+      }
     },
     defaultErrorHandler: function (model, response, opts) {
       console.error("Error on "+this.singular+" model: " + JSON.stringify(model) + " --- " + JSON.stringify(response));
@@ -69,8 +73,9 @@
         _.each(errors, function(v, k) {
           var errField = jQuery("*[name='"+k+"'].field");
 
-          if (errField.is(':checkbox, :radio'))
+          if (errField.is(':checkbox, :radio')) {
             errField = errField.parent();
+          }
 
           errField.addClass("error");
           errField.one('change focus', function() {
@@ -78,10 +83,11 @@
           });
         });
 
-      } else if (response.status >= 500 && response.status < 600)
+      } else if (response.status >= 500 && response.status < 600) {
         msg = "Our apologies, the server responded with an error. There may be a problem with the system.";
-      else
+      } else {
         msg = "Sorry, there was some sort of error while performing this action. The server may be temporarily unavailable.";
+      }
 
       veos.alert(msg, "Error");
     }
@@ -98,8 +104,9 @@
     attachPhoto: function (photo, successCallback) {
       var report = this;
       photo.save({'report_id': report.id}, {success: function () {
-        if (!report.photos)
+        if (!report.photos) {
           report.photos = [];
+        }
 
         report.photos.push(photo);
         photo.report = report; // in case we need to later refer to the report we're attached to from the photo
@@ -110,14 +117,16 @@
         
         console.log("Photo "+photo.id+" attached to report "+ report.id);
 
-        if (successCallback)
+        if (successCallback) {
           successCallback(report, photo);
+        }
       }});
     },
 
     updatePhotosAttribute: function () {
-      if (!this.photos)
+      if (!this.photos) {
         this.photos = [];
+      }
 
       var photos = [];
 
@@ -131,7 +140,7 @@
 
     // return attached photos as Photo model objects
     getPhotos: function () {
-      return _.map(this.get('photos'), function (data) { return new model.Photo(data)});
+      return _.map(this.get('photos'), function (data) { return new model.Photo(data);});
     },
 
     getLatLng: function() {
@@ -176,10 +185,12 @@
     nested: ['tags'],
 
     captureFromCamera: function () {
+      console.log("Trying to capture photo via camera");
       this.capture(Camera.PictureSourceType.CAMERA);
     },
 
     captureFromGallery: function () {
+      console.log("Trying to select photo from gallery");
       this.capture(Camera.PictureSourceType.PHOTOLIBRARY);
     },
 
@@ -208,8 +219,9 @@
     upload: function () {
       var photo = this;
 
-      if (!photo.imageURL)
+      if (!photo.imageURL) {
         throw new Error("Cannot upload photo because it does not have an imageURL! You need to capture an image before uploading.");
+      }
 
       console.log("Uploading photo: "+photo.imageURL);
 
@@ -242,8 +254,9 @@
 
     addTag: function (tag) {
       var tags = this.get('tags');
-      if (!tags)
-          tags = [];
+      if (!tags) {
+        tags = [];
+      }
 
       tags.push({tag: tag});
 
