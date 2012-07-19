@@ -363,7 +363,6 @@
                 } else {
                     thumb = "";
                 }*/
-// TODO the line below only works with code above
                 //var item = jQuery("<li><a href='report-details.html?id="+installation.id+"'>"+complianceLevel+thumb+" "+buttonText+"</a></li>");
                 //list.append(item);
                 list.listview('refresh');
@@ -426,6 +425,15 @@
                 } else {
                     ownerName = "<span class='owner_name unknown'>Unknown Owner</span><br/>" + report.getLocDescription();
                 }
+
+/*                var complianceLevel;
+                if (report.get('compliance_level_override')) {
+                    complianceLevel = "<span class='compliance "+report.get('compliance_level_override')+"'></span>";
+                } else if (report.get('compliance_level')) {
+                    complianceLevel = "<span class='compliance "+report.get('compliance_level')+"'></span>";
+                } else {
+                    complianceLevel = "<span class='compliance unknown'></span>";
+                }       */         
                 
                 // TODO - update this to new model once Armin is done with photos
                 var thumb;
@@ -443,14 +451,46 @@
         }
     });
 
+
+/*var ChildView = ParentView.extend({
+   events: function(){
+      return _.extend({},ParentView.prototype.events,{
+          'click' : 'onclickChild'
+      });
+   }
+});*/
+
+/*    var ReportViewList = self.ReportList.extend({
+*//*        initialize: function(){
+           this.events = _.extend({},self.ReportList.prototype.events,this.events)
+        },*/
+/*        events: function(){
+            return _.extend({},self.ReportList.prototype.events,{
+            'click': alert('view!')
+            });        
+        }
+     
+    });*/
+
+
     /** TEMPORARY - not working **/
-    self.ReportViewList = self.ReportList.extend({
+/*    self.ReportViewList = self.ReportList.extend({
         events: {
+            return _.extend({
+                    'click .ui-btn': function (ev) {
+                    alert('view!');
+                }
+            }, this.constructor.__super__.events);
+
             'click .ui-btn': function (ev) {
                 alert('view!');
             }
+        },
+
+        initialize: function() {
+            alert('alerts suck');
         }
-    });    
+    });  */  
     self.ReportSelectionList = self.ReportList.extend({
         'click a.arrowbutton': function () {
             alert('selection!');
@@ -524,7 +564,7 @@
             var photoContainer = jQuery('#point-details-page .photo-thumbnail-container');
             photoContainer.append(photoThumbnail); */ 
 
-            if (report.get('camera')) {
+/*            if (report.get('camera')) {
                 if (report.get('camera').hasOwnProperty("photos") && report.get('camera').photos.length > 0 && report.get('camera').photos[0].big_url !== null) {
                     photoThumbnail.attr('src', veos.model.baseURL + report.get('camera').photos[0].big_url);
                 }
@@ -550,15 +590,15 @@
                 this.$el.find('.point-content-4').text(report.get('sign').visibility);
                 this.$el.find('.point-title-5').text('Text of Sign: ');
                 this.$el.find('.point-content-5').text(report.get('sign').text);
-                /*jQuery('#point-details-page .point-title-1').text('Visibility: ');
+                jQuery('#point-details-page .point-title-1').text('Visibility: ');
                 jQuery('#point-details-page .point-content-1').text('Obscure/High');
                 jQuery('#point-details-page .point-title-2').text('Stated Purpose: ');
-                jQuery('#point-details-page .point-content-2').text('Public Safety');*/
+                jQuery('#point-details-page .point-content-2').text('Public Safety');
                 this.$el.find('.point-content-4').append(jQuery('<br />'));
             } else {
                 console.log ('neither a camera or a sign');
             }
-            photoContainer.append(photoThumbnail);
+            photoContainer.append(photoThumbnail);*/
         }
     });
 

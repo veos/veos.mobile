@@ -124,12 +124,16 @@
                         <div data-role="fieldcontain">
                             <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
                                 <div data-role="fieldcontain">
-                                    <label for="space_viewed">What is the installation looking at?</label>
-                                    <select class="field" name="space_viewed" id="space-viewed" data-mini="true" multiple="multiple" data-native-menu="false">
+                                    <label for="surveilled_space">What is the installation looking at?</label>
+                                    <select class="field" name="surveilled_space" id="space-viewed" data-mini="true" multiple="multiple" data-native-menu="false">
                                         <option>Choose options</option>
+                                        <option value="Mall common area">Mall common area</option>
+                                        <option value="Park">Park</option>
                                         <option value="Public space">Public space</option>
-                                        <option value="Semi-public space">Semi-public space</option>
-                                        <option value="Private space">Private space</option>
+                                        <option value="Public plaza">Public plaza</option>
+                                        <option value="Publicly accessible private space">Publicly accessible private space</option>
+                                        <option value="Semi-public">Semi-public</option>
+                                        <option value="Private space">Sidewalk</option>
                                         <option value="Other type of space">Other type of space</option>
                                     </select>
                                 </div>                                
@@ -175,8 +179,8 @@
                                     <label for="sign_visibility">Visibility of sign</label>
                                     <select class="field" name="sign_visibility" id="sign-visibility" data-mini="true" data-native-menu="false">
                                         <option>Choose an option</option>
-                                        <option value="clear">Clear</option>
-                                        <option value="Hard to see">Hard to see</option>
+                                        <option value="Visible">Visible</option>
+                                        <option value="Obscure">Obscure</option>
                                     </select>
                                 </div>
                             </div>
@@ -185,8 +189,9 @@
                                     <label for="sign_purpose">Stated purpose</label>
                                     <select class="field" name="sign_purpose" id="sign-purpose" data-mini="true" multiple="multiple" data-native-menu="false">
                                         <option>Choose options</option>
-                                        <option value="Some value">Some value</option>
-                                        <option value="Other value">Other value</option>
+                                        <option value="None/unknown">None/unknown</option>
+                                        <option value="Crime prevention/prosecution">Crime prevention/prosecution</option>
+                                        <option value="Public safety">Public safety</option>
                                     </select>
                                 </div>
                             </div>
@@ -195,8 +200,14 @@
                                     <label for="sign_properties">Stated properties</label>
                                     <select class="field" name="sign_properties" id="sign-properties" data-mini="true" multiple="multiple" data-native-menu="false">
                                         <option>Choose options</option>
-                                        <option value="Some prop">Some prop</option>
-                                        <option value="other prop">Other prop</option>
+                                        <option value="None/unknown">None/unknown</option>
+                                        <option value="# days image will be retained"># days image will be retained</option>
+                                        <option value="Available to police">Available to police</option>
+                                        <option value="Face blurring">Face blurring</option>
+                                        <option value="Face recognition">Face recognition</option>
+                                        <option value="Image encryption">Image encryption</option>
+                                        <option value="Live monitoring">Live monitoring</option>
+                                        <option value="Recording">Recording</option>
                                     </select>
                                 </div>
                             </div>

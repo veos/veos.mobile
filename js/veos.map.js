@@ -141,17 +141,19 @@
 
     reports.each(function(r) {
       var latLng = r.getLatLng();
+
       var marker = new google.maps.Marker({
         position: latLng,
         title: r.get('owner_name') || "Unknown Owner"
       });
 
       var mapPopupContent;
-      if (r.get('camera')) {
+      mapPopupContent = '<p><b> ' + (r.get('owner_name') || "Unknown Owner") + ' </b> - Camera</p>';      // TEMPORARY TODO
+      /*if (r.get('camera')) {
         mapPopupContent = '<p><b> ' + (r.get('owner_name') || "Unknown Owner") + ' </b> - Camera</p>';
       } else if (r.get('sign')) {
         mapPopupContent = '<p><b> ' + (r.get('owner_name') || "Unknown Owner") + ' </b> - Sign</p>';
-      }
+      }*/
 
 
 
