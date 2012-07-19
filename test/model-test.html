@@ -62,7 +62,7 @@
                         var from = jQuery(ev.target).data('acquire-from')
                         veos.currentPhoto = new veos.model.Photo();
                         new PhotoTestView({model: veos.currentPhoto, el: this.$el.find('#photo-json')});
-                        veos.captureImage(jQuery(ev.target).data('acquire-from'), veos.currentPhoto);
+                        veos.captureImage(from, veos.currentPhoto);
                     },
 
                     'click .add-photo-tags': function (ev) {
