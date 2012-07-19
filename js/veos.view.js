@@ -59,7 +59,28 @@
                 console.log('sign-no button clicked');
                 jQuery('#sign-details-container').trigger('collapse');
                 this.model.set('has_sign', false);
-            },      
+            },
+
+            // 'click .acquire-photo': function (ev) {
+            //     var from = jQuery(ev.target).data('acquire-from');
+            //     veos.currentPhoto = new veos.model.Photo();
+            //     new PhotoView({model: veos.currentPhoto, el: this.$el.find('#camera-image-list')});
+            //     veos.captureImage(from, veos.currentPhoto);
+            // }, 
+
+            'click #add-camera-photo-button': function (ev) {
+                //var from = jQuery(ev.target).data('acquire-from');
+                veos.currentPhoto = new veos.model.Photo();
+                new PhotoView({model: veos.currentPhoto, el: this.$el.find('#camera-image-list')});
+                veos.captureImage('camera', veos.currentPhoto);
+            }, 
+
+            'click #select-camera-photo-button': function (ev) {
+                //var from = jQuery(ev.target).data('acquire-from');
+                veos.currentPhoto = new veos.model.Photo();
+                new PhotoView({model: veos.currentPhoto, el: this.$el.find('#camera-image-list')});
+                veos.captureImage('gallery', veos.currentPhoto);
+            },
 
 
             'click #submit-report': 'submit',
@@ -203,8 +224,9 @@
             veos.map.lookupAddressForLoc(geoloc, function (address) {
                 self.model.set('loc_description_from_google', address.formatted_address);
                 // only set user address from location if user hasn't manually entered it
-                if (!self.model.get('loc_description_from_user'))
+                if (!self.model.get('loc_description_from_user')) {
                     self.model.set('loc_description_from_user', address.formatted_address);
+                }
             });
         },
 
@@ -274,6 +296,27 @@
         }
     });
 
+    var PhotoView = Backbone.View.extend({
+        initialize: function () {
+            this.model.on('image_upload change sync', this.render, this);
+
+            this.model.on('image_upload', function () {
+                veos.currentReport.attachPhoto(veos.currentPhoto, function () {
+                    console.log("Photo attached!");
+                    //reportView.render();
+                    self.ReportForm.render();
+                });
+            }, this);
+        },
+
+        render: function () {
+            console.log("Rendering PhotoView...");
+            //this.$el.text(JSON.stringify(this.model.toJSON(), null, 2));
+            console.log("Photo url: "+this.model.thumbUrl());
+            this.$el.append("<br /><img src='"+this.model.thumbUrl()+"' />");
+        }
+    });
+
 
     /**
         InstallationList (to replace ReportList)            Colin will deal with this
@@ -283,8 +326,9 @@
         initialize: function () {
             var self = this;
 
-            if (!this.collection)
+            if (!this.collection) {
                 this.collection = new veos.model.Installations();
+            }
 
             // TODO: consider binding 'add' and 'remove' to pick up added/removed Installations too?
             this.collection.on('reset', _.bind(this.render, self)); 
@@ -319,9 +363,9 @@
                 } else {
                     thumb = "";
                 }*/
-
-                var item = jQuery("<li><a href='report-details.html?id="+installation.id+"'>"+complianceLevel+thumb+" "+buttonText+"</a></li>");
-                list.append(item);
+// TODO the line below only works with code above
+                //var item = jQuery("<li><a href='report-details.html?id="+installation.id+"'>"+complianceLevel+thumb+" "+buttonText+"</a></li>");
+                //list.append(item);
                 list.listview('refresh');
             });
         }
@@ -357,8 +401,9 @@
         initialize: function () {
             var self = this;
 
-            if (!this.collection)
+            if (!this.collection) {
                 this.collection = new veos.model.Reports();
+            }
 
             // TODO: consider binding 'add' and 'remove' to pick up added/removed Reports too?
             this.collection.on('reset', _.bind(this.render, self)); 
@@ -455,8 +500,9 @@
         render: function () {
             var report = this.model;
 
-            if (this.loader)
+            if (this.loader) {
                 this.hideLoader();
+            }
 
             this.createPointDetailsMap(report);
             
