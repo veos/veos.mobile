@@ -196,16 +196,10 @@
 
 /***** REPORTS LIST PAGE, TO BE CHANGED TO INSTALLATIONS-LIST-PAGE, EXPANDED FOR REPORT-SELECTION-PAGE *****/
 
-#reports-list-page .ui-block-a {
-    width: 100%;
-}
-
-#reports-list-page .ui-block-b {
-    width: 25%;
-}
 
 #reports-list-page .owner_name {
-
+    font-size: 120%;
+    font-style: bold;
 }
 
 #reports-list-page .owner_name.unknown {

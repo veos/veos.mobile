@@ -276,7 +276,7 @@
 
 
     /**
-        InstallationList (to replace ReportList)
+        InstallationList (to replace ReportList)            Colin will deal with this
         Shows a list of Installations.
     **/
     self.InstallationList = Backbone.View.extend({
@@ -328,7 +328,7 @@
     });
 
     /**
-        Extending InstallaionList for add-or-edit.html
+        Extending InstallaionList for report-selection.html TODO
     **/
     self.InstallationSelectionList = self.InstallationList.extend({
         'click a.arrowbutton': function () {
@@ -348,6 +348,11 @@
     **/
     self.ReportList = Backbone.View.extend({
         MAX_DISTANCE_FROM_CURRENT_LOCATION: 10, // km
+/*        events: {
+            'click .ui-btn': function (ev) {
+                alert('it works');
+            }
+        },*/
 
         initialize: function () {
             var self = this;
@@ -370,34 +375,40 @@
             list.empty();
 
             this.collection.each(function (report) {
-                var buttonText = '';
                 var ownerName;
                 if (report.get('owner_name')) {
-                    ownerName = "<span class='owner_name'>" + report.get('owner_name') + "</span>";
+                    ownerName = "<span class='owner_name'>" + report.get('owner_name') + "</span><br/>" + report.getLocDescription();
                 } else {
-                    ownerName = "<span class='owner_name unknown'>Unknown Owner</span>";
+                    ownerName = "<span class='owner_name unknown'>Unknown Owner</span><br/>" + report.getLocDescription();
                 }
                 
-                // creates the HTML for the jQuery button to be filled with returned content. Why are you so ugly jQuery?
-                if (report.get('sign')) {
-                    buttonText = ownerName + " - Sign " + "<br/>" + report.getLocDescription();
-                } else if (report.get('camera')) {
-                    buttonText = ownerName + " - Camera " + "<br/>" + report.getLocDescription();
-                }
-                
+                // TODO - update this to new model once Armin is done with photos
                 var thumb;
-                var obj = report.get('sign') || report.get('camera');
+                var obj = report.get('photos');
                 if (obj && obj.photos && obj.photos[0] && obj.photos[0].thumb_url) {
                     thumb = "<img src='"+veos.model.baseURL + obj.photos[0].thumb_url+"' />";
                 } else {
                     thumb = "";
                 }
 
-
-                var item = jQuery("<li><a href='report-details.html?id="+report.id+"'>"+thumb+" "+buttonText+"</a></li>");
+                var item = jQuery("<li><a href='report-details.html?id="+report.id+"'>"+ownerName+"</a></li>");
                 list.append(item);
                 list.listview('refresh');
             });
+        }
+    });
+
+    /** TEMPORARY - not working **/
+    self.ReportViewList = self.ReportList.extend({
+        events: {
+            'click .ui-btn': function (ev) {
+                alert('view!');
+            }
+        }
+    });    
+    self.ReportSelectionList = self.ReportList.extend({
+        'click a.arrowbutton': function () {
+            alert('selection!');
         }
     });
 
