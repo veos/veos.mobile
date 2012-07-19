@@ -4,7 +4,6 @@
 window.veos = (function(veos) {
     var self = veos;
 
-    // the last acquired user location is cached here
     self.lastLoc = new google.maps.LatLng(43.6621614579938, -79.39527873417967); // FIXME: default hard-coded to toronto; maybe make it based on last report?
 
     self.alert = function (msg, title) {
@@ -98,7 +97,7 @@ window.veos = (function(veos) {
                 map.addReportRefinerMarker(self.reportForm.model, veos.lastLoc);
             })
 
-        /** reports-list.html (reports-list-page) **/
+        /** reports-list.html (reports-list-page) TODO: TO BE REPLACED**/
             .delegate("#reports-list-page", "pageshow", function(ev) {
                 var view = new veos.view.ReportList({
                     el: ev.target
@@ -106,6 +105,15 @@ window.veos = (function(veos) {
                 
                 view.fetchNearby();
             })
+
+        /** report-selection.html (report-selection-page) **/
+            .delegate("#report-selection-page", "pageshow", function(ev) {
+                var view = new veos.view.ReportList({
+                    el: ev.target
+                });
+                
+                view.fetchNearby();
+            })            
 
         /** report-details.html (report-details-page) **/
             .delegate("#report-details-page", "pageshow", function(ev) {

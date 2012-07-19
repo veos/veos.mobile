@@ -17,59 +17,50 @@
     self.ReportForm = Backbone.View.extend({
         events: {
             'change .field': function (ev) {
-                    var f = jQuery(ev.target);
+                var f = jQuery(ev.target);
 
-                    if (f.attr('name') === 'loc_description_from_user') {
-                        this.updateLocFromAddress(f.val());
-                    }
+                if (f.attr('name') === 'loc_description_from_user') {
+                    this.updateLocFromAddress(f.val());
+                }
 
-                    console.log("Setting "+f.attr("name")+" to "+f.val());
-                    this.model.set(f.attr('name'), f.val());
-                },
+                console.log("Setting "+f.attr("name")+" to "+f.val());
+                this.model.set(f.attr('name'), f.val());
+            },
             'change [name="owner_name"].field': function (ev) {
-                    var f = jQuery(ev.target);
+                var f = jQuery(ev.target);
 
-                    var unidentified_owner_input = this.$el.find("#unidentified-owner-checkbox").parent();
-                    if (f.val() === "") {
-                        unidentified_owner_input.css('opacity', 1.0);
-                    } else {
-                        unidentified_owner_input.css('opacity', 0.4);
-                    }
-                },
+                var unidentified_owner_input = this.$el.find("#unidentified-owner-checkbox").parent();
+                if (f.val() === "") {
+                    unidentified_owner_input.css('opacity', 1.0);
+                } else {
+                    unidentified_owner_input.css('opacity', 0.4);
+                }
+            },
             'change #unidentified-owner-checkbox': function (ev) {
-                    var f = jQuery(ev.target);
-                    f.parent().css('opacity', 1.0);
-                    if (f.is(':checked')) {
-                        console.log("Setting owner_name and owner_description to null");
-                        this.model.set('owner_name', null);
-                        this.model.set('owner_description', null);
-                        this.$el.find('#owner').attr('disabled', true);
-                    } else {
-                        this.$el.find('#owner').removeAttr('disabled');
-                    }
-                },
-            'change #no-camera': function (ev) {
-                    var checked = jQuery('#no-camera').is(":checked");
-                    if (checked) {
-                        jQuery("#camera-buttons").hide();
-                        // TODO: also hide camera detail fields here
-                        this.cameraNotVisible = true;
-                    } else {
-                        jQuery("#camera-buttons").show();
-                        delete this.cameraNotVisible;
-                    }
-                },
-            'change #no-sign': function (ev) {
-                    var checked = jQuery('#no-sign').is(":checked");
-                    if (checked) {
-                        jQuery("#sign-buttons").hide();
-                        // TODO: also hide sign detail fields here
-                        this.signNotVisible = true;
-                    } else {
-                        jQuery("#sign-buttons").show();
-                        delete this.signNotVisible;
-                    }
-                },
+                var f = jQuery(ev.target);
+                f.parent().css('opacity', 1.0);
+                if (f.is(':checked')) {
+                    console.log("Setting owner_name and owner_type to null");
+                    this.model.set('owner_name', null);
+                    this.model.set('owner_type', null);
+                    this.model.set('owner_identifiable', false);
+                    this.$el.find('#owner').attr('disabled', true);
+                } else {
+                    this.$el.find('#owner').removeAttr('disabled');
+                    this.model.set('owner_identifiable', true);                 // confirm that this makes sense and is what the backend is expecting
+                }
+            },          
+            'change #sign-yes': function (ev) {
+                console.log('sign-yes button clicked');
+                jQuery('#sign-details-container').trigger('expand');
+                this.model.set('has_sign', true);
+            },  
+            'change #sign-no': function (ev) {
+                console.log('sign-no button clicked');
+                jQuery('#sign-details-container').trigger('collapse');
+                this.model.set('has_sign', false);
+            },      
+
 
             'click #submit-report': 'submit',
             'click #cancel-report': 'cancel'
@@ -82,13 +73,13 @@
 
             this.model.on('change', _.bind(this.updateChangedFields, this));
 
-            this.photos = {
+/*            this.photos = {
                 camera: [], // photos of the camera go here
                 sign: [] // photos of the sign go here
-            };
+            };*/
 
-            this.model.set('camera', {});
-            this.model.set('sign', {});
+/*            this.model.set('camera', {});
+            this.model.set('sign', {});*/
 
             this.$el.data('initialized', true); // check this later to prevent double-init
 
@@ -103,12 +94,12 @@
         submit: function () {
             var self = this;
 
-            if (this.signNotVisible) {
+/*            if (this.signNotVisible) {
                 self.model.unset('sign', {silent: false});
             }
             if (this.cameraNotVisible) {
                 self.model.unset('camera', {silent: false});
-            }
+            }*/
 
             jQuery.mobile.showPageLoadingMsg();
             jQuery('.ui-loader h1').text('Submitting...');
@@ -129,7 +120,7 @@
                         jQuery.mobile.changePage("overview-map.html");
                     };
 
-                    //var photos = self.$el.find('img.photo');
+/*                    var photos = self.$el.find('img.photo');
 
                     _.each(self.photos, function (photos, of) {
                     
@@ -152,11 +143,11 @@
                                 );
                             });
                         }
-                    });
+                    });*/
 
-                    if (self.photos.sign.length == 0 && self.photos.camera.length == 0) {
+                    //if (self.photos.sign.length === 0 && self.photos.camera.length === 0) {
                         doneSubmit();
-                    }
+                    //}
                 }
             });
         },
@@ -285,6 +276,73 @@
 
 
     /**
+        InstallationList (to replace ReportList)
+        Shows a list of Installations.
+    **/
+    self.InstallationList = Backbone.View.extend({
+        initialize: function () {
+            var self = this;
+
+            if (!this.collection)
+                this.collection = new veos.model.Installations();
+
+            // TODO: consider binding 'add' and 'remove' to pick up added/removed Installations too?
+            this.collection.on('reset', _.bind(this.render, self)); 
+        },
+
+        render: function () {
+            var list = this.$el.find('.installations-list');
+            list.empty();
+
+            this.collection.each(function (installation) {
+                var buttonText = '';
+                var ownerName;
+                if (installation.get('owner_name')) {
+                    buttonText = "<span class='owner_name'>" + installation.get('owner_name') + "</span<br/>" + installation.getLocDescription();  // this may no longer be required here, if installations only have the one type of locdescription
+                } else {
+                    buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/>" + installation.getLocDescription();
+                }
+                
+                var complianceLevel;
+                if (installation.get('compliance_level_override')) {
+                    complianceLevel = "<span class='compliance "+installation.get('compliance_level_override')+"'></span>";
+                } else if (installation.get('compliance_level')) {
+                    complianceLevel = "<span class='compliance "+installation.get('compliance_level')+"'></span>";
+                } else {
+                    complianceLevel = "<span class='compliance unknown'></span>";
+                }
+                
+/*                var thumb;
+                var obj = report.get('sign') || report.get('camera');                       // FIXME when we know how photos are going to look
+                if (obj && obj.photos && obj.photos[0] && obj.photos[0].thumb_url) {
+                    thumb = "<img src='"+veos.model.baseURL + obj.photos[0].thumb_url+"' />";
+                } else {
+                    thumb = "";
+                }*/
+
+                var item = jQuery("<li><a href='report-details.html?id="+installation.id+"'>"+complianceLevel+thumb+" "+buttonText+"</a></li>");
+                list.append(item);
+                list.listview('refresh');
+            });
+        }
+    });
+
+    /**
+        Extending InstallaionList for add-or-edit.html
+    **/
+    self.InstallationSelectionList = self.InstallationList.extend({
+        'click a.arrowbutton': function () {
+            // go to editable version of installation-list.html
+        }
+    });
+
+    self.InstallationViewList = self.InstallationList.extend({
+        'click a.arrowbutton': function () {
+            // go to installation-list.html
+        }
+    });
+
+    /**
         ReportList
         Shows a list of Reports.
     **/
@@ -335,23 +393,10 @@
                     thumb = "";
                 }
 
+
                 var item = jQuery("<li><a href='report-details.html?id="+report.id+"'>"+thumb+" "+buttonText+"</a></li>");
                 list.append(item);
                 list.listview('refresh');
-
-
-                /*var divA = jQuery('<div class="ui-block-a">');
-                var reportOuterButton = jQuery('<a href="report-details.html?id='+report.id+'" data-role="button" data-transition="fade" href="#point-details-page" data-icon="arrow-r" data-iconpos="left" data-theme="c" class="ui-btn ui-btn-icon-left ui-btn-corner-all ui-shadow ui-btn-up-c" />');
-                reportOuterButton.button();
-                // attaching the report object to the HTML in data-report
-                reportOuterButton.data('report', report);
-                var reportInnerButton = jQuery('<span class="ui-btn-inner ui-btn-corner-all">' + buttonText + '</span>');
-                var reportButtonIcon = jQuery('<span class="ui-icon ui-icon-arrow-r ui-icon-shadow" />');
-                reportOuterButton.append(reportInnerButton);
-                reportOuterButton.append(reportButtonIcon);
-                divA.append(reportOuterButton);
-                //reportInnerButton.text(report.get('location_name') + &#10; + report.get('latitude'));
-                list.append(divA);*/
             });
         }
     });
@@ -432,7 +477,7 @@
                 this.$el.find('.point-title-2').text('Owner name: ');
                 this.$el.find('.point-content-2').html(ownerName);
                 this.$el.find('.point-title-3').text('Owner description: ');
-                this.$el.find('.point-content-3').text(report.attributes.owner_description);
+                this.$el.find('.point-content-3').text(report.attributes.owner_type);
             } else if (report.get('sign')) {
                 if (report.get('sign').hasOwnProperty("photos") && report.get('sign').photos.length > 0 && report.get('sign').photos[0].big_url !== null) {
                     photoThumbnail.attr('src', veos.model.baseURL + report.get('sign').photos[0].big_url);
@@ -443,7 +488,7 @@
                 this.$el.find('.point-title-2').text('Owner name: ');
                 this.$el.find('.point-content-2').html(ownerName);
                 this.$el.find('.point-title-3').text('Owner description: ');
-                this.$el.find('.point-content-3').text(report.attributes.owner_description);
+                this.$el.find('.point-content-3').text(report.attributes.owner_type);
                 this.$el.find('.point-title-4').text('Visibility of sign: ');
                 this.$el.find('.point-content-4').text(report.get('sign').visibility);
                 this.$el.find('.point-title-5').text('Text of Sign: ');
