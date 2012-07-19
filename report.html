@@ -58,8 +58,8 @@
                         <label for="owner-type">
                             Owner Type
                         </label>
-                        <select id="owner-type" class="field" name="owner_type">
-                            <option value="null">...</option>
+                        <select id="owner-type" class="field" name="owner_type" data-native-menu="false">
+                            <option value>Choose an option</option>
                             <option value="Banking">Banking</option>
                             <option value="Education">Education</option>
                             <option value="Government">Government</option>
@@ -115,28 +115,30 @@
                                     Select Photo from Gallery
                                 </a>
                                 <div id="camera-image-list" class="photo-list">
-                                    Images are added dynamically via camera or gallery selection
+                                    <!-- Images are added dynamically via camera or gallery selection -->
                                 </div>
                             </div>
                         </fieldset>
 
+                        <!-- TODO in view still, does not seem to exist in model, maybe to become 'space_viewed' -->
                         <div data-role="fieldcontain">
                             <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
-                                <legend>What is the installation looking at?</legend>
-                                <input name="camera-view-checkbox-1" id="camera-view-checkbox-1" type="checkbox">
-                                <label for="camera-view-checkbox-1">Public space</label>
-                                <input name="camera-view-checkbox-2" id="camera-view-checkbox-2" type="checkbox">
-                                <label for="camera-view-checkbox-2">Semi-public space</label>
-                                <input name="camera-view-checkbox-3" id="camera-view-checkbox-3" type="checkbox">
-                                <label for="camera-view-checkbox-3">Private space</label>
-                                <input name="camera-view-checkbox-4" id="camera-view-checkbox-4" type="checkbox">
-                                <label for="camera-view-checkbox-4">Other type of space</label>
+                                <div data-role="fieldcontain">
+                                    <label for="space_viewed">What is the installation looking at?</label>
+                                    <select class="field" name="space_viewed" id="space-viewed" data-mini="true" multiple="multiple" data-native-menu="false">
+                                        <option>Choose options</option>
+                                        <option value="Public space">Public space</option>
+                                        <option value="Semi-public space">Semi-public space</option>
+                                        <option value="Private space">Private space</option>
+                                        <option value="Other type of space">Other type of space</option>
+                                    </select>
+                                </div>                                
                             </fieldset>
                         </div>
                         <div data-role="fieldcontain">
                             <fieldset data-role="controlgroup" data-mini="true">
                                 <label for="number-of-cameras">How many cameras do you see?</label>
-                                <input id="number-of-cameras" placeholder="#" value="" type="number">
+                                <input class="field" name="camera_count" id="number-of-cameras" placeholder="#" value="" type="number">
                             </fieldset>
                         </div>                        
                     </div>
@@ -163,16 +165,16 @@
                         <div data-role="fieldcontain">
                             <fieldset data-role="controlgroup">
                                 <label for="sign-text">Text of sign</label>
-                                <input id="sign-text" placeholder="Text of sign if it exists..." value="" type="text">
+                                <input class="field" name="sign_text" id="sign-text" placeholder="Text of sign if it exists..." value="" type="text">
                             </fieldset>
                         </div>
 
                         <div class="ui-grid-b">
                             <div class="ui-block-a">
                                 <div data-role="fieldcontain">
-                                    <label for="sign-visibility">Visibility of sign</label>
-                                    <select name="sign-visibility" id="sign-visibility" data-mini="true">
-                                        <option value="null">...</option>
+                                    <label for="sign_visibility">Visibility of sign</label>
+                                    <select class="field" name="sign_visibility" id="sign-visibility" data-mini="true" data-native-menu="false">
+                                        <option>Choose an option</option>
                                         <option value="clear">Clear</option>
                                         <option value="Hard to see">Hard to see</option>
                                     </select>
@@ -180,9 +182,9 @@
                             </div>
                             <div class="ui-block-b">
                                 <div data-role="fieldcontain">
-                                    <label for="sign-purpose">Stated purpose</label>
-                                    <select name="sign-purpose" id="sign-purpose" data-mini="true">
-                                        <option value="null">...</option>
+                                    <label for="sign_purpose">Stated purpose</label>
+                                    <select class="field" name="sign_purpose" id="sign-purpose" data-mini="true" multiple="multiple" data-native-menu="false">
+                                        <option>Choose options</option>
                                         <option value="Some value">Some value</option>
                                         <option value="Other value">Other value</option>
                                     </select>
@@ -190,9 +192,9 @@
                             </div>
                             <div class="ui-block-c">
                                 <div data-role="fieldcontain">
-                                    <label for="sign-properties">Stated properties</label>
-                                    <select name="sign-properties" id="sign-properties" data-mini="true">
-                                        <option value="null">...</option>
+                                    <label for="sign_properties">Stated properties</label>
+                                    <select class="field" name="sign_properties" id="sign-properties" data-mini="true" multiple="multiple" data-native-menu="false">
+                                        <option>Choose options</option>
                                         <option value="Some prop">Some prop</option>
                                         <option value="other prop">Other prop</option>
                                     </select>
@@ -202,8 +204,8 @@
 
                         <div data-role="fieldcontain">
                             <fieldset data-role="controlgroup">
-                                <label for="report-note">Note:</label>
-                                <textarea id="report-note" placeholder="Any other observations..."></textarea>
+                                <label for="notes">Note:</label>
+                                <textarea class="field" name="notes" id="report-note" placeholder="Any other observations..."></textarea>
                             </fieldset>
                         </div>
                     </div>

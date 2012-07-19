@@ -43,18 +43,18 @@
                     console.log("Setting owner_name and owner_type to null");
                     this.model.set('owner_name', null);
                     this.model.set('owner_type', null);
+                    this.model.set('owner_identifiable', false);
                     this.$el.find('#owner').attr('disabled', true);
                 } else {
                     this.$el.find('#owner').removeAttr('disabled');
+                    this.model.set('owner_identifiable', true);                 // confirm that this makes sense and is what the backend is expecting
                 }
-            },
-
+            },          
             'change #sign-yes': function (ev) {
                 console.log('sign-yes button clicked');
                 jQuery('#sign-details-container').trigger('expand');
-                this.model.set('has_sign', true);               
+                this.model.set('has_sign', true);
             },  
-
             'change #sign-no': function (ev) {
                 console.log('sign-no button clicked');
                 jQuery('#sign-details-container').trigger('collapse');
