@@ -140,8 +140,9 @@
 
     addSignTag: function (tag, tagType) {
       var tags = this.get('sign_tags');
-      if (!tags)
-          tags = [];
+      if (!tags) {
+        tags = [];
+      }
 
       tags.push({tag: tag, tag_type: tagType});
 
