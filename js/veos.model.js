@@ -182,6 +182,23 @@
     plural: "installations"
   });
 
+  model.Installations = Backbone.Collection.extend({
+      model: model.Installation,
+      url: model.baseURL + '/installations.json'
+  });
+
+  model.NearbyInstallations = Backbone.Collection.extend({
+      initialize: function (nearLat, nearLng, maxDist) {
+        this.nearLat = nearLat;
+        this.nearLng = nearLng;
+        this.maxDist = maxDist;
+      },
+      model: model.Installation,
+      url: function () {
+        return model.baseURL + '/installations/near.json?lat=' + this.nearLat + '&lng=' + this.nearLng + '&max_dist=' + this.maxDist
+      }
+  });
+
   /*** Organization ***/
 
   model.Organization = Base.extend({
