@@ -391,11 +391,11 @@
     **/
     self.ReportList = Backbone.View.extend({
         MAX_DISTANCE_FROM_CURRENT_LOCATION: 10, // km
-/*        events: {
+        events: {
             'click .ui-btn': function (ev) {
-                alert('it works');
+                console.log("clicked ui-button");
             }
-        },*/
+        },
 
         initialize: function () {
             var self = this;
@@ -451,49 +451,13 @@
         }
     });
 
-
-/*var ChildView = ParentView.extend({
-   events: function(){
-      return _.extend({},ParentView.prototype.events,{
-          'click' : 'onclickChild'
-      });
-   }
-});*/
-
-/*    var ReportViewList = self.ReportList.extend({
-*//*        initialize: function(){
-           this.events = _.extend({},self.ReportList.prototype.events,this.events)
-        },*/
-/*        events: function(){
-            return _.extend({},self.ReportList.prototype.events,{
-            'click': alert('view!')
-            });        
-        }
-     
-    });*/
-
-
-    /** TEMPORARY - not working **/
-/*    self.ReportViewList = self.ReportList.extend({
-        events: {
-            return _.extend({
-                    'click .ui-btn': function (ev) {
-                    alert('view!');
-                }
-            }, this.constructor.__super__.events);
-
-            'click .ui-btn': function (ev) {
-                alert('view!');
+    // WHY YOU NO WORK?!
+    self.ReportSelectionListView = self.ReportList.extend({
+        initialize: function () {
+            this.events['click .ui-btn'] = function(ev) {
+                alert("clicked some-other thing");
             }
-        },
-
-        initialize: function() {
-            alert('alerts suck');
-        }
-    });  */  
-    self.ReportSelectionList = self.ReportList.extend({
-        'click a.arrowbutton': function () {
-            alert('selection!');
+            this.delegateEvents();
         }
     });
 

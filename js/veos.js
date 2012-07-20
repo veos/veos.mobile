@@ -113,7 +113,15 @@ window.veos = (function(veos) {
                 });
                 
                 view.fetchNearby();
-            })            
+            })  
+
+/*.delegate("#reports-list-page", "pageshow", function(ev) {
+    var nearbyInstallations = new veos.model.NearbyInstallations();
+    
+    var v = new veos.view.ReportList({
+        el: ev.target,
+        collection: 
+    });*/                      
 
         /** report-details.html (report-details-page) **/
             .delegate("#report-details-page", "pageshow", function(ev) {
