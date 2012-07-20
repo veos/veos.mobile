@@ -23,7 +23,7 @@
     <body>
         <button class="set-location">Set Location</button>
 
-        <button class="add-sign-tags">Tag Sign</button>
+        <button class="add-report-tags">Tag Report</button>
 
         <button class="acquire-photo" data-acquire-from="camera">Acquire Photo</button>
 
@@ -53,9 +53,9 @@
                         this.model.set('loc_lng_from_gps', 87.654321);
                     },
 
-                    'click .add-sign-tags': function (ev) {
-                        this.model.addSignTag("face recognition", "stated_property");
-                        this.model.addSignTag("crime preventions", "stated_purpose");
+                    'click .add-report-tags': function (ev) {
+                        this.model.addTag("face recognition", "sign_stated_property");
+                        this.model.addTag("crime preventions", "sign_stated_purpose");
                     },
 
                     'click .acquire-photo': function (ev) {

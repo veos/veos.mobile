@@ -99,7 +99,7 @@
   model.Report = Base.extend({
     singular: "report",
     plural: "reports",
-    nested: ['sign_tags', ['photos', ['tags']], ['installation', ['organization']]],
+    nested: ['tags', ['photos', ['tags']], ['installation', ['organization']]],
 
     attachPhoto: function (photo, successCallback) {
       var report = this;
@@ -138,15 +138,15 @@
       this.trigger('change');
     },
 
-    addSignTag: function (tag, tagType) {
-      var tags = this.get('sign_tags');
+    addTag: function (tag, tagType) {
+      var tags = this.get('tags');
       if (!tags) {
         tags = [];
       }
 
       tags.push({tag: tag, tag_type: tagType});
 
-      this.set('sign_tags', tags);
+      this.set('tags', tags);
       this.trigger('change');
     },
 
