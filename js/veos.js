@@ -37,8 +37,8 @@ window.veos = (function(veos) {
 
         jQuery(document)
 
-        /** overview-map.html (overview-map-page) **/
-            .delegate("#overview-map-page", "pageshow", function() {
+        /** overview-map.html (overview-map-page)  LEGACY CODE **/
+/*            .delegate("#overview-map-page", "pageshow", function() {
                 var map = new veos.map.Map('#overview-map-canvas');
 
                 // add all report markers
@@ -48,6 +48,21 @@ window.veos = (function(veos) {
                 });
                 reports.fetch();
                 
+
+                // start following user
+                map.startFollowing();
+            })*/
+
+        /** overview-map.html (overview-map-page) **/
+            .delegate("#overview-map-page", "pageshow", function() {
+                var map = new veos.map.Map('#overview-map-canvas');
+
+                // add all installation markers
+                var installations = new veos.model.Installations();
+                installations.on('reset', function(collection) {
+                    map.addInstallationMarkers(collection);
+                });
+                installations.fetch();
 
                 // start following user
                 map.startFollowing();

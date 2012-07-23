@@ -18,8 +18,8 @@
     var center;
     var zoom;
     if (!initLoc) {
-      center = new google.maps.LatLng(43.6621614579938, -79.39527873417967);
-      zoom = 3;
+      center = new google.maps.LatLng(43.6621614579938, -79.39527873417967);            // TODO map should be zoomed out (zoom = 3) under some conditions (when not near insts?)
+      zoom = 13;
     } else {
       center = veos.map.convertGeolocToGmapLatLng(initLoc);
       zoom = 13;
@@ -128,10 +128,10 @@
 
 
   /**
-    Adds markers for a collection of Reports.
+    Adds markers for a collection of Reports.           LEGACY CODE (I think - we want installations showing, not reports, right?)
     @param reports veos.model.Reports
   **/
-  self.Map.prototype.addReportMarkers = function (reports) {
+/*  self.Map.prototype.addReportMarkers = function (reports) {
     console.log("Adding "+reports.length+" report markers to map...");
 
     var map = this;
@@ -149,13 +149,53 @@
 
       var mapPopupContent;
       mapPopupContent = '<p><b> ' + (r.get('owner_name') || "Unknown Owner") + ' </b> - Camera</p>';      // TEMPORARY TODO
-      /*if (r.get('camera')) {
-        mapPopupContent = '<p><b> ' + (r.get('owner_name') || "Unknown Owner") + ' </b> - Camera</p>';
-      } else if (r.get('sign')) {
-        mapPopupContent = '<p><b> ' + (r.get('owner_name') || "Unknown Owner") + ' </b> - Sign</p>';
-      }*/
+
+      // binding a popup click event to the marker
+      google.maps.event.addListener(marker, 'click', function() {
+        map.infowindow.setContent(mapPopupContent);
+        map.infowindow.open(map.gmap, marker);
+      });
+      marker.setMap(map.gmap);
+    });
+  };*/
 
 
+
+  /**
+    Adds markers for a collection of Installations.
+    @param installations veos.model.Installations
+  **/
+  self.Map.prototype.addInstallationMarkers = function (installations) {
+    console.log("Adding "+installations.length+" installation markers to map...");
+
+    var map = this;
+
+    map.infowindow = new google.maps.InfoWindow({
+    });
+
+    installations.each(function(i) {
+      var latLng = new google.maps.LatLng(i.get('loc_lat'), i.get('loc_lng'));
+
+      // TODO - confirm that I don't need to do the override check here. If I do, it probably makes more sense to extend the Installations model
+      var compliancePin;
+      if (i.get('compliance') === "high") {
+        compliancePin = '/images/pin-green-full.png';
+      } else if (i.get('compliance') === "medium") {
+        compliancePin = '/images/pin-yellow-full.png';
+      } else if (i.get('compliance') === "low") {
+        compliancePin = '/images/pin-red-full.png';
+      } else {
+        compliancePin = 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+      }
+
+      var marker = new google.maps.Marker({
+        position: latLng,
+        icon: compliancePin,        
+        title: i.get('owner_name') || "Unknown Owner"
+      });
+
+      var mapPopupContent;
+      mapPopupContent = '<p><b> ' + (i.get('owner_name') || "<i>Unknown Owner</i>") + ' </b></p>' + i.getLocDescription();    // TODO - pretty this up, maybe truncate Addr with ellipses?
 
       // binding a popup click event to the marker
       google.maps.event.addListener(marker, 'click', function() {
