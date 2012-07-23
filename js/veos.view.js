@@ -361,16 +361,15 @@
                     buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/>" + installation.getLocDescription();
                 }
                 
-/*                var complianceLevel;
+/*                var complianceLevel;                   TODO - add me back in when model supports this
                 if (installation.get('compliance_level_override')) {
-                    complianceLevel = "<span class='compliance "+installation.get('compliance_level_override')+"'></span>";
+                    complianceLevel = "<span class='compliance-"+installation.get('compliance_level_override')+"'></span>";
                 } else if (installation.get('compliance_level')) {
-                    complianceLevel = "<span class='compliance "+installation.get('compliance_level')+"'></span>";
+                    complianceLevel = "<span class='compliance-"+installation.get('compliance_level')+"'></span>";
                 } else {
-                    complianceLevel = "<span class='compliance unknown'></span>";
+                    complianceLevel = "<span class='compliance-unknown'></span>";
                 }*/
-                var complianceLevel;
-                complianceLevel = "<span class='compliance "+installation.get('compliance_level')+"'></span>";
+                var complianceLevel = "<span class='compliance low'></span>";
                 
 /*                var thumb;
                 var obj = report.get('sign') || report.get('camera');                       // TODO when we know how photos are going to look
@@ -379,7 +378,8 @@
                 } else {
                     thumb = "";
                 }*/
-                var item = jQuery("<li><a href='report-details.html?id="+installation.id+"'>"+complianceLevel+" "+buttonText+"</a></li>");
+
+                var item = jQuery("<li><a class='relative' href=installation-details.html?id="+installation.id+">"+complianceLevel+buttonText+"</a></li>");
                 list.append(item);
                 list.listview('refresh');
             });
@@ -412,7 +412,7 @@
 
     /**
         ReportList
-        Shows a list of Reports.
+        Shows a list of Reports.                LEGACY CODE
     **/
     self.ReportList = Backbone.View.extend({
         MAX_DISTANCE_FROM_CURRENT_LOCATION: 10, // km
@@ -479,8 +479,8 @@
     });*/
 
     /**
-        ReportDetail
-        Shows detailed information about a report.
+        report-details
+        Shows detailed information about a report.          LEGACY CODE
     **/
     self.ReportDetail = Backbone.View.extend({
         initialize: function () {
@@ -580,6 +580,63 @@
                 console.log ('neither a camera or a sign');
             }
             photoContainer.append(photoThumbnail);*/
+        }
+    });
+
+    self.InstallationDetail = Backbone.View.extend({
+        initialize: function () {
+            var self = this;
+
+            // TODO: consider binding 'add' and 'remove' to pick up added/removed Insts too?
+            this.model.on('change sync', _.bind(this.render, self)); 
+        },
+
+        showLoader: function () {
+            this.loader = addLoader(this.$el.find('[role="content"]'));
+            // FIXME: this looks ugly
+            this.loader.css({
+                position: 'absolute',
+                top: '30%',
+                width: '100%'
+            });
+        },
+
+        hideLoader: function () {
+            this.loader.remove();
+            delete this.loader;
+        },
+
+        createPointDetailsMap: function(installation) {
+            // note: higher zoom level
+            var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=17&size=150x150&scale=2&sensor=true&center=" + installation.get('loc_lat') + "," + installation.get('loc_lng');
+            staticMapCriteria += "&markers=size:small%7C" + installation.get('loc_lat') + ',' + installation.get('loc_lng');
+            
+            var mapThumbnail = jQuery('<img class="map-thumbnail" />');
+            mapThumbnail.attr('src', staticMapCriteria);    
+            var thumbnailContainer = this.$el.find('.map-thumbnail-container');
+            thumbnailContainer.append(mapThumbnail);    
+        },
+
+        render: function () {
+            var installation = this.model;
+
+            if (this.loader) {
+                this.hideLoader();
+            }
+
+            this.createPointDetailsMap(installation);
+            
+            var photoThumbnail = jQuery('<img class="photo-thumbnail" />');
+            var photoContainer = this.$el.find('.photo-thumbnail-container');
+
+            var ownerName;
+            if (installation.get('owner_name')) {
+                ownerName = "<span class='owner_name'>" + installation.get('owner_name') + "</span>";
+            } else {
+                ownerName = "<span class='owner_name unknown'>Unknown Owner</span>";
+            }
+
+            this.$el.find('.installation-title').html(ownerName);
         }
     });
 

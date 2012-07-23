@@ -43,20 +43,27 @@
         </div>
         <div data-role="content" style="padding: 15px">
              <div data-role="content">
+                <h3>
+                    Are you reporting on any of the following installations? If not, choose Add New below
+                </h3>
+                <br/>
                 <ul data-role="listview" class="installations-list">
                     <!-- this is filled by the veos.view.InstallationsList.render() -->
                 </ul>
             </div>
-            <a data-role="button" data-transition="fade" href="report.html" data-icon="plus"
+            <div data-theme="a" data-role="footer" class="footer-with-buttons">
+                <a class="add-report-button" data-role="button" data-inline="true" data-transition="fade" data-theme="b" data-icon="plus" data-iconpos="left" href="report.html">
+                    Add New
+                </a>
+                <a class="map-view-button" data-role="button" data-inline="true" data-theme="b" data-icon="home" data-iconpos="left" href="overview-map.html">
+                    Map View
+                </a>
+            </div>
+<!--             <a data-role="button" data-transition="fade" href="report.html" data-icon="plus"
             data-iconpos="left">
                 Report a New Installation
-            </a>
+            </a> -->
         </div>
-<!--         <div data-theme="a" data-role="footer" data-position="fixed">
-            <h3>
-                Back to Map and maybe add new? or maybe list view?
-            </h3>
-        </div> -->
     </div>
 
     </body>

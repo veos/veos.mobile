@@ -213,34 +213,35 @@
     margin-bottom: 1em;
 }
 
+
+/** this seems kind of hacky - is there a better way to do this? **/
+.relative {
+    height: 100%;
+    position:relative;
+}
+
 .compliance {
     width: 5%;
+    position: absolute; top:0px; bottom:0px; left:0px;
+    width: 10px;
 }
 
-/*.compliance-high {
-    float: left;
-    max-width: 40px;
-    max-height: 80px;
-    background-color: #87BA1A;
-}
-Arg, I dunno - may be best to do this with little boxes instead of a colored div
-*/
-
-.compliance.1 {
+.compliance.high {
     background-color: #87BA1A;                  /* green */
 }
 
-.compliance.2 {
+.compliance.medium {
     background-color: #E6CC1C;                  /* amber */
 }
 
-.compliance.3 {
+.compliance.low {
     background-color: #BE1D23;                  /* red */
 }
 
-.compliance.unknown {
+.compliance-unknown {
     background-color: white;
 }
+
 
 
 

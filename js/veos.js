@@ -92,23 +92,14 @@ window.veos = (function(veos) {
                     return;
                 }
                 
-                
                 var map = new veos.map.Map('#refine-location-canvas');
                 map.addReportRefinerMarker(self.reportForm.model, veos.lastLoc);
             })
 
-        /** reports-list.html (reports-list-page) TODO refactor to installation-list page OUTDATED **/
-            .delegate("#reports-list-page", "pageshow", function(ev) {
-                var view = new veos.view.ReportList({
-                    el: ev.target
-                });
-                
-                view.fetchNearby();
-            })
 
         /** installations-list.html (installations-list-page) **/
             .delegate("#installations-list-page", "pageshow", function(ev) {
-                installations = new veos.model.Installations();
+                var installations = new veos.model.Installations();
 
                 var view = new veos.view.InstallationList({
                     el: ev.target,
@@ -120,7 +111,7 @@ window.veos = (function(veos) {
 
         /** report-selection.html (report-selection-page) **/
             .delegate("#report-selection-page", "pageshow", function(ev) {
-                var nearbyInstallations = new veos.model.NearbyInstallations(43.64711, -79.41981, 10);           // TODO decide on how to centre this correctly
+                var nearbyInstallations = new veos.model.NearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude, 10);           // TODO I'm pretty sure this is not the right way to access these
 
                 var view = new veos.view.InstallationList({
                     el: ev.target,
@@ -128,10 +119,37 @@ window.veos = (function(veos) {
                 });
                 
                 nearbyInstallations.fetch();
-            })              
-                  
+            })
 
-        /** report-details.html (report-details-page) **/
+        /** installation-details.html (installation-details-page) **/
+            .delegate("#installation-details-page", "pageshow", function(ev) {
+                console.log("Showing details page at "+window.location.href);
+                var installationId = window.location.href.match("[\\?&]id=(\\d+)")[1];
+                console.log("Showing details for installation "+installationId);
+
+                var installation = new veos.model.Installation({id: installationId});
+
+                var view = new veos.view.InstallationDetail({
+                    el: ev.target,
+                    model: installation
+                });
+                
+                view.showLoader();  
+                view.model.fetch();             // I don't think this is right - the whole 'view doesn't call this stuff on itself' (should be moved to the init in view?)
+            })
+
+
+
+
+        /** reports-list.html (reports-list-page) LEGACY CODE **/
+            .delegate("#reports-list-page", "pageshow", function(ev) {
+                var view = new veos.view.ReportList({
+                    el: ev.target
+                });
+                
+                view.fetchNearby();
+            })
+        /** report-details.html (report-details-page)  LEGACY CODE **/
             .delegate("#report-details-page", "pageshow", function(ev) {
                 console.log("Showing details page at "+window.location.href);
                 var reportId = window.location.href.match("[\\?&]id=(\\d+)")[1];
@@ -147,6 +165,8 @@ window.veos = (function(veos) {
                 view.showLoader();
                 view.model.fetch();
             });
+
+            
     };
 
     self.initPhonegapStuff = function () {
