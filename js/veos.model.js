@@ -179,7 +179,11 @@
 
   model.Installation = Base.extend({
     singular: "installation",
-    plural: "installations"
+    plural: "installations",
+
+    getLocDescription: function() {
+      return this.get('loc_description') || "";
+    }
   });
 
   model.Installations = Backbone.Collection.extend({

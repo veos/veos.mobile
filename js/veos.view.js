@@ -16,6 +16,7 @@
     **/
     self.ReportForm = Backbone.View.extend({
         events: {
+            // for most fields
             'change .field': function (ev) {
                 var f = jQuery(ev.target);
 
@@ -26,6 +27,19 @@
                 console.log("Setting "+f.attr("name")+" to "+f.val());
                 this.model.set(f.attr('name'), f.val());
             },
+            // for multipickers
+            'change .multi-field': function (ev) {
+                var f = jQuery(ev.target);
+
+                // this.model.removeTags()          // TODO when backend functionality is there
+                frozenModel = this.model;                     // 'this' changes inside the each
+                _.each(f.val(), function(el) {
+                    frozenModel.addTag(el, f.attr('name'));
+                    console.log("Setting "+f.attr("name")+" to "+el);
+                });
+            },
+
+            // specific to owner_name
             'change [name="owner_name"].field': function (ev) {
                 var f = jQuery(ev.target);
 
@@ -319,7 +333,7 @@
 
 
     /**
-        InstallationList (to replace ReportList)            Colin will deal with this
+        InstallationList
         Shows a list of Installations.
     **/
     self.InstallationList = Backbone.View.extend({
@@ -342,36 +356,38 @@
                 var buttonText = '';
                 var ownerName;
                 if (installation.get('owner_name')) {
-                    buttonText = "<span class='owner_name'>" + installation.get('owner_name') + "</span<br/>" + installation.getLocDescription();  // this may no longer be required here, if installations only have the one type of locdescription
+                    buttonText = "<span class='owner_name'>" + installation.get('owner_name') + "</span><br/>" + installation.getLocDescription();
                 } else {
                     buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/>" + installation.getLocDescription();
                 }
                 
-                var complianceLevel;
+/*                var complianceLevel;
                 if (installation.get('compliance_level_override')) {
                     complianceLevel = "<span class='compliance "+installation.get('compliance_level_override')+"'></span>";
                 } else if (installation.get('compliance_level')) {
                     complianceLevel = "<span class='compliance "+installation.get('compliance_level')+"'></span>";
                 } else {
                     complianceLevel = "<span class='compliance unknown'></span>";
-                }
+                }*/
+                var complianceLevel;
+                complianceLevel = "<span class='compliance "+installation.get('compliance_level')+"'></span>";
                 
 /*                var thumb;
-                var obj = report.get('sign') || report.get('camera');                       // FIXME when we know how photos are going to look
+                var obj = report.get('sign') || report.get('camera');                       // TODO when we know how photos are going to look
                 if (obj && obj.photos && obj.photos[0] && obj.photos[0].thumb_url) {
                     thumb = "<img src='"+veos.model.baseURL + obj.photos[0].thumb_url+"' />";
                 } else {
                     thumb = "";
                 }*/
-                //var item = jQuery("<li><a href='report-details.html?id="+installation.id+"'>"+complianceLevel+thumb+" "+buttonText+"</a></li>");
-                //list.append(item);
+                var item = jQuery("<li><a href='report-details.html?id="+installation.id+"'>"+complianceLevel+" "+buttonText+"</a></li>");
+                list.append(item);
                 list.listview('refresh');
             });
         }
     });
 
     /**
-        Extending InstallaionList for report-selection.html TODO
+        Extending InstallaionList for report-selection.html TODO - not working
     **/
     self.InstallationSelectionList = self.InstallationList.extend({
         'click a.arrowbutton': function () {
@@ -384,6 +400,15 @@
             // go to installation-list.html
         }
     });
+
+    self.InstallationSelectionListView = self.InstallationList.extend({
+        initialize: function () {
+            this.events['click .ui-btn'] = function(ev) {
+                alert("clicked some-other thing");
+            }
+            this.delegateEvents();
+        }
+    });    
 
     /**
         ReportList
@@ -426,14 +451,6 @@
                     ownerName = "<span class='owner_name unknown'>Unknown Owner</span><br/>" + report.getLocDescription();
                 }
 
-/*                var complianceLevel;
-                if (report.get('compliance_level_override')) {
-                    complianceLevel = "<span class='compliance "+report.get('compliance_level_override')+"'></span>";
-                } else if (report.get('compliance_level')) {
-                    complianceLevel = "<span class='compliance "+report.get('compliance_level')+"'></span>";
-                } else {
-                    complianceLevel = "<span class='compliance unknown'></span>";
-                }       */         
                 
                 // TODO - update this to new model once Armin is done with photos
                 var thumb;
@@ -452,14 +469,14 @@
     });
 
     // WHY YOU NO WORK?!
-    self.ReportSelectionListView = self.ReportList.extend({
+/*    self.ReportSelectionListView = self.ReportList.extend({
         initialize: function () {
             this.events['click .ui-btn'] = function(ev) {
                 alert("clicked some-other thing");
             }
             this.delegateEvents();
         }
-    });
+    });*/
 
     /**
         ReportDetail

@@ -97,7 +97,7 @@ window.veos = (function(veos) {
                 map.addReportRefinerMarker(self.reportForm.model, veos.lastLoc);
             })
 
-        /** reports-list.html (reports-list-page) TODO: TO BE REPLACED**/
+        /** reports-list.html (reports-list-page) TODO refactor to installation-list page OUTDATED **/
             .delegate("#reports-list-page", "pageshow", function(ev) {
                 var view = new veos.view.ReportList({
                     el: ev.target
@@ -106,22 +106,30 @@ window.veos = (function(veos) {
                 view.fetchNearby();
             })
 
-        /** report-selection.html (report-selection-page) **/
-            .delegate("#report-selection-page", "pageshow", function(ev) {
-                var view = new veos.view.ReportList({
-                    el: ev.target
+        /** installations-list.html (installations-list-page) **/
+            .delegate("#installations-list-page", "pageshow", function(ev) {
+                installations = new veos.model.Installations();
+
+                var view = new veos.view.InstallationList({
+                    el: ev.target,
+                    collection: installations
                 });
                 
-                view.fetchNearby();
-            })  
+                installations.fetch();
+            })              
 
-/*.delegate("#reports-list-page", "pageshow", function(ev) {
-    var nearbyInstallations = new veos.model.NearbyInstallations();
-    
-    var v = new veos.view.ReportList({
-        el: ev.target,
-        collection: 
-    });*/                      
+        /** report-selection.html (report-selection-page) **/
+            .delegate("#report-selection-page", "pageshow", function(ev) {
+                var nearbyInstallations = new veos.model.NearbyInstallations(43.64711, -79.41981, 10);           // TODO decide on how to centre this correctly
+
+                var view = new veos.view.InstallationList({
+                    el: ev.target,
+                    collection: nearbyInstallations
+                });
+                
+                nearbyInstallations.fetch();
+            })              
+                  
 
         /** report-details.html (report-details-page) **/
             .delegate("#report-details-page", "pageshow", function(ev) {

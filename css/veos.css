@@ -197,12 +197,12 @@
 /***** REPORTS LIST PAGE, TO BE CHANGED TO INSTALLATIONS-LIST-PAGE, EXPANDED FOR REPORT-SELECTION-PAGE *****/
 
 
-#reports-list-page .owner_name {
+.owner_name {
     font-size: 120%;
     font-style: bold;
 }
 
-#reports-list-page .owner_name.unknown {
+.owner_name.unknown {
     font-style: italic;
 }
 
@@ -213,7 +213,7 @@
     margin-bottom: 1em;
 }
 
-#reports-list-page .compliance {
+.compliance {
     width: 5%;
 }
 
@@ -226,19 +226,19 @@
 Arg, I dunno - may be best to do this with little boxes instead of a colored div
 */
 
-#reports-list-page .compliance.1 {
+.compliance.1 {
     background-color: #87BA1A;                  /* green */
 }
 
-#reports-list-page .compliance.2 {
+.compliance.2 {
     background-color: #E6CC1C;                  /* amber */
 }
 
-#reports-list-page .compliance.3 {
+.compliance.3 {
     background-color: #BE1D23;                  /* red */
 }
 
-#reports-list-page .compliance.unknown {
+.compliance.unknown {
     background-color: white;
 }
 
