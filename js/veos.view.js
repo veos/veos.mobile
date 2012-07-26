@@ -78,21 +78,21 @@
             // 'click .acquire-photo': function (ev) {
             //     var from = jQuery(ev.target).data('acquire-from');
             //     veos.currentPhoto = new veos.model.Photo();
-            //     new PhotoView({model: veos.currentPhoto, el: this.$el.find('#camera-image-list')});
+            //     new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
             //     veos.captureImage(from, veos.currentPhoto);
             // }, 
 
             'click #add-camera-photo-button': function (ev) {
                 //var from = jQuery(ev.target).data('acquire-from');
                 veos.currentPhoto = new veos.model.Photo();
-                new PhotoView({model: veos.currentPhoto, el: this.$el.find('#camera-image-list')});
+                new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
                 veos.captureImage('camera', veos.currentPhoto);
             }, 
 
             'click #select-camera-photo-button': function (ev) {
                 //var from = jQuery(ev.target).data('acquire-from');
                 veos.currentPhoto = new veos.model.Photo();
-                new PhotoView({model: veos.currentPhoto, el: this.$el.find('#camera-image-list')});
+                new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
                 veos.captureImage('gallery', veos.currentPhoto);
             },
 
@@ -103,18 +103,20 @@
 
         initialize: function () {
             //var self = this;
-
             console.log("Initializing ReportForm...");
 
             this.model.on('change', _.bind(this.updateChangedFields, this));
 
-/*            this.photos = {
-                camera: [], // photos of the camera go here
-                sign: [] // photos of the sign go here
-            };*/
+            // this.model is the veos.model.Report() you feed into your view's constructor under {model: report}
+            //this.model.on('change sync', this.render, this);
 
-/*            this.model.set('camera', {});
-            this.model.set('sign', {});*/
+            // this.model.on('image_upload', function () {
+            //     veos.currentReport.attachPhoto(veos.currentPhoto, function () {
+            //         console.log("Photo attached!");
+            //         //reportView.render();
+            //         self.ReportForm.render();
+            //     });
+            // }, this);
 
             this.$el.data('initialized', true); // check this later to prevent double-init
 
@@ -155,6 +157,28 @@
                         jQuery.mobile.changePage("overview-map.html");
                     };
 
+                    var report = self.model;
+                    var successCounter = 0;
+                    var photoTotalCount = self.model.getPhotos().length;
+
+                    console.log("Total count of photos attached: " +photoTotalCount);
+
+                    if (photoTotalCount === 0) {
+                        console.log("No pictures and we are done!");
+                        doneSubmit();
+                        return;
+                    }
+
+                    _.each(self.getPhotos(), function (photo) {
+                        report.attachPhoto(photo, function () {
+                            successCounter++;
+                            if (successCounter === photoTotalCount) {
+                                console.log("All photos attached!");
+                                doneSubmit();
+                            }
+                        });
+                    });
+
 /*                    var photos = self.$el.find('img.photo');
 
                     _.each(self.photos, function (photos, of) {
@@ -173,7 +197,7 @@
                                         if (pidx >= photos.length - 1) {
                                             console.log("All photos of "+of+" attached!");
                                             doneSubmit();
-                                        }
+                                        } 
                                     }
                                 );
                             });
@@ -181,7 +205,7 @@
                     });*/
 
                     //if (self.photos.sign.length === 0 && self.photos.camera.length === 0) {
-                        doneSubmit();
+                        //doneSubmit();
                     //}
                 }
             });
@@ -273,61 +297,56 @@
                 self.$el.find('.field[name="'+k+'"]').val(self.model.get(k));
             });
             self.updateLocFields();
-            self.renderPhotos();
-        },
-
-        renderPhotos: function () {
-            var self = this;
-            _.each(self.photos, function (photos, of) {
-                console.log("Rendering "+photos.length+" photos of "+of+"...");
-            
-                _.each(photos, function(photo) {
-                    if (!photo.imgTag || !jQuery.contains(self.el, photo.imgTag)) {
-                        delete photo.imgTag;
-                        console.log("Rendering photo from URL: " + photo.imageURL);
-
-                        // create empty image element
-                        var cameraImage = jQuery('<img class="photo" />');
-                        // set image URI of image element
-                        cameraImage.attr('src', photo.imageURL);
-                        cameraImage.data('photo', photo);
-                        
-                        // select div that will hold all image elements added
-                        var imageList = self.$el.find('#'+of+'-image-list');
-                        // only one image
-                        
-                        console.log("Appending Photo "+
-                            (photo.id||cameraImage.attr('src'))+" to "+
-                            "#"+of+"image-list" 
-                        );
-                        // add newly created image to image list
-                        imageList.append(cameraImage);
-
-                        photo.imgTag = cameraImage.get(0);
-                    }
-                });
-            });     
+            //self.renderPhotos();
         }
+
+        // renderPhotos: function () {
+        //     var photos = this.$el.find('#photos');
+        //     //photos.text(JSON.stringify(this.model.toJSON(), null, 2));
+        //     //photos.append("<br />");
+        //     // _.each(this.model.getPhotos(), function (photo) {
+        //     //     console.log("Photo url: "+photo.thumbUrl());
+        //     //     photos.append("<img src='"+photo.thumbUrl()+"' />")
+        //     // });
+
+        //     console.log("In renderPhotos")
+        //     _.each(this.model.getPhotos(), function (photo) {
+        //         if (this.$el.find('#photo-'+photo.id).length === 0) {
+        //           var img = this.make('img', {src: photo.get('thumb_url')});
+        //           photos.append(img);
+        //         }
+        //     });
+        // }
     });
 
     var PhotoView = Backbone.View.extend({
         initialize: function () {
+            var view = this;
+
             this.model.on('image_upload change sync', this.render, this);
 
-            this.model.on('image_upload', function () {
+            /*this.model.on('image_upload', function () {
                 veos.currentReport.attachPhoto(veos.currentPhoto, function () {
                     console.log("Photo attached!");
                     //reportView.render();
-                    self.ReportForm.render();
+                    //self.ReportForm.render();
+                    view.render();
                 });
-            }, this);
+            }, this);*/
         },
 
         render: function () {
             console.log("Rendering PhotoView...");
             //this.$el.text(JSON.stringify(this.model.toJSON(), null, 2));
             console.log("Photo url: "+this.model.thumbUrl());
-            this.$el.append("<br /><img src='"+this.model.thumbUrl()+"' />");
+
+            var img = this.$el.find('#photo-'+this.model.id);
+            if (img.length === 0) {
+                img = jQuery("<img style='display: block' id='photo-"+this.model.id+"' />");
+                this.$el.append(img);
+            }
+            img.attr('src', this.model.thumbUrl());
+            img.attr('alt', this.model.get('notes'));
         }
     });
 
@@ -453,13 +472,13 @@
 
                 
                 // TODO - update this to new model once Armin is done with photos
-                var thumb;
-                var obj = report.get('photos');
-                if (obj && obj.photos && obj.photos[0] && obj.photos[0].thumb_url) {
-                    thumb = "<img src='"+veos.model.baseURL + obj.photos[0].thumb_url+"' />";
-                } else {
-                    thumb = "";
-                }
+                // var thumb;
+                // var obj = report.get('photos');
+                // if (obj && obj.photos && obj.photos[0] && obj.photos[0].thumb_url) {
+                //     thumb = "<img src='"+veos.model.baseURL + obj.photos[0].thumb_url+"' />";
+                // } else {
+                //     thumb = "";
+                // }
 
                 var item = jQuery("<li><a href='report-details.html?id="+report.id+"'>"+ownerName+"</a></li>");
                 list.append(item);

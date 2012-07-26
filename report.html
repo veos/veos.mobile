@@ -32,6 +32,9 @@
         <script type="text/javascript" charset="utf-8" src="js/veos.model.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/veos.view.js"></script>
 
+        <script type="text/javascript">
+            veos.init();
+        </script>
     </head>
     <body>
         <div data-role="page" id="report-page">
@@ -114,7 +117,7 @@
                                 <a id="select-camera-photo-button" data-role="button" data-transition="fade" data-icon="plus" data-iconpos="left" class="acquire-photo" data-acquire-from="gallery" data-photo-of="camera">
                                     Select Photo from Gallery
                                 </a>
-                                <div id="camera-image-list" class="photo-list">
+                                <div id="photos" class="photo-list">
                                     <!-- Images are added dynamically via camera or gallery selection -->
                                 </div>
                             </div>
@@ -234,8 +237,6 @@
         </div>
 
 
-        <script type="text/javascript">
-            veos.init();
-        </script>
+        
     </body>
 </html>
