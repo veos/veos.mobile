@@ -253,6 +253,7 @@
       }
 
       console.log("Uploading photo: "+photo.imageURL);
+      this.trigger('start_image_upload');
 
       var options = new FileUploadOptions();
       options.fileKey = "photo[image]";

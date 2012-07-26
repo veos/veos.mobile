@@ -143,6 +143,28 @@
                         jQuery.mobile.changePage("overview-map.html");
                     };
 
+                    var report = self.model;
+                    var successCounter = 0;
+                    var photoTotalCount = self.model.getPhotos().length;
+
+                    console.log("Total count of photos attached: " +photoTotalCount);
+
+                    if (photoTotalCount === 0) {
+                        console.log("No pictures and we are done!");
+                        doneSubmit();
+                        return;
+                    }
+
+                    _.each(self.getPhotos(), function (photo) {
+                        report.attachPhoto(photo, function () {
+                            successCounter++;
+                            if (successCounter === photoTotalCount) {
+                                console.log("All photos attached!");
+                                doneSubmit();
+                            }
+                        });
+                    });
+
 /*                    var photos = self.$el.find('img.photo');
 
                     _.each(self.photos, function (photos, of) {
@@ -161,7 +183,7 @@
                                         if (pidx >= photos.length - 1) {
                                             console.log("All photos of "+of+" attached!");
                                             doneSubmit();
-                                        }
+                                        } 
                                     }
                                 );
                             });
@@ -169,7 +191,7 @@
                     });*/
 
                     //if (self.photos.sign.length === 0 && self.photos.camera.length === 0) {
-                        doneSubmit();
+                        //doneSubmit();
                     //}
                 }
             });
@@ -262,7 +284,7 @@
             });
             self.updateLocFields();
             //self.renderPhotos();
-        },
+        }
 
         // renderPhotos: function () {
         //     var photos = this.$el.find('#photos');
@@ -285,22 +307,32 @@
 
     var PhotoView = Backbone.View.extend({
         initialize: function () {
+            var view = this;
+
             this.model.on('image_upload change sync', this.render, this);
 
-            this.model.on('image_upload', function () {
+            /*this.model.on('image_upload', function () {
                 veos.currentReport.attachPhoto(veos.currentPhoto, function () {
                     console.log("Photo attached!");
                     //reportView.render();
                     //self.ReportForm.render();
+                    view.render();
                 });
-            }, this);
+            }, this);*/
         },
 
         render: function () {
             console.log("Rendering PhotoView...");
             //this.$el.text(JSON.stringify(this.model.toJSON(), null, 2));
             console.log("Photo url: "+this.model.thumbUrl());
-            this.$el.append("<br /><img src='"+this.model.thumbUrl()+"' />");
+
+            var img = this.$el.find('#photo-'+this.model.id);
+            if (img.length === 0) {
+                img = jQuery("<img style='display: block' id='photo-"+this.model.id+"' />");
+                this.$el.append(img);
+            }
+            img.attr('src', this.model.thumbUrl());
+            img.attr('alt', this.model.get('notes'));
         }
     });
 
