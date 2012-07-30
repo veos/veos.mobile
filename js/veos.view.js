@@ -1,4 +1,4 @@
-/*jshint browser: true, devel: true */
+/*jshint debug:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true */
 /*global Backbone, _, jQuery, Camera, FileTransfer, FileUploadOptions, google */
 
 (function(veos) {
@@ -107,17 +107,6 @@
 
             this.model.on('change', _.bind(this.updateChangedFields, this));
 
-            // this.model is the veos.model.Report() you feed into your view's constructor under {model: report}
-            //this.model.on('change sync', this.render, this);
-
-            // this.model.on('image_upload', function () {
-            //     veos.currentReport.attachPhoto(veos.currentPhoto, function () {
-            //         console.log("Photo attached!");
-            //         //reportView.render();
-            //         self.ReportForm.render();
-            //     });
-            // }, this);
-
             this.$el.data('initialized', true); // check this later to prevent double-init
 
             // FIXME: this is kind of nasty... refine-location should get its own View to make this better
@@ -130,13 +119,6 @@
 
         submit: function () {
             var self = this;
-
-/*            if (this.signNotVisible) {
-                self.model.unset('sign', {silent: false});
-            }
-            if (this.cameraNotVisible) {
-                self.model.unset('camera', {silent: false});
-            }*/
 
             jQuery.mobile.showPageLoadingMsg();
             jQuery('.ui-loader h1').text('Submitting...');
@@ -169,6 +151,7 @@
                         return;
                     }
 
+                    // this does not work and cannot work since getPhotos depends on attachPhoto which is called later
                     _.each(self.getPhotos(), function (photo) {
                         report.attachPhoto(photo, function () {
                             successCounter++;
@@ -342,7 +325,7 @@
 
             var img = this.$el.find('#photo-'+this.model.id);
             if (img.length === 0) {
-                img = jQuery("<img style='display: block' id='photo-"+this.model.id+"' />");
+                img = jQuery("<img style='display: block' class='photo-list-item' id='photo-"+this.model.id+"' />");
                 this.$el.append(img);
             }
             img.attr('src', this.model.thumbUrl());
