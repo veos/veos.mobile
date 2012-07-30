@@ -1,4 +1,4 @@
-/*jshint browser: true, devel: true */
+/*jshint sub:true, debug:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true */
 /*global Backbone, _, jQuery, Camera, FileTransfer, FileUploadOptions, google */
 
 (function(veos) {
@@ -183,12 +183,12 @@
 
     getLocDescription: function() {
       return this.get('loc_description') || "";
-    },
-
-/*    getComplianceLevel: function() {
-      return this.get('compliance') IF I NEED TO DEAL WITH THE OVERRIDE
     }
-*/  });
+    // ,
+    // getComplianceLevel: function() {
+    //   return this.get('compliance') IF I NEED TO DEAL WITH THE OVERRIDE
+    // }
+  });
 
   model.Installations = Backbone.Collection.extend({
       model: model.Installation,
@@ -203,7 +203,7 @@
       },
       model: model.Installation,
       url: function () {
-        return model.baseURL + '/installations/near.json?lat=' + this.nearLat + '&lng=' + this.nearLng + '&max_dist=' + this.maxDist
+        return model.baseURL + '/installations/near.json?lat=' + this.nearLat + '&lng=' + this.nearLng + '&max_dist=' + this.maxDist;
       }
   });
 
