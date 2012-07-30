@@ -261,7 +261,7 @@
       }
 
       console.log("Uploading photo: "+photo.imageURL);
-      this.trigger('start_image_upload');
+      photo.trigger('image_upload_start');
 
       var options = new FileUploadOptions();
       options.fileKey = "photo[image]";
@@ -278,7 +278,7 @@
 
         photo.set(res.photo);
 
-        photo.trigger('image_upload', res);
+        photo.trigger('image_upload_finish', res);
       };
 
       var failure = function (error) {

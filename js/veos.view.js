@@ -323,16 +323,16 @@
         initialize: function () {
             var view = this;
 
-            this.model.on('image_upload change sync', this.render, this);
+            this.model.on('image_upload image_upload_finish change sync', this.render, this);
 
-            /*this.model.on('image_upload', function () {
-                veos.currentReport.attachPhoto(veos.currentPhoto, function () {
-                    console.log("Photo attached!");
-                    //reportView.render();
-                    //self.ReportForm.render();
-                    view.render();
-                });
-            }, this);*/
+            this.model.on('image_upload_start', function () {
+                jQuery.mobile.showPageLoadingMsg();
+                jQuery('.ui-loader h1').text('Uploading photo...');
+            }, this);
+
+            this.model.on('image_upload_error', function () {
+                jQuery.mobile.hidePageLoadingMsg();
+            }, this);
         },
 
         render: function () {
@@ -347,6 +347,8 @@
             }
             img.attr('src', this.model.thumbUrl());
             img.attr('alt', this.model.get('notes'));
+
+            jQuery.mobile.hidePageLoadingMsg();
         }
     });
 
@@ -424,7 +426,7 @@
         initialize: function () {
             this.events['click .ui-btn'] = function(ev) {
                 alert("clicked some-other thing");
-            }
+            };
             this.delegateEvents();
         }
     });    
