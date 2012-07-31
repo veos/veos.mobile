@@ -202,6 +202,7 @@
       return true; // will now redirect to clicked element's href
     },
 
+    // TODO: clear isn't working. Was working before?
     clear: function () {
       console.log("Clearing ReportForm...");
 

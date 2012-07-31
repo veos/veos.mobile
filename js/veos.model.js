@@ -183,7 +183,12 @@
 
     getLocDescription: function() {
       return this.get('loc_description') || "";
-    }
+    },
+
+    getTruncatedLocDescription: function() {
+      var locText = this.get('loc_description') || "";
+      return locText.substring(0,20) + '...';
+    }    
     // ,
     // getComplianceLevel: function() {
     //   return this.get('compliance') IF I NEED TO DEAL WITH THE OVERRIDE
