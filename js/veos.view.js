@@ -145,22 +145,57 @@
 
           console.log("Total count of photos attached: " +photoTotalCount);
 
-          if (photoTotalCount === 0) {
-            console.log("No pictures and we are done!");
-            doneSubmit();
-            return;
-          }
 
-          // this does not work and cannot work since getPhotos depends on attachPhoto which is called later
-          _.each(self.getPhotos(), function (photo) {
-            report.attachPhoto(photo, function () {
-              successCounter++;
-              if (successCounter === photoTotalCount) {
-                console.log("All photos attached!");
-                doneSubmit();
-              }
-            });
+
+          var images = jQuery('.photo-list-item');
+          var photoCount = images.length;
+          console.log("Total count of photos attached 2: " +photoCount);
+
+          jQuery('.photo-list-item').each(function (idx) {
+            console.log("in the each");
+            var photoModelJson = jQuery(this).attr('data-model');
+            console.log('Photo Model JSON: ' +photoModelJson)
+            var photoModel = JSON.parse(photoModelJson);
+            //{model: veos.currentPhoto, el: this.$el.find('#photos')}
+            var photo = new veos.model.Photo({id: photoModel.photo.id});
+
+            var photoFetchSuccess = function (model, response) {
+              console.log("We made it and are about tot attach Photos");
+
+              report.attachPhoto(model, function () {
+                successCounter++;
+                if (successCounter === photoCount) {
+                  console.log("All photos attached!");
+                  doneSubmit();
+                }
+              });
+            };
+
+
+            photo.fetch({success: photoFetchSuccess});
+            
+
+            
           });
+
+          // console.log("shouldn't arrive here really");
+
+          // if (photoTotalCount === 0) {
+          //   console.log("No pictures and we are done!");
+          //   doneSubmit();
+          //   return;
+          // }
+
+          // // this does not work and cannot work since getPhotos depends on attachPhoto which is called later
+          // _.each(self.getPhotos(), function (photo) {
+          //   report.attachPhoto(photo, function () {
+          //     successCounter++;
+          //     if (successCounter === photoTotalCount) {
+          //       console.log("All photos attached!");
+          //       doneSubmit();
+          //     }
+          //   });
+          // });
 
 /*                    var photos = self.$el.find('img.photo');
 
@@ -326,6 +361,8 @@
       var img = this.$el.find('#photo-'+this.model.id);
       if (img.length === 0) {
         img = jQuery("<img style='display: block' class='photo-list-item' id='photo-"+this.model.id+"' />");
+        //img.attr('data-model', this.model);
+        img.attr('data-model', JSON.stringify(this.model.toJSON()));
         this.$el.append(img);
       }
       img.attr('src', this.model.thumbUrl());
