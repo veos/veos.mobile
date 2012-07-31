@@ -194,8 +194,34 @@
         title: i.get('owner_name') || "Unknown Owner"
       });
 
+      // duplicating html from InstallationList (veos.view.js)
       var mapPopupContent;
-      mapPopupContent = '<p><b> ' + (i.get('owner_name') || "<i>Unknown Owner</i>") + ' </b></p>' + i.getLocDescription();    // TODO - pretty this up, maybe truncate Addr with ellipses?
+      //mapPopupContent = '<p><b> ' + (i.get('owner_name') || "<i>Unknown Owner</i>") + ' </b></p>' + i.getLocDescription();    // TODO - pretty this up, maybe truncate Addr with ellipses?
+
+/*                var complianceLevel;                   TODO - do we really want this? It's duplicate info here, since the pin already shows more info
+      if (installation.get('compliance_level_override')) {
+        complianceLevel = "<span class='compliance-"+installation.get('compliance_level_override')+"'></span>";
+      } else if (installation.get('compliance_level')) {
+        complianceLevel = "<span class='compliance-"+installation.get('compliance_level')+"'></span>";
+      } else {
+        complianceLevel = "<span class='compliance-unknown'></span>";
+      }*/
+
+      if (i.get('owner_name')) {
+        buttonText = "<span class='owner_name'>" + i.get('owner_name') + "</span><br/>" + i.getTruncatedLocDescription();
+      } else {
+        buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/>" + i.getLocDescription();
+      }
+      
+/*                var thumb;
+      var obj = report.get('sign') || report.get('camera');                       // TODO when we know how photos are going to look
+      if (obj && obj.photos && obj.photos[0] && obj.photos[0].thumb_url) {
+        thumb = "<img src='"+veos.model.baseURL + obj.photos[0].thumb_url+"' />";
+      } else {
+        thumb = "";
+      }*/
+
+      mapPopupContent = "<a href=installation-details.html?id="+i.id+">"+buttonText+"</a>";
 
       // binding a popup click event to the marker
       google.maps.event.addListener(marker, 'click', function() {

@@ -77,30 +77,13 @@
     font-size: 60%;    
 }
 
+#overview-map-page .map-popup {
+    background-color: #FFFFFF;
+}
+
 
 /***** REPORT *****/
 
-#report-page .photo-list {
-
-}
-
-#report-page .photo-list img {
-    display: inline;
-    width: 49%;
-    height: auto;
-}
-
-#report-page .map-thumbnail-container {
-    text-align: center;
-}
-
-#report-page .map-thumbnail {
-    height: auto;
-}
-
-#report-page .radio-button {
-    /* TODO: set some kind of min-width here to make the buttons of equal size */
-}
 
 #report-page #report-type {
 }
@@ -114,23 +97,97 @@
     text-align: center;
 }
 
+
+#report-page .map-thumbnail-container {
+    text-align: center;
+}
+
+#report-page .map-thumbnail {
+    height: auto;
+}
+
+#refine-location-page #refine-location-canvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+
+#report-page .photo-list {
+
+}
+
+#report-page .photo-list img {
+    display: inline;
+    width: 49%;
+    height: auto;
+}
+
 #report-page #photos-container .ui-collapsible-content {
     text-align: center;
     white-space: nowrap;
 }
 
-#report-page .photo-box {
+#report-page .dashed-box {
     border: 3px dashed #bbb;
     border-radius: 10px 10px 10px 10px;
     display: inline-block;
     padding: 6px;
-    width: 46%;
+    width: 90%;
     vertical-align: top;
 }
 
-@media only screen and (max-device-width: 800px) {
-    /* phone screens can't fit camera + sign box side by side 
-        so we show them one above the other */
+#report-page .dashed-box legend {
+    color: #999;
+    font-size: 21px;
+    font-weight: bold;
+    padding-left: 9px;
+    padding-right: 9px;
+    margin-left: 8%;
+}
+
+
+
+
+/* making radio buttons for Sign same width. CHECK ON PHONE */
+#report-page .ui-radio .ui-btn {
+    width: 120px;
+    text-align: center;
+
+}
+
+#sign-details-container {
+    text-align: center;
+    white-space: nowrap;    
+}
+
+
+#sign-details-container.dashed-box {
+
+}
+
+.dropdown-label {
+    vertical-align: 100%;                        /* puts it in the middle of the parent div, jquery etc */
+    display: inline-block;
+    width: 21%;
+}
+
+#report-note {
+    width: 100%;                                /* TODO: check this on the phone */
+}
+
+/*#report-page .sign-box label {
+    text-align: center;
+}*/
+
+/*#refine-location-page div[data-role="content"] {
+    position: absolute;
+
+}*/
+
+/*@media only screen and (max-device-width: 800px) {
+    phone screens can't fit camera + sign box side by side 
+        so we show them one above the other 
 
     #report-page #photos-container .ui-collapsible-content {
         white-space: normal;
@@ -141,35 +198,7 @@
         margin-bottom: 10px;
         width: 95%;
     }
-}
-
-#report-page .photo-box legend {
-    color: #999;
-    font-size: 21px;
-    font-weight: bold;
-    padding-left: 9px;
-    padding-right: 9px;
-    margin-left: 8%;
-}
-
-#report-page .photo-box label {
-    text-align: center;
-}
-
-#report-page .photo-box:first-child {
-    margin-right: 8px;
-}
-
-/*#refine-location-page div[data-role="content"] {
-    position: absolute;
-
 }*/
-
-#refine-location-page #refine-location-canvas {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-}
 
 /*
 #refine-location-page #refine-location-button {
@@ -194,11 +223,11 @@
 }*/
 
 
-/***** REPORTS LIST PAGE, TO BE CHANGED TO INSTALLATIONS-LIST-PAGE, EXPANDED FOR REPORT-SELECTION-PAGE *****/
+/***** REPORTS LIST PAGE *****/
 
 
 .owner_name {
-    font-size: 120%;
+    font-size: 150%;
     font-style: bold;
 }
 
@@ -212,7 +241,6 @@
     margin-top: 1em;
     margin-bottom: 1em;
 }
-
 
 /** this seems kind of hacky - is there a better way to do this? **/
 .relative {
