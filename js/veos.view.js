@@ -130,29 +130,32 @@
           jQuery.mobile.hidePageLoadingMsg();
         },
         success: function () {
-          console.log("Report saved successfully with id "+self.model.id);
+          var report = self.model;    
+          var successCounter = 0;     // needed to know when we went through all the attached pictures
           
+          console.log("Report saved successfully with id "+report.id);
+          
+          // This function is called later on in the success once all is done
+          // deletes objects and bounces us back to overview map
           var doneSubmit = function() {
             delete veos.currentReport;
             delete veos.reportForm;
             veos.alert("Report submitted successfully!");
             jQuery.mobile.changePage("overview-map.html");
           };
-
-          var report = self.model;
-          var successCounter = 0;
-          //var photoTotalCount = self.model.getPhotos().length;
-
-          var images = jQuery('.photo-list-item');
-          var photoCount = images.length;
+          
+          var images = jQuery('.photo-list-item');    // get all images that were taken
+          var photoCount = images.length;             // count how many pictures are attached
           console.log("Total count of photos attached: " +photoCount);
 
+          // no photos attached so we are done (call doneSubmit)
           if (photoCount === 0) {
             console.log("No pictures and we are done!");
             doneSubmit();
             return;
           }
           
+          // go through all pictures and attach them to the report
           jQuery('.photo-list-item').each(function (idx) {
             // retrieving photo model data stored in DOM as JSON
             var photoModelJson = jQuery(this).attr('data-model');
@@ -176,8 +179,17 @@
               });
             };
 
+            // TODO: think about this since it delets all input on error and returns to map
+            function photoFetchError (model, response) {
+              console.error("Fetching photo model " + model.id +" failed with error: " +response);
+              veos.alert("Error fetching Photo data during Report submission!");
+              delete veos.currentReport;
+              delete veos.reportForm;
+              jQuery.mobile.changePage("overview-map.html");
+            }
+
             // TODO: Implement a error function. What would the behaviour be?
-            photo.fetch({success: photoFetchSuccess});
+            photo.fetch({success: photoFetchSuccess, error: photoFetchError});
           });
         }
       });
