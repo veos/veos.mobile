@@ -188,7 +188,14 @@
     getTruncatedLocDescription: function() {
       var locText = this.get('loc_description') || "";
       return locText.substring(0,20) + '...';
-    }    
+    },
+
+    startAmending: function () {
+      var newReport = new model.Report();
+      newReport.fetch({url: model.baseURL + '/installations/' + this.id + '/amend.json'});
+      return newReport;
+    }
+
     // ,
     // getComplianceLevel: function() {
     //   return this.get('compliance') IF I NEED TO DEAL WITH THE OVERRIDE
