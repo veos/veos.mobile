@@ -59,6 +59,7 @@
   self.Map.prototype.startFollowing = function () {
     var map = this;
 
+    console.log("Started following user...");
     map.posWatcher = navigator.geolocation.watchPosition(function (geoloc) {
       jQuery(veos).trigger('haveloc', geoloc);
 
@@ -116,6 +117,7 @@
     Stops updating the current location marker.
   **/
   self.Map.prototype.stopFollowing = function () {
+    console.log("Stopped following user...");
     navigator.geolocation.clearWatch(this.posWatcher);
   };
 
@@ -123,6 +125,7 @@
     Removes the current location marker from the map.
   **/
   self.Map.prototype.clearCurrentLocation = function () {
+    console.log("Resetting current location...");
     this.currentLocMarker.setMap(null);
   };
 
