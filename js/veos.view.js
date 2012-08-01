@@ -370,26 +370,12 @@
         var complianceLevel = "<span class='compliance low'></span>";
         
         var thumb;
-/*        if (installation.get('latest_report')) {
-          console.log(installation.get('latest_report').id);
-          // more stuff
+        var obj = installation.get('photos');
+        if (obj && obj[0] && obj[0].image_file_name) {
+          console.log(obj.id);
+          thumb = "<img src='"+veos.model.baseURL + "/photos/images/" +  obj[0].id + "/thumb/" + obj[0].image_file_name+ ".jpg' />";
         } else {
-          console.log("no latest_report");
-        }*/
-
-/*        var lastestReport = new veos.model.Report({id: reportID});
-        
-        var someFunction = function (model, response) {
-          // do stuff here
-        };
-
-        lastestReport.fetch({success: someFunction, error: someErrorFunction});*/
-
-        var obj;
-        // obj = installation.get('photos')
-        if (obj && obj.photos && obj.photos[0] && obj.photos[0].thumb_url) {
-          thumb = "<img src='"+veos.model.baseURL + obj.photos[0].thumb_url+"' />";
-        } else {
+          console.log("no photos");
           thumb = "";
         }
 
