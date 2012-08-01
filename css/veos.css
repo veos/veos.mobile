@@ -245,7 +245,7 @@
 /** this seems kind of hacky - is there a better way to do this? **/
 .relative {
     height: 100%;
-    position:relative;
+    position: relative;
 }
 
 .compliance {

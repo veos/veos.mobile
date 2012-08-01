@@ -82,6 +82,55 @@ window.veos = (function(veos) {
         // this needs to go in here to make the refined map work, I believe. But it may also be causing the wierd viewport issues
         //report.init();
       })
+
+
+
+
+
+
+
+    /** report-edit.html (report-edit-page) **/
+      .delegate("#report-edit-page", "pageshow", function(ev) {
+        var newReport = self.currentInstallation.startAmending();
+        var reportEditView = new self.view.ReportEditForm({model: newReport, el: '#report-edit-page'});
+        reportEditView.render();
+
+/*        if (!self.currentReport) {
+          self.currentReport = new veos.model.Report();
+
+          if (veos.lastLoc) {
+            var initLoc = veos.map.convertGeolocToGmapLatLng(veos.lastLoc);
+            self.currentReport.set('loc_lng_from_gps', initLoc.lng());
+            self.currentReport.set('loc_lat_from_gps', initLoc.lat());
+          }
+        }
+
+        if (!self.reportForm) {
+          self.reportForm = new veos.view.ReportEditForm({
+            el: ev.target,
+            model: self.currentReport
+          });
+        }
+
+        if (!self.reportForm.$el.data('initialized')) {
+          console.log("Pointing ReportForm to "+ev.target);
+          self.reportForm.setElement(ev.target);
+          self.reportForm.$el.data('initialized', true);
+        }*/
+        
+        //veos.view.newReport.render();
+
+        // this needs to go in here to make the refined map work, I believe. But it may also be causing the wierd viewport issues
+        //report.init();
+      })
+
+
+
+
+
+
+
+
   
     /** refine-location.html (refine-location-page) **/
       .delegate("#refine-location-page", "pageshow", function() {

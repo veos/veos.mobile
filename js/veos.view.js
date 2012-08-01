@@ -48,6 +48,7 @@
           unidentified_owner_input.css('opacity', 1.0);
         } else {
           unidentified_owner_input.css('opacity', 0.4);
+          this.model.set('owner_identifiable', true);
         }
       },
       'change #unidentified-owner-checkbox': function (ev) {
@@ -61,7 +62,7 @@
           this.$el.find('#owner').attr('disabled', true);
         } else {
           this.$el.find('#owner').removeAttr('disabled');
-          this.model.set('owner_identifiable', true);                 // confirm that this makes sense and is what the backend is expecting
+          this.model.set('owner_identifiable', true);
         }
       },          
       'change #sign-yes': function (ev) {
@@ -294,6 +295,302 @@
     // }
   });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  self.ReportEditForm = Backbone.View.extend({
+    events: {
+      // for most fields
+      'change .field': function (ev) {
+        var f = jQuery(ev.target);
+
+        if (f.attr('name') === 'loc_description_from_user') {
+          this.updateLocFromAddress(f.val());
+        }
+
+        console.log("Setting "+f.attr("name")+" to "+f.val());
+        this.model.set(f.attr('name'), f.val());
+      },
+      // for multipickers
+      'change .multi-field': function (ev) {
+        var f = jQuery(ev.target);
+
+        // this.model.removeTags()          // TODO when backend functionality is there
+        var frozenModel = this.model;                     // 'this' changes inside the each
+        _.each(f.val(), function(el) {
+          frozenModel.addTag(el, f.attr('name'));
+          console.log("Setting "+f.attr("name")+" to "+el);
+        });
+      },
+
+      // specific to owner_name
+      'change [name="owner_name"].field': function (ev) {
+        var f = jQuery(ev.target);
+
+        var unidentified_owner_input = this.$el.find("#unidentified-owner-checkbox").parent();
+        if (f.val() === "") {
+          unidentified_owner_input.css('opacity', 1.0);
+        } else {
+          unidentified_owner_input.css('opacity', 0.4);
+          this.model.set('owner_identifiable', true);
+        }
+      },
+      'change #unidentified-owner-checkbox': function (ev) {
+        var f = jQuery(ev.target);
+        f.parent().css('opacity', 1.0);
+        if (f.is(':checked')) {
+          console.log("Setting owner_name and owner_type to null");
+          this.model.set('owner_name', null);
+          this.model.set('owner_type', null);
+          this.model.set('owner_identifiable', false);
+          this.$el.find('#owner').attr('disabled', true);
+        } else {
+          this.$el.find('#owner').removeAttr('disabled');
+          this.model.set('owner_identifiable', true);
+        }
+      },          
+      'change #sign-yes': function (ev) {
+        console.log('sign-yes button clicked');
+        jQuery('#sign-details-container').trigger('expand');
+        this.model.set('has_sign', true);
+      },  
+      'change #sign-no': function (ev) {
+        console.log('sign-no button clicked');
+        jQuery('#sign-details-container').trigger('collapse');
+        this.model.set('has_sign', false);
+      },
+      'click #add-camera-photo-button': function (ev) {
+        //var from = jQuery(ev.target).data('acquire-from');
+        veos.currentPhoto = new veos.model.Photo();
+        new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
+        veos.captureImage('camera', veos.currentPhoto);
+      }, 
+
+      'click #select-camera-photo-button': function (ev) {
+        //var from = jQuery(ev.target).data('acquire-from');
+        veos.currentPhoto = new veos.model.Photo();
+        new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
+        veos.captureImage('gallery', veos.currentPhoto);
+      },
+
+
+      'click #submit-report': 'submit',
+      'click #cancel-report': 'cancel'
+    },
+
+    initialize: function () {
+      //var self = this;
+      console.log("Initializing ReportForm...");
+
+      this.model.on('change', _.bind(this.updateChangedFields, this));
+
+      this.$el.data('initialized', true); // check this later to prevent double-init
+
+      // FIXME: this is kind of nasty... refine-location should get its own View to make this better
+      jQuery(document).delegate("#refine-location-submit", "click", function () {
+        console.log("User submitted refined location");
+        veos.currentReport.set('loc_description_from_user', null); // we'll look it up again from geoloc
+        return true; // will now redirect to clicked element's href
+      });
+    },
+
+    submit: function () {
+      var self = this;
+
+      jQuery.mobile.showPageLoadingMsg();
+      jQuery('.ui-loader h1').text('Submitting...');
+      // use this once we upgrade to jQuery Mobile 1.2
+      //jQuery.mobile.loading( 'show', { theme: "b", text: "Submitting...", textonly: false });
+
+      self.model.save(null, {
+        complete: function () {
+          jQuery.mobile.hidePageLoadingMsg();
+        },
+        success: function () {
+          console.log("Report saved successfully with id "+self.model.id);
+          
+          var doneSubmit = function() {
+            delete veos.currentReport;
+            delete veos.reportForm;
+            veos.alert("Report submitted successfully!");
+            jQuery.mobile.changePage("overview-map.html");
+          };
+
+          var report = self.model;
+          var successCounter = 0;
+          //var photoTotalCount = self.model.getPhotos().length;
+
+          var images = jQuery('.photo-list-item');
+          var photoCount = images.length;
+          console.log("Total count of photos attached: " +photoCount);
+
+          if (photoCount === 0) {
+            console.log("No pictures and we are done!");
+            doneSubmit();
+            return;
+          }
+          
+          jQuery('.photo-list-item').each(function (idx) {
+            // retrieving photo model data stored in DOM as JSON
+            var photoModelJson = jQuery(this).attr('data-model');
+            console.log('Photo Model JSON: ' +photoModelJson);
+            var photoModel = JSON.parse(photoModelJson);
+
+            // create a Photo model using the id
+            var photo = new veos.model.Photo({id: photoModel.photo.id});
+
+            // once photo model is available (via fetch) we attach the photo to the report
+            var photoFetchSuccess = function (model, response) {
+              console.log("We made it and are about tot attach Photos");
+
+              report.attachPhoto(model, function () {
+                successCounter++;
+                if (successCounter === photoCount) {
+                  console.log("All photos attached!");
+                  doneSubmit();
+                  return;
+                }
+              });
+            };
+
+            // TODO: Implement a error function. What would the behaviour be?
+            photo.fetch({success: photoFetchSuccess});
+
+
+          });
+        }
+      });
+    },
+
+    cancel: function () {
+      console.log("Cancelling report...");
+      this.clear();
+      delete veos.reportForm;
+      delete veos.currentReport;
+      return true; // will now redirect to clicked element's href
+    },
+
+    // TODO: clear isn't working. Was working before?
+    clear: function () {
+      console.log("Clearing ReportForm...");
+
+      // TODO: need to clear photos and stuff
+
+      this.model = new veos.model.Report();
+      this.render();
+
+      // FIXME: bad!
+      veos.currentReport = this.model;
+    },
+
+    updateLocFields: function () {
+      //var self = this;
+      var geoloc;
+      if (this.model.getLatLng()) {
+        console.log("Using location from report model...", this.model.getLatLng());
+        geoloc = this.model.getLatLng();
+      } else if (veos.lastLoc) {
+        console.log("Using last known location...", veos.latLoc);
+        geoloc = veos.lastLoc;
+      } else {
+        console.warn("Location unavailable... cannot update fields that depend on location.");
+        return;
+      }
+
+      this.updateMapThumbnailFromLoc(geoloc);
+      this.updateAddressFromLoc(geoloc);
+    },
+
+    updateMapThumbnailFromLoc: function (geoloc) {
+      var glatlng = veos.map.convertGeolocToGmapLatLng(geoloc);
+      var staticMapURL = veos.map.generateStaticMapURL(glatlng);
+      var mapThumbnail = jQuery(this.$el.find('.map-thumbnail'));
+      mapThumbnail.attr('src', staticMapURL);
+      jQuery(".map-thumbnail-container .waiting").hide();
+    },
+
+    updateAddressFromLoc: function (geoloc) {
+      var self = this;
+      veos.map.lookupAddressForLoc(geoloc, function (address) {
+        self.model.set('loc_description_from_google', address.formatted_address);
+        // only set user address from location if user hasn't manually entered it
+        if (!self.model.get('loc_description_from_user')) {
+          self.model.set('loc_description_from_user', address.formatted_address);
+        }
+      });
+    },
+
+    updateLocFromAddress: function (address) {
+      var self = this;
+      veos.map.lookupLocForAddress(address, function (lat, lng) {
+        self.model.set('loc_lat_from_user', lat);
+        self.model.set('loc_lng_from_user', lng);
+        self.updateMapThumbnailFromLoc(new google.maps.LatLng(lat, lng));
+      });
+    },
+
+    updateChangedFields: function () {
+      console.log("updating changed fields in ReportForm: "+_.keys(this.model.changed).join(", "));
+      var self = this;
+      _.each(this.model.changed, function(v, k) {
+        self.$el.find('*[name="'+k+'"].field').val(self.model.get(k));
+      });
+
+      // TODO: handle other non-trivial fields like report type, photo, etc.
+    },
+
+    /**
+      Triggers full update of all dynamic elements in the report page.
+    **/
+    render: function () {
+      console.log("rendering ReportForm!");
+      var self = this;
+      _.each(this.model.attributes, function(v, k) {
+        self.$el.find('.field[name="'+k+'"]').val(self.model.get(k));
+      });
+      self.updateLocFields();
+      //self.renderPhotos();
+    }
+
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   var PhotoView = Backbone.View.extend({
     initialize: function () {
       var view = this;
@@ -335,6 +632,32 @@
     Shows a list of Installations.
   **/
   self.InstallationList = Backbone.View.extend({
+    MAX_DISTANCE_FROM_CURRENT_LOCATION: 10, // km
+    
+    events: {
+      'click .ui-li': function (ev) {
+        console.log("clicked ui-li");
+        veos.currentInstallation = jQuery(ev.target).data('installation');
+        console.log(veos.currentInstallation);
+        //veos.currentInstallation = jQuery(ev.target).parents('li').first().data('installation');
+
+        // TODO once I can get the installation from .data, can remove this fetch
+/*        var editableInstallation = new veos.model.Installation({id: 47});
+
+        var startEditing = function (model, response) {
+          veos.currentInstallation = editableInstallation;
+          window.location.href = "report-edit.html";
+        }
+
+        var errorFunction = function (model, response) {
+          console.log("no installation found with that id");
+        }
+
+        editableInstallation.fetch({success: startEditing, error: errorFunction});*/
+
+      }
+    },
+
     initialize: function () {
       var self = this;
 
@@ -343,7 +666,7 @@
       }
 
       // TODO: consider binding 'add' and 'remove' to pick up added/removed Installations too?
-      this.collection.on('reset', _.bind(this.render, self)); 
+      this.collection.on('reset', _.bind(this.render, self));   
     },
 
     render: function () {
@@ -371,16 +694,23 @@
         
         var thumb;
         var obj = installation.get('photos');
-        if (obj && obj[0] && obj[0].image_file_name) {
+        if (obj && obj[0] && obj[0].image_file_name && obj[0].id) {
           console.log(obj.id);
           thumb = "<img src='"+veos.model.baseURL + "/photos/images/" +  obj[0].id + "/thumb/" + obj[0].image_file_name+ ".jpg' />";
         } else {
-          console.log("no photos");
           thumb = "";
         }
 
-        var item = jQuery("<li><a class='relative' href=installation-details.html?id="+installation.id+">"+complianceLevel+thumb+buttonText+"</a></li>");
-        list.append(item);
+        //var item = jQuery("<li><a class='relative' href=installation-details.html?id="+installation.id+">"+complianceLevel+thumb+buttonText+"</a></li>");
+/*        var item = jQuery("<li><a class='relative' href=report-edit.html>"+complianceLevel+thumb+buttonText+"</a></li>");
+        item.data('installation', installation);*/
+
+        var item = jQuery("<a class='relative' href=report-edit.html>"+complianceLevel+thumb+buttonText+"</a>");
+        item.data('installation', installation);
+        var li = jQuery("<li />")
+        li.append(item);
+
+        list.append(li);
         list.listview('refresh');
       });
     }
@@ -409,6 +739,10 @@
       this.delegateEvents();
     }
   });    
+
+
+  /***********************************************************************************************************************************/
+
 
   /**
     ReportList
