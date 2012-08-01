@@ -141,24 +141,28 @@
 
           var report = self.model;
           var successCounter = 0;
-          var photoTotalCount = self.model.getPhotos().length;
-
-          console.log("Total count of photos attached: " +photoTotalCount);
-
-
+          //var photoTotalCount = self.model.getPhotos().length;
 
           var images = jQuery('.photo-list-item');
           var photoCount = images.length;
-          console.log("Total count of photos attached 2: " +photoCount);
+          console.log("Total count of photos attached: " +photoCount);
 
+          if (photoCount === 0) {
+            console.log("No pictures and we are done!");
+            doneSubmit();
+            return;
+          }
+          
           jQuery('.photo-list-item').each(function (idx) {
-            console.log("in the each");
+            // retrieving photo model data stored in DOM as JSON
             var photoModelJson = jQuery(this).attr('data-model');
-            console.log('Photo Model JSON: ' +photoModelJson)
+            console.log('Photo Model JSON: ' +photoModelJson);
             var photoModel = JSON.parse(photoModelJson);
-            //{model: veos.currentPhoto, el: this.$el.find('#photos')}
+
+            // create a Photo model using the id
             var photo = new veos.model.Photo({id: photoModel.photo.id});
 
+            // once photo model is available (via fetch) we attach the photo to the report
             var photoFetchSuccess = function (model, response) {
               console.log("We made it and are about tot attach Photos");
 
@@ -167,62 +171,16 @@
                 if (successCounter === photoCount) {
                   console.log("All photos attached!");
                   doneSubmit();
+                  return;
                 }
               });
             };
 
-
+            // TODO: Implement a error function. What would the behaviour be?
             photo.fetch({success: photoFetchSuccess});
-                        
+
+
           });
-
-          // console.log("shouldn't arrive here really");
-
-          // if (photoTotalCount === 0) {
-          //   console.log("No pictures and we are done!");
-          //   doneSubmit();
-          //   return;
-          // }
-
-          // // this does not work and cannot work since getPhotos depends on attachPhoto which is called later
-          // _.each(self.getPhotos(), function (photo) {
-          //   report.attachPhoto(photo, function () {
-          //     successCounter++;
-          //     if (successCounter === photoTotalCount) {
-          //       console.log("All photos attached!");
-          //       doneSubmit();
-          //     }
-          //   });
-          // });
-
-/*                    var photos = self.$el.find('img.photo');
-
-          _.each(self.photos, function (photos, of) {
-          
-            if (photos.length >= 0) {
-              jQuery('.ui-loader h1').text('Uploading Photos...');
-              console.log("Found "+photos.length+" photos of "+of+" to attach...");
-              jQuery(photos).each(function (pidx) {
-                var photo = this;
-                console.log("Trying to attach Photo at "+photo.imageURL+" to Report with id "+self.model.id);
-                self.model.attachPhoto(
-                  photo,
-                  of,
-                  function () {
-                    console.log("Successfully attached Photo of "+of+" with id "+photo.id+" to Report with id "+self.model.id+".");
-                    if (pidx >= photos.length - 1) {
-                      console.log("All photos of "+of+" attached!");
-                      doneSubmit();
-                    } 
-                  }
-                );
-              });
-            }
-          });*/
-
-          //if (self.photos.sign.length === 0 && self.photos.camera.length === 0) {
-            //doneSubmit();
-          //}
         }
       });
     },

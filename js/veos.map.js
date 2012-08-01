@@ -1,4 +1,4 @@
-/*jshint browser: true, devel: true */
+/*jshint debug:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true */
 /*globals jQuery, google */
 
 (function(veos) {
@@ -10,7 +10,7 @@
     } else {
       return new google.maps.LatLng(geoloc.coords.latitude, geoloc.coords.longitude);
     }
-  }
+  };
 
   self.Map = function (mapDiv, initLoc) {
     console.log("initializing map in " + mapDiv);
@@ -59,6 +59,7 @@
   self.Map.prototype.startFollowing = function () {
     var map = this;
 
+    console.log("Started following user...");
     map.posWatcher = navigator.geolocation.watchPosition(function (geoloc) {
       jQuery(veos).trigger('haveloc', geoloc);
 
@@ -116,6 +117,7 @@
     Stops updating the current location marker.
   **/
   self.Map.prototype.stopFollowing = function () {
+    console.log("Stopped following user...");
     navigator.geolocation.clearWatch(this.posWatcher);
   };
 
@@ -123,6 +125,7 @@
     Removes the current location marker from the map.
   **/
   self.Map.prototype.clearCurrentLocation = function () {
+    console.log("Resetting current location...");
     this.currentLocMarker.setMap(null);
   };
 
@@ -175,6 +178,7 @@
 
     installations.each(function(i) {
       var latLng = new google.maps.LatLng(i.get('loc_lat'), i.get('loc_lng'));
+      var buttonText = "";
 
       // TODO - confirm that I don't need to do the override check here. If I do, it probably makes more sense to extend the Installations model
       var compliancePin;
@@ -185,7 +189,7 @@
       } else if (i.get('compliance') === "low") {
         compliancePin = '/images/pin-red-full.png';
       } else {
-        compliancePin = 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+        compliancePin = 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
       }
 
       var marker = new google.maps.Marker({
