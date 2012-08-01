@@ -173,9 +173,7 @@
 
 
             photo.fetch({success: photoFetchSuccess});
-            
-
-            
+                        
           });
 
           // console.log("shouldn't arrive here really");
@@ -413,15 +411,31 @@
         }*/
         var complianceLevel = "<span class='compliance low'></span>";
         
-/*                var thumb;
-        var obj = report.get('sign') || report.get('camera');                       // TODO when we know how photos are going to look
+        var thumb;
+/*        if (installation.get('latest_report')) {
+          console.log(installation.get('latest_report').id);
+          // more stuff
+        } else {
+          console.log("no latest_report");
+        }*/
+
+/*        var lastestReport = new veos.model.Report({id: reportID});
+        
+        var someFunction = function (model, response) {
+          // do stuff here
+        };
+
+        lastestReport.fetch({success: someFunction, error: someErrorFunction});*/
+
+        var obj;
+        // obj = installation.get('photos')
         if (obj && obj.photos && obj.photos[0] && obj.photos[0].thumb_url) {
           thumb = "<img src='"+veos.model.baseURL + obj.photos[0].thumb_url+"' />";
         } else {
           thumb = "";
-        }*/
+        }
 
-        var item = jQuery("<li><a class='relative' href=installation-details.html?id="+installation.id+">"+complianceLevel+buttonText+"</a></li>");
+        var item = jQuery("<li><a class='relative' href=installation-details.html?id="+installation.id+">"+complianceLevel+thumb+buttonText+"</a></li>");
         list.append(item);
         list.listview('refresh');
       });
