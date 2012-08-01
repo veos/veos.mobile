@@ -188,7 +188,6 @@
               jQuery.mobile.changePage("overview-map.html");
             }
 
-            // TODO: Implement a error function. What would the behaviour be?
             photo.fetch({success: photoFetchSuccess, error: photoFetchError});
           });
         }
@@ -379,15 +378,17 @@
         }*/
         var complianceLevel = "<span class='compliance low'></span>";
         
-/*                var thumb;
-        var obj = report.get('sign') || report.get('camera');                       // TODO when we know how photos are going to look
-        if (obj && obj.photos && obj.photos[0] && obj.photos[0].thumb_url) {
-          thumb = "<img src='"+veos.model.baseURL + obj.photos[0].thumb_url+"' />";
+        var thumb;
+        var obj = installation.get('photos');
+        if (obj && obj[0] && obj[0].image_file_name) {
+          console.log(obj.id);
+          thumb = "<img src='"+veos.model.baseURL + "/photos/images/" +  obj[0].id + "/thumb/" + obj[0].image_file_name+ ".jpg' />";
         } else {
+          console.log("no photos");
           thumb = "";
-        }*/
+        }
 
-        var item = jQuery("<li><a class='relative' href=installation-details.html?id="+installation.id+">"+complianceLevel+buttonText+"</a></li>");
+        var item = jQuery("<li><a class='relative' href=installation-details.html?id="+installation.id+">"+complianceLevel+thumb+buttonText+"</a></li>");
         list.append(item);
         list.listview('refresh');
       });
