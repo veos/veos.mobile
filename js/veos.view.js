@@ -382,7 +382,7 @@
         var obj = installation.get('photos');
         if (obj && obj[0] && obj[0].image_file_name) {
           console.log(obj.id);
-          thumb = "<img src='"+veos.model.baseURL + "/photos/images/" +  obj[0].id + "/thumb/" + obj[0].image_file_name+ ".jpg' />";
+          thumb = "<img class='list-picture' src='"+veos.model.baseURL + "/photos/images/" +  obj[0].id + "/thumb/" + obj[0].image_file_name+ ".jpg' />";
         } else {
           console.log("no photos");
           thumb = "";

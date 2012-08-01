@@ -243,9 +243,10 @@
 }
 
 /** this seems kind of hacky - is there a better way to do this? **/
-.relative {
+a.relative {
     height: 100%;
-    position:relative;
+    position: relative;
+    padding-left: 2% !important;
 }
 
 .compliance {
@@ -270,9 +271,9 @@
     background-color: white;
 }
 
-
-
-
+.list-picture {
+    position: relative;
+}
 
 
 #report-details-page .map-thumbnail {
