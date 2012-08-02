@@ -203,7 +203,6 @@
       return true; // will now redirect to clicked element's href
     },
 
-    // TODO: clear isn't working. Was working before?
     clear: function () {
       console.log("Clearing ReportForm...");
 
@@ -323,7 +322,7 @@
 
 
 
-
+  // this really should be an extension ofthe ReportForm view above
 
 
   self.ReportEditForm = Backbone.View.extend({
@@ -495,6 +494,7 @@
       this.clear();
       delete veos.reportForm;
       delete veos.currentReport;
+      delete veos.currentInstallation;        // unique to editReport's view
       return true; // will now redirect to clicked element's href
     },
 
