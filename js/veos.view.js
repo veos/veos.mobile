@@ -636,25 +636,8 @@
     
     events: {
       'click .ui-li': function (ev) {
-        console.log("clicked ui-li");
-        veos.currentInstallation = jQuery(ev.target).data('installation');
-        console.log(veos.currentInstallation);
-        //veos.currentInstallation = jQuery(ev.target).parents('li').first().data('installation');
-
-        // TODO once I can get the installation from .data, can remove this fetch
-/*        var editableInstallation = new veos.model.Installation({id: 47});
-
-        var startEditing = function (model, response) {
-          veos.currentInstallation = editableInstallation;
-          window.location.href = "report-edit.html";
-        }
-
-        var errorFunction = function (model, response) {
-          console.log("no installation found with that id");
-        }
-
-        editableInstallation.fetch({success: startEditing, error: errorFunction});*/
-
+        console.log("clicked ui-li a");
+        veos.currentInstallation = jQuery(ev.target).data('installation');      // next used in the report-edit delegate
       }
     },
 
@@ -701,12 +684,8 @@
           thumb = "";
         }
 
-        //var item = jQuery("<li><a class='relative' href=installation-details.html?id="+installation.id+">"+complianceLevel+thumb+buttonText+"</a></li>");
-/*        var item = jQuery("<li><a class='relative' href=report-edit.html>"+complianceLevel+thumb+buttonText+"</a></li>");
-        item.data('installation', installation);*/
-
-        var item = jQuery("<a class='relative' href=report-edit.html>"+complianceLevel+thumb+buttonText+"</a>");
-        item.data('installation', installation);
+        var item = jQuery("<a class='relative' href=report.html>"+complianceLevel+thumb+buttonText+"</a>");
+        item.data('installation', installation);        // add the installation object so that we can retrieve it in the click event
         var li = jQuery("<li />")
         li.append(item);
 

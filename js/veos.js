@@ -54,82 +54,46 @@ window.veos = (function(veos) {
 
     /** report.html (report-page) **/
       .delegate("#report-page", "pageshow", function(ev) {
-        if (!self.currentReport) {
-          self.currentReport = new veos.model.Report();
+        // edit report
+        if (self.currentInstallation) {
+          var newReport = self.currentInstallation.startAmending();
+          var reportEditView = new self.view.ReportEditForm({model: newReport, el: '#report-page'});
+          reportEditView.render();
+        }
+        // new report
+        else {
+          if (!self.currentReport) {
+            self.currentReport = new veos.model.Report();
 
-          if (veos.lastLoc) {
-            var initLoc = veos.map.convertGeolocToGmapLatLng(veos.lastLoc);
-            self.currentReport.set('loc_lng_from_gps', initLoc.lng());
-            self.currentReport.set('loc_lat_from_gps', initLoc.lat());
+            if (veos.lastLoc) {
+              var initLoc = veos.map.convertGeolocToGmapLatLng(veos.lastLoc);
+              self.currentReport.set('loc_lng_from_gps', initLoc.lng());
+              self.currentReport.set('loc_lat_from_gps', initLoc.lat());
+            }
           }
-        }
 
-        if (!self.reportForm) {
-          self.reportForm = new veos.view.ReportForm({
-            el: ev.target,
-            model: self.currentReport
-          });
-        }
+          if (!self.reportForm) {
+            self.reportForm = new veos.view.ReportForm({
+              el: ev.target,
+              model: self.currentReport
+            });
+          }
 
-        if (!self.reportForm.$el.data('initialized')) {
-          console.log("Pointing ReportForm to "+ev.target);
-          self.reportForm.setElement(ev.target);
-          self.reportForm.$el.data('initialized', true);
+          if (!self.reportForm.$el.data('initialized')) {
+            console.log("Pointing ReportForm to "+ev.target);
+            self.reportForm.setElement(ev.target);
+            self.reportForm.$el.data('initialized', true);
+          }
+          
+          self.reportForm.render();          
         }
-        
-        self.reportForm.render();
 
         // this needs to go in here to make the refined map work, I believe. But it may also be causing the wierd viewport issues
         //report.init();
       })
 
-
-
-
-
-
-
-    /** report-edit.html (report-edit-page) **/
-      .delegate("#report-edit-page", "pageshow", function(ev) {
-        var newReport = self.currentInstallation.startAmending();
-        var reportEditView = new self.view.ReportEditForm({model: newReport, el: '#report-edit-page'});
-        reportEditView.render();
-
-/*        if (!self.currentReport) {
-          self.currentReport = new veos.model.Report();
-
-          if (veos.lastLoc) {
-            var initLoc = veos.map.convertGeolocToGmapLatLng(veos.lastLoc);
-            self.currentReport.set('loc_lng_from_gps', initLoc.lng());
-            self.currentReport.set('loc_lat_from_gps', initLoc.lat());
-          }
-        }
-
-        if (!self.reportForm) {
-          self.reportForm = new veos.view.ReportEditForm({
-            el: ev.target,
-            model: self.currentReport
-          });
-        }
-
-        if (!self.reportForm.$el.data('initialized')) {
-          console.log("Pointing ReportForm to "+ev.target);
-          self.reportForm.setElement(ev.target);
-          self.reportForm.$el.data('initialized', true);
-        }*/
-        
-        //veos.view.newReport.render();
-
-        // this needs to go in here to make the refined map work, I believe. But it may also be causing the wierd viewport issues
-        //report.init();
-      })
-
-
-
-
-
-
-
+// TODO otherwise clean up all of the duplicate ids in the html and views
+// TODO figure out why the radios and dropdowns aren't being rendered correctly
 
   
     /** refine-location.html (refine-location-page) **/
