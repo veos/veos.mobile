@@ -167,9 +167,9 @@
 }
 
 .dropdown-label {
-    vertical-align: 100%;                        /* puts it in the middle of the parent div, jquery etc */
+    /*vertical-align: 100%;*/                        /* puts it in the middle of the parent div, jquery etc */
     display: inline-block;
-    width: 21%;
+    /*width: 21%;*/
 }
 
 #report-note {
