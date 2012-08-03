@@ -687,7 +687,76 @@
         var thumb;
         var obj = installation.get('photos');
         if (obj && obj[0] && obj[0].image_file_name && obj[0].id) {
-          console.log(obj.id);
+          console.log(obj[0].id);
+          thumb = "<img class='list-picture' src='"+veos.model.baseURL + "/photos/images/" +  obj[0].id + "/thumb/" + obj[0].image_file_name+ ".jpg' />";
+        } else {
+          thumb = "";
+        }
+
+        var item = jQuery("<a class='relative' href='installation-details.html?id="+installation.get('id')+"'>"+complianceLevel+thumb+buttonText+"</a>");
+        item.data('installation', installation);        // add the installation object so that we can retrieve it in the click event
+        var li = jQuery("<li />")
+        li.append(item);
+
+        list.append(li);
+        list.listview('refresh');
+      });
+    }
+  });
+
+
+  /**
+    InstallationList for Report creation
+    Shows a list of Installations.
+  **/
+  self.InstallationListReport = Backbone.View.extend({
+    MAX_DISTANCE_FROM_CURRENT_LOCATION: 10, // km
+    
+    events: {
+      'click .ui-li': function (ev) {
+        console.log("clicked ui-li a");
+        veos.currentInstallation = jQuery(ev.target).data('installation');      // next used in the report-edit delegate
+      }
+    },
+
+    initialize: function () {
+      var self = this;
+
+      if (!this.collection) {
+        this.collection = new veos.model.Installations();
+      }
+
+      // TODO: consider binding 'add' and 'remove' to pick up added/removed Installations too?
+      this.collection.on('reset', _.bind(this.render, self));   
+    },
+
+    render: function () {
+      var list = this.$el.find('.installations-list');
+      list.empty();
+
+      this.collection.each(function (installation) {
+        var buttonText = '';
+        var ownerName;
+        if (installation.get('owner_name')) {
+          buttonText = "<span class='owner_name'>" + installation.get('owner_name') + "</span><br/>" + installation.getLocDescription();
+        } else {
+          buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/>" + installation.getLocDescription();
+        }
+        
+/*                var complianceLevel;                   TODO - add me back in when model supports this
+        if (installation.get('compliance_level_override')) {
+          complianceLevel = "<span class='compliance-"+installation.get('compliance_level_override')+"'></span>";
+        } else if (installation.get('compliance_level')) {
+          complianceLevel = "<span class='compliance-"+installation.get('compliance_level')+"'></span>";
+        } else {
+          complianceLevel = "<span class='compliance-unknown'></span>";
+        }*/
+        var complianceLevel = "<span class='compliance low'></span>";
+        
+        var thumb;
+        var obj = installation.get('photos');
+        if (obj && obj[0] && obj[0].image_file_name && obj[0].id) {
+          console.log(obj[0].id);
           thumb = "<img class='list-picture' src='"+veos.model.baseURL + "/photos/images/" +  obj[0].id + "/thumb/" + obj[0].image_file_name+ ".jpg' />";
         } else {
           thumb = "";
@@ -707,26 +776,26 @@
   /**
     Extending InstallaionList for report-selection.html TODO - not working
   **/
-  self.InstallationSelectionList = self.InstallationList.extend({
-    'click a.arrowbutton': function () {
-      // go to editable version of installation-list.html
-    }
-  });
+  // self.InstallationSelectionList = self.InstallationList.extend({
+  //   'click a.arrowbutton': function () {
+  //     // go to editable version of installation-list.html
+  //   }
+  // });
 
-  self.InstallationViewList = self.InstallationList.extend({
-    'click a.arrowbutton': function () {
-      // go to installation-list.html
-    }
-  });
+  // self.InstallationViewList = self.InstallationList.extend({
+  //   'click a.arrowbutton': function () {
+  //     // go to installation-list.html
+  //   }
+  // });
 
-  self.InstallationSelectionListView = self.InstallationList.extend({
-    initialize: function () {
-      this.events['click .ui-btn'] = function(ev) {
-        alert("clicked some-other thing");
-      };
-      this.delegateEvents();
-    }
-  });    
+  // self.InstallationSelectionListView = self.InstallationList.extend({
+  //   initialize: function () {
+  //     this.events['click .ui-btn'] = function(ev) {
+  //       alert("clicked some-other thing");
+  //     };
+  //     this.delegateEvents();
+  //   }
+  // });    
 
 
   /***********************************************************************************************************************************/
