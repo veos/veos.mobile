@@ -1008,6 +1008,28 @@
       thumbnailContainer.append(mapThumbnail);
     },
 
+    showPictures: function(installation) {
+      console.log('Showing pictures...');
+      var photoContainer = this.$el.find('.photo-thumbnail-container');
+
+      _.each(installation.get('photos'), function (photo) {
+        var photo = new veos.model.Photo({id: photo.id});
+
+        function photoSuccess (model, response) {
+          var img = jQuery('<img />');
+          img.attr('src', model.thumbUrl());
+          photoContainer.append(img);
+        }
+
+        function photoError (model, response) {
+          console.error("Error fetching photo model with message: "+response);
+          veos.alert("Error fetching photo details");
+        }
+
+        photo.fetch({success: photoSuccess, error: photoError});
+      });
+    },
+
     render: function () {
       var self = this;
       var installation = this.model;
@@ -1017,6 +1039,10 @@
       }
 
       this.createPointDetailsMap(installation);
+
+      if (installation.has('photos')) {
+        self.showPictures(installation);
+      }
       
       var photoThumbnail = jQuery('<img class="photo-thumbnail" />');
       var photoContainer = this.$el.find('.photo-thumbnail-container');
@@ -1034,7 +1060,7 @@
       //console.log("rendering ReportForm!");
       
       _.each(installation.attributes, function(v, k) {
-        self.$el.find('.field[name="'+k+'"]').val(self.model.get(k));
+        self.$el.find('.field[name="'+k+'"]').text(self.model.get(k));
       });
 
     }
