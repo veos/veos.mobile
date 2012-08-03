@@ -125,7 +125,7 @@ window.veos = (function(veos) {
       .delegate("#report-selection-page", "pageshow", function(ev) {
         var nearbyInstallations = new veos.model.NearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude, 10);           // TODO I'm pretty sure this is not the right way to access these
 
-        var view = new veos.view.InstallationList({
+        var view = new veos.view.InstallationListReport({
           el: ev.target,
           collection: nearbyInstallations
         });
