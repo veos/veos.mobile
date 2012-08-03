@@ -695,7 +695,7 @@
 
         var item = jQuery("<a class='relative' href='installation-details.html?id="+installation.get('id')+"'>"+complianceLevel+thumb+buttonText+"</a>");
         item.data('installation', installation);        // add the installation object so that we can retrieve it in the click event
-        var li = jQuery("<li />")
+        var li = jQuery("<li />");
         li.append(item);
 
         list.append(li);
@@ -764,7 +764,7 @@
 
         var item = jQuery("<a class='relative' href=report.html>"+complianceLevel+thumb+buttonText+"</a>");
         item.data('installation', installation);        // add the installation object so that we can retrieve it in the click event
-        var li = jQuery("<li />")
+        var li = jQuery("<li />");
         li.append(item);
 
         list.append(li);
@@ -1005,10 +1005,11 @@
       var mapThumbnail = jQuery('<img class="map-thumbnail" />');
       mapThumbnail.attr('src', staticMapCriteria);    
       var thumbnailContainer = this.$el.find('.map-thumbnail-container');
-      thumbnailContainer.append(mapThumbnail);    
+      thumbnailContainer.append(mapThumbnail);
     },
 
     render: function () {
+      var self = this;
       var installation = this.model;
 
       if (this.loader) {
@@ -1021,13 +1022,21 @@
       var photoContainer = this.$el.find('.photo-thumbnail-container');
 
       var ownerName;
-      if (installation.get('owner_name')) {
+      if (installation.has('owner_name')) {
         ownerName = "<span class='owner_name'>" + installation.get('owner_name') + "</span>";
       } else {
         ownerName = "<span class='owner_name unknown'>Unknown Owner</span>";
       }
 
       this.$el.find('.installation-title').html(ownerName);
+
+
+      //console.log("rendering ReportForm!");
+      
+      _.each(installation.attributes, function(v, k) {
+        self.$el.find('.field[name="'+k+'"]').val(self.model.get(k));
+      });
+
     }
   });
 
