@@ -127,7 +127,7 @@
                                 <fieldset data-role="controlgroup" data-mini="true">
                                     <!-- <div data-role="fieldcontain"> -->
                                         <label class="dropdown-label" for="surveilled-space">What is the installation looking at?</label>
-                                        <select class="multi-field" name="surveilled_space" id="surveilled-space" data-mini="true" multiple="multiple" data-native-menu="false">
+                                        <select class="multi-field field" name="surveilled_space" id="surveilled-space" data-mini="true" multiple="multiple" data-native-menu="false">
                                             <option>Choose options</option>
                                             <option value="Mall common area">Mall common area</option>
                                             <option value="Park">Park</option>
@@ -157,9 +157,9 @@
                 <div data-role="fieldcontain">
                     <fieldset data-role="controlgroup" data-type="horizontal">
                         <legend><b>I see a sign</b></legend>
-                        <input name="sign-present" class="sign-present" id="sign-yes" value="yes" type="radio">
+                        <input name="has_sign" class="has-sign field" id="sign-yes" value="yes" type="radio">
                         <label for="sign-yes"><b>Yes</b></label>
-                        <input name="sign-present" class="sign-present" id="sign-no" value="no" type="radio">
+                        <input name="has_sign" class="has-sign field" id="sign-no" value="no" type="radio">
                         <label for="sign-no"><b>No</b></label>
                     </fieldset>
                 </div>
@@ -191,7 +191,7 @@
 
                             <div data-role="fieldcontain">
                                 <label class="dropdown-label" for="sign-stated-purpose">Stated purpose</label>
-                                <select class="multi-field" name="sign_stated_purpose" id="sign-stated-purpose" data-mini="true" multiple="multiple" data-native-menu="false">
+                                <select class="multi-field field" name="sign_stated_purpose" id="sign-stated-purpose" data-mini="true" multiple="multiple" data-native-menu="false">
                                     <option>Choose options</option>
                                     <option value="None/unknown">None/unknown</option>
                                     <option value="Crime prevention/prosecution">Crime prevention/prosecution</option>
@@ -201,7 +201,7 @@
 
                             <div data-role="fieldcontain">
                                 <label class="dropdown-label" for="sign-properties">Stated properties</label>
-                                <select class="multi-field" name="sign_properties" id="sign-properties" data-mini="true" multiple="multiple" data-native-menu="false">
+                                <select class="multi-field field" name="sign_properties" id="sign-properties" data-mini="true" multiple="multiple" data-native-menu="false">
                                     <option>Choose options</option>
                                     <option value="None/unknown">None/unknown</option>
                                     <option value="# days image will be retained"># days image will be retained</option>

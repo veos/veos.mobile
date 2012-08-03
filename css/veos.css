@@ -42,14 +42,6 @@
     z-index: 1;
 }
 
-.colorMeGreen {
-    color: green;
-}
-
-.colorMeRed { /* seriously?? :) */
-    color: red;
-}
-
 .map-thumbnail {
     max-width: 100%;
 }
@@ -72,7 +64,6 @@
     height: 100%;
 }
 
-/* WE NEED A SMALL FONT TO FIT THESE LATERALLY ON A PHONE SCREEN. SWITCH TO VERITCAL STACK? */
 #overview-map-page .map-button-container {
     font-size: 60%;    
 }
@@ -223,7 +214,7 @@
 }*/
 
 
-/***** REPORTS LIST PAGE *****/
+/***** INSTALLATION LIST PAGE *****/
 
 
 .owner_name {

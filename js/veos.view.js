@@ -560,11 +560,54 @@
     updateChangedFields: function () {
       console.log("updating changed fields in ReportForm: "+_.keys(this.model.changed).join(", "));
       var self = this;
-      _.each(this.model.changed, function(v, k) {
-        self.$el.find('*[name="'+k+'"].field').val(self.model.get(k));
+      _.each(this.model.changed, function(v, k) {                 // this whole thing needs to be checked over. These refreshes seem wrong. Also, the following 15 lines are 'verbose'
+        if (k === "tags") {
+          var purposesArray = [];
+          var propertiesArray = [];
+          var spacesArray = [];
+          _.each(v, function(i) {
+            if (i.tag_type === "sign_stated_purpose") {
+              purposesArray.push(i.tag);
+            } else if (i.tag_type === "sign_properties") {
+              propertiesArray.push(i.tag);
+            } else if (i.tag_type === "surveilled_space") {
+              spacesArray.push(i.tag);
+            } else {
+              console.log("unknown tag type");
+            }
+          });
+          self.$el.find('*[name="sign_stated_purpose"].multi-field').val(purposesArray);
+          self.$el.find('*[name="sign_properties"].multi-field').val(propertiesArray);
+          self.$el.find('*[name="surveilled_space"].multi-field').val(spacesArray);
+        } else if (k === "has_sign") {
+          if (self.model.get(k)) {
+            jQuery('#sign-yes').attr('checked', true);                // erm, what? Start here
+            console.log('true');
+          } else if (!self.model.get(k)) {
+            jQuery('#sign-no').attr('checked', true);
+            console.log('false');
+          }
+        }
+         else {
+          self.$el.find('*[name="'+k+'"].field').val(self.model.get(k));
+        }
+
+
+/*        self.$el.find('*[name="'+k+'"].field').val(self.model.get(k));
+        self.$el.find('*[name="'+k+'"].multi-field').val(self.model.get(k));   */     
       });
 
-      // TODO: handle other non-trivial fields like report type, photo, etc.
+
+      jQuery('#owner-type').selectmenu('refresh');                          // why doesn't this work with classes? Would be much nicer
+      jQuery('#sign-visibility').selectmenu('refresh');                
+
+      jQuery('#surveilled-space').selectmenu('refresh', 'true');
+      jQuery('#sign-stated-purpose').selectmenu('refresh', 'true');
+      jQuery('#sign-properties').selectmenu('refresh', 'true');
+      jQuery("input[type='radio']").attr("checked",true).checkboxradio("refresh"); 
+
+
+      // TODO: handle other non-trivial fields like , photo, etc.
     },
 
     /**
