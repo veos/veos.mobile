@@ -439,6 +439,8 @@
           var doneSubmit = function() {
             delete veos.currentReport;
             delete veos.reportForm;
+            delete veos.currentInstallation;        // unique to editReport's view
+
             veos.alert("Report submitted successfully!");
             jQuery.mobile.changePage("overview-map.html");
           };
@@ -498,7 +500,6 @@
       return true; // will now redirect to clicked element's href
     },
 
-    // TODO: clear isn't working. Was working before?
     clear: function () {
       console.log("Clearing ReportForm...");
 
@@ -560,7 +561,7 @@
     updateChangedFields: function () {
       console.log("updating changed fields in ReportForm: "+_.keys(this.model.changed).join(", "));
       var self = this;
-      _.each(this.model.changed, function(v, k) {                 // this whole thing needs to be checked over. These refreshes seem wrong. Also, the following 15 lines are 'verbose'
+      _.each(this.model.changed, function(v, k) {                 // this whole thing needs to be checked over. These refreshes seem wrong. Also, the following 15 lines are 'verbose'... I can only assume Matt will rewrite this in 3 lines
         if (k === "tags") {
           var purposesArray = [];
           var propertiesArray = [];
@@ -581,31 +582,26 @@
           self.$el.find('*[name="surveilled_space"].multi-field').val(spacesArray);
         } else if (k === "has_sign") {
           if (self.model.get(k)) {
-            jQuery('#sign-yes').attr('checked', true);                // erm, what? Start here
+            jQuery('#sign-yes').attr("checked",true).checkboxradio("refresh"); 
             console.log('true');
           } else if (!self.model.get(k)) {
-            jQuery('#sign-no').attr('checked', true);
+            jQuery('#sign-no').attr("checked",true).checkboxradio("refresh"); 
             console.log('false');
           }
         }
          else {
           self.$el.find('*[name="'+k+'"].field').val(self.model.get(k));
         }
-
-
-/*        self.$el.find('*[name="'+k+'"].field').val(self.model.get(k));
-        self.$el.find('*[name="'+k+'"].multi-field').val(self.model.get(k));   */     
+   
       });
 
 
-      jQuery('#owner-type').selectmenu('refresh');                          // why doesn't this work with classes? Would be much nicer
+      jQuery('#owner-type').selectmenu('refresh');                          // why doesn't this work with classes? Would be much cleaner
       jQuery('#sign-visibility').selectmenu('refresh');                
 
       jQuery('#surveilled-space').selectmenu('refresh', 'true');
       jQuery('#sign-stated-purpose').selectmenu('refresh', 'true');
       jQuery('#sign-properties').selectmenu('refresh', 'true');
-      jQuery("input[type='radio']").attr("checked",true).checkboxradio("refresh"); 
-
 
       // TODO: handle other non-trivial fields like , photo, etc.
     },
@@ -885,8 +881,6 @@
           ownerName = "<span class='owner_name unknown'>Unknown Owner</span><br/>" + report.getLocDescription();
         }
 
-        
-        // TODO - update this to new model once Armin is done with photos
         // var thumb;
         // var obj = report.get('photos');
         // if (obj && obj.photos && obj.photos[0] && obj.photos[0].thumb_url) {

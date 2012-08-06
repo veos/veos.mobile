@@ -92,9 +92,6 @@ window.veos = (function(veos) {
         //report.init();
       })
 
-// TODO otherwise clean up all of the duplicate ids in the html and views
-// TODO figure out why the radios and dropdowns aren't being rendered correctly
-
   
     /** refine-location.html (refine-location-page) **/
       .delegate("#refine-location-page", "pageshow", function() {
