@@ -61,8 +61,14 @@
                     <h3>
                         Location
                     </h3>
-
                     <div class="map-thumbnail-container">
+                    </div>
+
+                    <div data-role="fieldcontain">
+                        <fieldset data-role="controlgroup">
+                            <legend for="location-address"><b>Address or Place</b></legend>
+                            <input class="field" name="loc_description" value="" type="text" disabled="disabled" />
+                        </fieldset>
                     </div>
                 </div>
 
@@ -73,50 +79,35 @@
                         <h3>
                             Photos
                         </h3>
-                        <fieldset id="camera-box" class="dashed-box">
-                            <legend>Camera</legend>
+                        <fieldset class="dashed-box">
+                            <legend>Cameras</legend>
 
-                                <div class="photo-thumbnail-container">
-                                </div>
+                            <div class="photo-thumbnail-container">
+                            </div>
 
                             <hr>
-                            <!-- <div data-role="fieldcontain"> -->
-                                <!-- <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true"> -->
-                                <fieldset data-role="controlgroup" data-mini="true">
-                                    <!-- <div data-role="fieldcontain"> -->
-                                        <label class="dropdown-label" for="surveilled-space">What is the installation looking at?</label>
-                                        <select class="multi-field field" name="surveilled_space" id="surveilled-space" data-mini="true" multiple="multiple" data-native-menu="false">
-                                            <option>Choose options</option>
-                                            <option value="Mall common area">Mall common area</option>
-                                            <option value="Park">Park</option>
-                                            <option value="Public space">Public space</option>
-                                            <option value="Public plaza">Public plaza</option>
-                                            <option value="Publicly accessible private space">Publicly accessible private space</option>
-                                            <option value="Semi-public">Semi-public</option>
-                                            <option value="Private space">Sidewalk</option>
-                                            <option value="Other type of space">Other type of space</option>
-                                        </select>
-                                    <!-- </div>                                 -->
+                            <div data-role="fieldcontain">
+                                <fieldset data-role="controlgroup">
+                                    <legend for="surveilled-space"><b>This installation is looking at</b></legend>
+                                    <input class="field multi-field" name="surveilled_space" value="" type="text" disabled="disabled" />
                                 </fieldset>
-                                <hr>
-                            <!-- </div> -->
-                            <!-- <div data-role="fieldcontain"> -->
-                                <fieldset data-role="controlgroup" data-mini="true">
-                                    <label for="camera-count">How many cameras do you see?</label>
-                                    <input class="field" name="camera_count" id="camera-count" placeholder="#" value="0" type="number">
+                            </div>
+                            <hr>
+
+                            <div data-role="fieldcontain">
+                                <fieldset data-role="controlgroup">
+                                    <legend for="camera-count"><b>Number of cameras</b></legend>
+                                    <input class="field" name="camera_count" type="number" disabled="disabled" />
                                 </fieldset>
-                            <!-- </div> -->
+                            </div>
                         </fieldset>
                     </div>
                 </div>
 
                 <div data-role="fieldcontain">
-                    <fieldset data-role="controlgroup" data-type="horizontal">
-                        <legend><b>I see a sign</b></legend>
-                        <input name="has_sign" class="has-sign field" id="sign-yes" value="yes" type="radio">
-                        <label for="sign-yes"><b>Yes</b></label>
-                        <input name="has_sign" class="has-sign field" id="sign-no" value="no" type="radio">
-                        <label for="sign-no"><b>No</b></label>
+                    <fieldset data-role="controlgroup">
+                        <legend><b>Sign observed</b></legend>
+                        <input class="field" name="has_sign" type="text" disabled="disabled" />
                     </fieldset>
                 </div>
 
@@ -131,49 +122,36 @@
                             <legend>Sign</legend>
                             <div data-role="fieldcontain">
                                 <fieldset data-role="controlgroup">
-                                    <label for="sign-text">Text of sign</label>
-                                    <input class="field" name="sign_text" id="sign-text" placeholder="Text of sign if it exists..." value="" type="text">
+                                    <legend><b>Text of sign</b></legend>
+                                    <input class="field" name="sign_text" value="" type="text" disabled="disabled" />
                                 </fieldset>
                             </div>
 
                             <div data-role="fieldcontain">
-                                <label class="dropdown-label" for="sign-visibility">Visibility of sign</label>
-                                <select class="field" name="sign_visibility" id="sign-visibility" data-mini="true" data-native-menu="false">
-                                    <option>Choose an option</option>
-                                    <option value="Visible">Visible</option>
-                                    <option value="Obscure">Obscure</option>
-                                </select>
-                            </div>
-
-                            <div data-role="fieldcontain">
-                                <label class="dropdown-label" for="sign-stated-purpose">Stated purpose</label>
-                                <select class="multi-field field" name="sign_stated_purpose" id="sign-stated-purpose" data-mini="true" multiple="multiple" data-native-menu="false">
-                                    <option>Choose options</option>
-                                    <option value="None/unknown">None/unknown</option>
-                                    <option value="Crime prevention/prosecution">Crime prevention/prosecution</option>
-                                    <option value="Public safety">Public safety</option>
-                                </select>
-                            </div>
-
-                            <div data-role="fieldcontain">
-                                <label class="dropdown-label" for="sign-properties">Stated properties</label>
-                                <select class="multi-field field" name="sign_properties" id="sign-properties" data-mini="true" multiple="multiple" data-native-menu="false">
-                                    <option>Choose options</option>
-                                    <option value="None/unknown">None/unknown</option>
-                                    <option value="# days image will be retained"># days image will be retained</option>
-                                    <option value="Available to police">Available to police</option>
-                                    <option value="Face blurring">Face blurring</option>
-                                    <option value="Face recognition">Face recognition</option>
-                                    <option value="Image encryption">Image encryption</option>
-                                    <option value="Live monitoring">Live monitoring</option>
-                                    <option value="Recording">Recording</option>
-                                </select>
+                                <fieldset data-role="controlgroup">
+                                    <legend><b>Visibility of sign</b></legend>
+                                    <input class="field" name="sign_visibility" value="" type="text" disabled="disabled" />
+                                </fieldset>                                
                             </div>
 
                             <div data-role="fieldcontain">
                                 <fieldset data-role="controlgroup">
-                                    <legend>Note</legend>
-                                    <textarea class="field" name="notes" id="report-note" placeholder="Any other observations..."></textarea>
+                                    <legend><b>Stated purpose of sign</b></legend>
+                                    <input class="field" name="sign_stated_purpose" value="" type="text" disabled="disabled" />
+                                </fieldset>                                
+                            </div>
+
+                            <div data-role="fieldcontain">
+                                <fieldset data-role="controlgroup">
+                                    <legend><b>Stated properties of sign</b></legend>
+                                    <input class="field" name="sign_properties" value="" type="text" disabled="disabled" />
+                                </fieldset>
+                            </div>
+
+                            <div data-role="fieldcontain">
+                                <fieldset data-role="controlgroup">
+                                    <legend><b>Notes</b></legend>
+                                    <input class="field" name="notes" value="" type="text" disabled="disabled" />
                                 </fieldset>
                             </div>
                         </fieldset>
@@ -182,11 +160,9 @@
             </div>
             
             <div data-theme="a" data-role="footer" class="footer-with-buttons">
-                <a id="cancel-report" data-role="button" data-transition="fade" data-theme="f" data-icon="delete" data-iconpos="left" href="overview-map.html">
-                    Cancel
+                <a data-role="button" data-transition="fade" data-theme="f" data-icon="delete" data-iconpos="left" href="installations-list.html">
+                    Back
                 </a>
-
-                <input id="submit-report" type="submit" data-theme="b" data-icon="check" data-iconpos="left" value="Submit" />
             </div>
         </div>
 

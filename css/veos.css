@@ -89,11 +89,11 @@
 }
 
 
-#report-page .map-thumbnail-container {
+.map-thumbnail-container {
     text-align: center;
 }
 
-#report-page .map-thumbnail {
+.map-thumbnail {
     height: auto;
 }
 
@@ -267,31 +267,36 @@ a.relative {
 }
 
 
-#report-details-page .map-thumbnail {
-    max-width: 75%;
-    /*float: right;*/
+/**** INSTALLATION DETAILS CONTAINER ****/
+
+/*#installation-details-page .map-thumbnail-container {
+    text-align: center;
 }
 
-#report-details-page .report-details-text-container {
+#installation-details-page .map-thumbnail {
+    max-width: 75%;
+}*/
+
+#installation-details-page .dashed-box {
+    border: 3px dashed #bbb;
+    border-radius: 10px 10px 10px 10px;
+    display: inline-block;
+    padding: 6px;
+    width: 90%;
+    vertical-align: top;
+}
+
+#installation-details-page .dashed-box legend {
+    color: #999;
+    font-size: 21px;
+    font-weight: bold;
+    padding-left: 9px;
+    padding-right: 9px;
+    margin-left: 8%;
+}
+
+#installation-details-page .report-details-text-container {
     margin-left: 1%;
     margin-top: 1%;
 }
-
-/*#report-details-page .compliance {
-    margin-left: 1%;
-}*/
-
-/* ask Matt about cascading here */
-#report-details-page .ui-block-a {
-    width: 75%;
-}
-
-#report-details-page .ui-block-b {
-    width: 25%;
-}
-
-#report-details-page .ui-grid-a {
-    clear: right;
-}
-
 

@@ -151,7 +151,7 @@
       });
 
       var mapPopupContent;
-      mapPopupContent = '<p><b> ' + (r.get('owner_name') || "Unknown Owner") + ' </b> - Camera</p>';      // TEMPORARY TODO
+      mapPopupContent = '<p><b> ' + (r.get('owner_name') || "Unknown Owner") + ' </b> - Camera</p>';
 
       // binding a popup click event to the marker
       google.maps.event.addListener(marker, 'click', function() {

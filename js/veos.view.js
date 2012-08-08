@@ -814,7 +814,7 @@
         var obj = installation.get('photos');
         if (obj && obj[0] && obj[0].image_file_name && obj[0].id) {
           console.log(obj[0].id);
-          thumb = "<img class='list-picture' src='"+veos.model.baseURL + "/photos/images/" +  obj[0].id + "/thumb/" + obj[0].image_file_name+ ".jpg' />";
+          thumb = "<img class='list-picture' src='"+veos.model.baseURL + "photos/images/" +  obj[0].id + "/thumb/" + obj[0].image_file_name+ ".jpg' />";
         } else {
           thumb = "";
         }
@@ -984,50 +984,9 @@
       }
 
       this.$el.find('.installation-title').html(ownerName);
-
-      // TODO: replace with Matt's stuff
-      /*    var photoThumbnail = jQuery('<img class="photo-thumbnail" />');
-      photoThumbnail.attr('src', I'M GOING TO BE A PHOTO);
-      var photoContainer = jQuery('#point-details-page .photo-thumbnail-container');
-      photoContainer.append(photoThumbnail); */ 
-
-/*            if (report.get('camera')) {
-        if (report.get('camera').hasOwnProperty("photos") && report.get('camera').photos.length > 0 && report.get('camera').photos[0].big_url !== null) {
-          photoThumbnail.attr('src', veos.model.baseURL + report.get('camera').photos[0].big_url);
-        }
-        this.$el.find('.point-type').text('Camera');
-        this.$el.find('.point-title-1').text('Camera\'s location: ');
-        this.$el.find('.point-content-1').text(report.attributes.loc_description_from_google);
-        this.$el.find('.point-title-2').text('Owner name: ');
-        this.$el.find('.point-content-2').html(ownerName);
-        this.$el.find('.point-title-3').text('Owner description: ');
-        this.$el.find('.point-content-3').text(report.attributes.owner_type);
-      } else if (report.get('sign')) {
-        if (report.get('sign').hasOwnProperty("photos") && report.get('sign').photos.length > 0 && report.get('sign').photos[0].big_url !== null) {
-          photoThumbnail.attr('src', veos.model.baseURL + report.get('sign').photos[0].big_url);
-        }
-        this.$el.find('.point-type').text('Sign');
-        this.$el.find('.point-title-1').text('Sign location: ');
-        this.$el.find('.point-content-1').text(report.attributes.loc_description_from_google);
-        this.$el.find('.point-title-2').text('Owner name: ');
-        this.$el.find('.point-content-2').html(ownerName);
-        this.$el.find('.point-title-3').text('Owner description: ');
-        this.$el.find('.point-content-3').text(report.attributes.owner_type);
-        this.$el.find('.point-title-4').text('Visibility of sign: ');
-        this.$el.find('.point-content-4').text(report.get('sign').visibility);
-        this.$el.find('.point-title-5').text('Text of Sign: ');
-        this.$el.find('.point-content-5').text(report.get('sign').text);
-        jQuery('#point-details-page .point-title-1').text('Visibility: ');
-        jQuery('#point-details-page .point-content-1').text('Obscure/High');
-        jQuery('#point-details-page .point-title-2').text('Stated Purpose: ');
-        jQuery('#point-details-page .point-content-2').text('Public Safety');
-        this.$el.find('.point-content-4').append(jQuery('<br />'));
-      } else {
-        console.log ('neither a camera or a sign');
-      }
-      photoContainer.append(photoThumbnail);*/
     }
   });
+
 
   self.InstallationDetail = Backbone.View.extend({
     initialize: function () {
@@ -1108,11 +1067,42 @@
       } else {
         self.$el.find('.field[name="owner_name"]').val('Unknown Owner');
       }
-
-      //console.log("rendering ReportForm!");
       
       _.each(installation.attributes, function(v, k) {
         self.$el.find('.field[name="'+k+'"]').val(installation.get(k));
+
+        if (k === "latest_report") {
+          _.each(v, function(subv, subk) {
+            self.$el.find('.field[name="'+subk+'"]').val(installation.get('latest_report')[subk]);
+          });
+        }
+/*        else if (k === "tags") {
+          var purposesArray = [];
+          var propertiesArray = [];
+          var spacesArray = [];
+          _.each(v, function(i) {
+            if (i.tag_type === "sign_stated_purpose") {
+              purposesArray.push(i.tag);
+            } else if (i.tag_type === "sign_properties") {
+              propertiesArray.push(i.tag);
+            } else if (i.tag_type === "surveilled_space") {
+              spacesArray.push(i.tag);
+            } else {
+              console.log("unknown tag type");
+            }
+          });
+          self.$el.find('*[name="sign_stated_purpose"].multi-field').val(purposesArray);
+          self.$el.find('*[name="sign_properties"].multi-field').val(propertiesArray);
+          self.$el.find('*[name="surveilled_space"].multi-field').val(spacesArray);
+        } else if (k === "has_sign") {
+          if (self.model.get(k)) {
+            jQuery('#sign-yes').attr("checked",true).checkboxradio("refresh"); 
+            console.log('true');
+          } else if (!self.model.get(k)) {
+            jQuery('#sign-no').attr("checked",true).checkboxradio("refresh"); 
+            console.log('false');
+          }
+        }*/
       });
 
     }
