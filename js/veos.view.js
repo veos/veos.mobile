@@ -1104,18 +1104,15 @@
 
       var ownerName;
       if (installation.has('owner_name')) {
-        ownerName = "<span class='owner_name'>" + installation.get('owner_name') + "</span>";
+        self.$el.find('.field[name="owner_name"]').val(installation.get('owner_name'));
       } else {
-        ownerName = "<span class='owner_name unknown'>Unknown Owner</span>";
+        self.$el.find('.field[name="owner_name"]').val('Unknown Owner');
       }
-
-      this.$el.find('.installation-title').html(ownerName);
-
 
       //console.log("rendering ReportForm!");
       
       _.each(installation.attributes, function(v, k) {
-        self.$el.find('.field[name="'+k+'"]').text(self.model.get(k));
+        self.$el.find('.field[name="'+k+'"]').val(installation.get(k));
       });
 
     }
