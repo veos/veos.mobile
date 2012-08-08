@@ -248,7 +248,8 @@
       var options = {
         quality: 50,
         destinationType: Camera.DestinationType.FILE_URI,
-        sourceType: from
+        sourceType: from,
+        correctOrientation: true
       };
 
       console.log('Capturing photo from source '+from+' with options: ', options);
