@@ -852,7 +852,121 @@
   //     };
   //     this.delegateEvents();
   //   }
-  // });    
+  // });
+
+  self.InstallationDetail = Backbone.View.extend({
+    initialize: function () {
+      var self = this;
+
+      // TODO: consider binding 'add' and 'remove' to pick up added/removed Insts too?
+      this.model.on('change sync', _.bind(this.render, self)); 
+    },
+
+    showLoader: function () {
+      this.loader = addLoader(this.$el.find('[role="content"]'));
+      // FIXME: this looks ugly
+      this.loader.css({
+        position: 'absolute',
+        top: '30%',
+        width: '100%'
+      });
+    },
+
+    hideLoader: function () {
+      this.loader.remove();
+      delete this.loader;
+    },
+
+    createPointDetailsMap: function(installation) {
+      // note: higher zoom level
+      var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=17&size=150x150&scale=2&sensor=true&center=" + installation.get('loc_lat') + "," + installation.get('loc_lng');
+      staticMapCriteria += "&markers=size:small%7C" + installation.get('loc_lat') + ',' + installation.get('loc_lng');
+      
+      var mapThumbnail = jQuery('<img class="map-thumbnail" />');
+      mapThumbnail.attr('src', staticMapCriteria);    
+      var thumbnailContainer = this.$el.find('.map-thumbnail-container');
+      thumbnailContainer.append(mapThumbnail);
+    },
+
+    showPictures: function(installation) {
+      console.log('Showing pictures...');
+      var photoContainer = this.$el.find('.photo-thumbnail-container');
+
+      _.each(installation.get('photos'), function (p) {
+        var photo = new veos.model.Photo({id: p.id});
+
+        function photoSuccess (model, response) {
+          var img = jQuery('<img />');
+          img.attr('src', model.thumbUrl());
+          photoContainer.append(img);
+        }
+
+        function photoError (model, response) {
+          console.error("Error fetching photo model with message: "+response);
+          veos.alert("Error fetching photo details");
+        }
+
+        photo.fetch({success: photoSuccess, error: photoError});
+      });
+    },
+
+    render: function () {
+      var self = this;
+      var installation = this.model;
+
+      if (this.loader) {
+        this.hideLoader();
+      }
+
+      this.createPointDetailsMap(installation);
+
+      if (installation.has('photos')) {
+        self.showPictures(installation);
+      }
+      
+      var photoThumbnail = jQuery('<img class="photo-thumbnail" />');
+      var photoContainer = this.$el.find('.photo-thumbnail-container');
+
+      var ownerName;
+      if (installation.has('owner_name')) {
+        self.$el.find('.field[name="owner_name"]').val(installation.get('owner_name'));
+      } else {
+        self.$el.find('.field[name="owner_name"]').val('Unknown Owner');
+      }
+      
+      _.each(installation.attributes, function(v, k) {
+        self.$el.find('.field[name="'+k+'"]').val(installation.get(k));
+
+        if (k === "latest_report") {
+          _.each(v, function(subv, subk) {
+            self.$el.find('.field[name="'+subk+'"]').val(installation.get('latest_report')[subk]);
+          });
+        }
+        // TODO add tags functionality when they exist in the backend
+/*        else if (k === "tags") {
+          var purposesArray = [];
+          var propertiesArray = [];
+          var spacesArray = [];
+          _.each(v, function(i) {
+            if (i.tag_type === "sign_stated_purpose") {
+              purposesArray.push(i.tag);
+            } else if (i.tag_type === "sign_properties") {
+              propertiesArray.push(i.tag);
+            } else if (i.tag_type === "surveilled_space") {
+              spacesArray.push(i.tag);
+            } else {
+              console.log("unknown tag type");
+            }
+          });
+          self.$el.find('*[name="sign_stated_purpose"].multi-field').val(purposesArray);
+          self.$el.find('*[name="sign_properties"].multi-field').val(propertiesArray);
+          self.$el.find('*[name="surveilled_space"].multi-field').val(spacesArray);
+        }
+        }*/
+      });
+
+    }
+  });
 
 
   /***********************************************************************************************************************************/
@@ -984,127 +1098,6 @@
       }
 
       this.$el.find('.installation-title').html(ownerName);
-    }
-  });
-
-
-  self.InstallationDetail = Backbone.View.extend({
-    initialize: function () {
-      var self = this;
-
-      // TODO: consider binding 'add' and 'remove' to pick up added/removed Insts too?
-      this.model.on('change sync', _.bind(this.render, self)); 
-    },
-
-    showLoader: function () {
-      this.loader = addLoader(this.$el.find('[role="content"]'));
-      // FIXME: this looks ugly
-      this.loader.css({
-        position: 'absolute',
-        top: '30%',
-        width: '100%'
-      });
-    },
-
-    hideLoader: function () {
-      this.loader.remove();
-      delete this.loader;
-    },
-
-    createPointDetailsMap: function(installation) {
-      // note: higher zoom level
-      var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=17&size=150x150&scale=2&sensor=true&center=" + installation.get('loc_lat') + "," + installation.get('loc_lng');
-      staticMapCriteria += "&markers=size:small%7C" + installation.get('loc_lat') + ',' + installation.get('loc_lng');
-      
-      var mapThumbnail = jQuery('<img class="map-thumbnail" />');
-      mapThumbnail.attr('src', staticMapCriteria);    
-      var thumbnailContainer = this.$el.find('.map-thumbnail-container');
-      thumbnailContainer.append(mapThumbnail);
-    },
-
-    showPictures: function(installation) {
-      console.log('Showing pictures...');
-      var photoContainer = this.$el.find('.photo-thumbnail-container');
-
-      _.each(installation.get('photos'), function (p) {
-        var photo = new veos.model.Photo({id: p.id});
-
-        function photoSuccess (model, response) {
-          var img = jQuery('<img />');
-          img.attr('src', model.thumbUrl());
-          photoContainer.append(img);
-        }
-
-        function photoError (model, response) {
-          console.error("Error fetching photo model with message: "+response);
-          veos.alert("Error fetching photo details");
-        }
-
-        photo.fetch({success: photoSuccess, error: photoError});
-      });
-    },
-
-    render: function () {
-      var self = this;
-      var installation = this.model;
-
-      if (this.loader) {
-        this.hideLoader();
-      }
-
-      this.createPointDetailsMap(installation);
-
-      if (installation.has('photos')) {
-        self.showPictures(installation);
-      }
-      
-      var photoThumbnail = jQuery('<img class="photo-thumbnail" />');
-      var photoContainer = this.$el.find('.photo-thumbnail-container');
-
-      var ownerName;
-      if (installation.has('owner_name')) {
-        self.$el.find('.field[name="owner_name"]').val(installation.get('owner_name'));
-      } else {
-        self.$el.find('.field[name="owner_name"]').val('Unknown Owner');
-      }
-      
-      _.each(installation.attributes, function(v, k) {
-        self.$el.find('.field[name="'+k+'"]').val(installation.get(k));
-
-        if (k === "latest_report") {
-          _.each(v, function(subv, subk) {
-            self.$el.find('.field[name="'+subk+'"]').val(installation.get('latest_report')[subk]);
-          });
-        }
-/*        else if (k === "tags") {
-          var purposesArray = [];
-          var propertiesArray = [];
-          var spacesArray = [];
-          _.each(v, function(i) {
-            if (i.tag_type === "sign_stated_purpose") {
-              purposesArray.push(i.tag);
-            } else if (i.tag_type === "sign_properties") {
-              propertiesArray.push(i.tag);
-            } else if (i.tag_type === "surveilled_space") {
-              spacesArray.push(i.tag);
-            } else {
-              console.log("unknown tag type");
-            }
-          });
-          self.$el.find('*[name="sign_stated_purpose"].multi-field').val(purposesArray);
-          self.$el.find('*[name="sign_properties"].multi-field').val(propertiesArray);
-          self.$el.find('*[name="surveilled_space"].multi-field').val(spacesArray);
-        } else if (k === "has_sign") {
-          if (self.model.get(k)) {
-            jQuery('#sign-yes').attr("checked",true).checkboxradio("refresh"); 
-            console.log('true');
-          } else if (!self.model.get(k)) {
-            jQuery('#sign-no').attr("checked",true).checkboxradio("refresh"); 
-            console.log('false');
-          }
-        }*/
-      });
-
     }
   });
 

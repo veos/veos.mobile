@@ -300,3 +300,8 @@ a.relative {
     margin-top: 1%;
 }
 
+#installation-details-page .edit-button-container {
+    float: right;
+    padding: 5px 5px 0px 0px;                   /* using px = bad, but since jQuery Mobile is already full of them */
+}
+
