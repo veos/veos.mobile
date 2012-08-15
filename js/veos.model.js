@@ -182,6 +182,14 @@
       this.trigger('change');
     },
 
+    setTags: function (tags, tagType) {
+      var ts = [];
+      this.set('tags', ts);
+      _.each(tags, function (t) {
+        ts.push({tag: t, tag_type: tagType});
+      });
+    },
+
     findTag: function (tag, tagType) {
       var tags = this.get('tags');
 
