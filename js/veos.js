@@ -61,6 +61,8 @@ window.veos = (function(veos) {
         if (self.currentInstallation) {
           var newReport = self.currentInstallation.startAmending();
           var reportEditView = new self.view.ReportEditForm({model: newReport, el: '#report-page'});
+          jQuery('#report-header-text').text('Editing the Installation');
+
           reportEditView.render();
         }
         // new report
@@ -103,8 +105,14 @@ window.veos = (function(veos) {
           jQuery.mobile.changePage("report.html");
           return;
         }
-        
+
+/*        if (!veos.map.refiningMap) {
+          veos.map.refiningMap = new veos.map.Map('#refine-location-canvas');
+        }
+        veos.map.refiningMap.addReportRefinerMarker(self.reportForm.model, veos.lastLoc);
+        */
         var map = new veos.map.Map('#refine-location-canvas');
+
         map.addReportRefinerMarker(self.reportForm.model, veos.lastLoc);
       })
 

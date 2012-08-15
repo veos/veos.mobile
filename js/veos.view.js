@@ -32,11 +32,14 @@
         var f = jQuery(ev.target);
 
         // this.model.removeTags()          // TODO when backend functionality is there
-        var frozenModel = this.model;                     // 'this' changes inside the each
+/*        var frozenModel = this.model;                     // 'this' changes inside the each
         _.each(f.val(), function(el) {
           frozenModel.addTag(el, f.attr('name'));
           console.log("Setting "+f.attr("name")+" to "+el);
-        });
+        });*/
+
+        this.model.setTags(f.val(), f.attr('name'));
+        console.log("Setting "+f.attr("name")+" to "+f.val());
       },
 
       // specific to owner_name
@@ -343,11 +346,14 @@
         var f = jQuery(ev.target);
 
         // this.model.removeTags()          // TODO when backend functionality is there
-        var frozenModel = this.model;                     // 'this' changes inside the each
+/*        var frozenModel = this.model;                     // 'this' changes inside the each
         _.each(f.val(), function(el) {
           frozenModel.addTag(el, f.attr('name'));
           console.log("Setting "+f.attr("name")+" to "+el);
-        });
+        });*/
+
+        this.model.setTags(f.val(), f.attr('name'));
+        console.log("Setting "+f.attr("name")+" to "+f.val());        
       },
 
       // specific to owner_name
