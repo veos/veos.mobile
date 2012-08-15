@@ -150,6 +150,25 @@
       this.trigger('change');
     },
 
+    deleteTag: function (tag, tagType) {
+      var tags = this.get('tags');
+
+      var t;
+      while (t = this.findTag(tag, tagType)) {
+        tags.splice(_.indexOf(tags, t), 1);
+      }
+
+      this.trigger('change');
+    },
+
+    findTag: function (tag, tagType) {
+      var tags = this.get('tags');
+
+      return _.find(tags, function (t) {
+        return t.tag == tag && t.tag_type == tagType;
+      });
+    },
+
     // return attached photos as Photo model objects
     getPhotos: function () {
       return _.map(this.get('photos'), function (data) { return new model.Photo(data);});
