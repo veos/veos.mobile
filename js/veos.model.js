@@ -123,6 +123,27 @@
       }});
     },
 
+    removePhoto: function (fingerprint) {
+      var report = this;
+
+      // this shouldn't really happen...
+      if (!report.photos) {
+        report.photos = [];
+      }
+
+      var photo = _.find(report.photos, function (p) {
+        return p.get('image_fingerprint') == fingerprint;
+      });
+
+      if (!photo) {
+        console.error("Tried to remove a photo with fingerprint '"+fingerprint+"' but this report has no such photo. Attached photos are:",report.photos);
+        throw "Tried to remove a photo that doesn't exist in this report!";
+      }
+
+      report.photos.splice(_.indexOf(report.photos, photo), 1);
+      report.updatePhotosAttribute();
+    },
+
     updatePhotosAttribute: function () {
       if (!this.photos) {
         this.photos = [];
