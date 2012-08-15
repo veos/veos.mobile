@@ -19,7 +19,7 @@
     var zoom;
     if (!initLoc) {
       center = new google.maps.LatLng(43.6621614579938, -79.39527873417967);            // TODO map should be zoomed out (zoom = 3) under some conditions (when not near insts?)
-      zoom = 13;
+      zoom = 3;
     } else {
       center = veos.map.convertGeolocToGmapLatLng(initLoc);
       zoom = 13;

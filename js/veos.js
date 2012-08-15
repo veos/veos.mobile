@@ -39,17 +39,20 @@ window.veos = (function(veos) {
 
     /** overview-map.html (overview-map-page) **/
       .delegate("#overview-map-page", "pageshow", function() {
-        var map = new veos.map.Map('#overview-map-canvas');
+        if (!veos.map.overviewMap) {
+          veos.map.overviewMap = new veos.map.Map('#overview-map-canvas');
+        }
+        //var map = new veos.map.Map('#overview-map-canvas');
 
         // add all installation markers
         var installations = new veos.model.Installations();
         installations.on('reset', function(collection) {
-          map.addInstallationMarkers(collection);
+          veos.map.overviewMap.addInstallationMarkers(collection);
         });
         installations.fetch();
 
         // start following user
-        map.startFollowing();
+        veos.map.overviewMap.startFollowing();
       })
 
     /** report.html (report-page) **/
@@ -138,7 +141,7 @@ window.veos = (function(veos) {
 
         var installation = new veos.model.Installation({id: installationId});
 
-        var view = new veos.view.InstallationDetail({
+        var view = new veos.view.InstallationDetails({
           el: ev.target,
           model: installation
         });

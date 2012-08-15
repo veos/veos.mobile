@@ -222,7 +222,7 @@
         console.log("Using location from report model...", this.model.getLatLng());
         geoloc = this.model.getLatLng();
       } else if (veos.lastLoc) {
-        console.log("Using last known location...", veos.latLoc);
+        console.log("Using last known location...", veos.lastLoc);
         geoloc = veos.lastLoc;
       } else {
         console.warn("Location unavailable... cannot update fields that depend on location.");
@@ -519,7 +519,7 @@
         console.log("Using location from report model...", this.model.getLatLng());
         geoloc = this.model.getLatLng();
       } else if (veos.lastLoc) {
-        console.log("Using last known location...", veos.latLoc);
+        console.log("Using last known location...", veos.lastLoc);
         geoloc = veos.lastLoc;
       } else {
         console.warn("Location unavailable... cannot update fields that depend on location.");
@@ -596,7 +596,7 @@
       });
 
 
-      jQuery('#owner-type').selectmenu('refresh');                          // why doesn't this work with classes? Would be much cleaner
+      jQuery('#owner-type').selectmenu('refresh');                          // why doesn't this work with classes? Would be much cleaner. Also refresh, really?
       jQuery('#sign-visibility').selectmenu('refresh');                
 
       jQuery('#surveilled-space').selectmenu('refresh', 'true');
@@ -854,7 +854,7 @@
   //   }
   // });
 
-  self.InstallationDetail = Backbone.View.extend({
+  self.InstallationDetails = Backbone.View.extend({
     initialize: function () {
       var self = this;
 
