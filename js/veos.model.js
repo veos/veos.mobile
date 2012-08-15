@@ -150,7 +150,7 @@
       this.trigger('change');
     },
 
-    deleteTag: function (tag, tagType) {
+    removeTag: function (tag, tagType) {
       var tags = this.get('tags');
 
       var t;
