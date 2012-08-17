@@ -657,6 +657,7 @@
       }, this);
 
       this.model.on('image_upload_error', function () {
+        veos.alert("Image upload failed.");
         jQuery.mobile.hidePageLoadingMsg();
       }, this);
     },
