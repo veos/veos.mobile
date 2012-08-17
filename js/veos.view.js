@@ -823,13 +823,29 @@
           }
         }        
         
-        var thumb;
-        var obj = installation.get('photos');
-        if (obj && obj[0] && obj[0].image_file_name && obj[0].id) {
-          console.log(obj[0].id);
-          thumb = "<img class='list-picture' src='"+veos.model.baseURL + "photos/images/" +  obj[0].id + "/thumb/" + obj[0].image_file_name+ ".jpg' />";
-        } else {
-          thumb = "";
+        var thumb = "";
+
+        // if photos are attached to the installation retrieve the thumb URL of the first photo via Photo model
+        if (installation.has('photos') && installation.get('photos').length > 0) {
+          var photoID = installation.get('photos')[0].id;
+          thumb = "<img class='list-picture photo-"+photoID+"' />";
+          
+          console.log('Trying to retrieve photo thumb URL for photo with ID: '+photoID);
+
+          var thumbPhoto = new veos.model.Photo({id: photoID});
+
+          var photoFetchSuccess = function (model, response) {
+            console.log("We made it and are about to retrieve Photo thumb URL");
+            var img = jQuery('.photo-'+model.id);
+            img.attr('src', model.thumbUrl());
+          };
+
+          // TODO: think about this since it delets all input on error and returns to map
+          var photoFetchError = function (model, response) {
+            console.error("Fetching photo model for Installation List failed with error: " +response);
+          };
+
+          thumbPhoto.fetch({success: photoFetchSuccess, error: photoFetchError});
         }
 
         var item = jQuery("<a class='relative' href=report.html>"+complianceLevel+thumb+buttonText+"</a>");
