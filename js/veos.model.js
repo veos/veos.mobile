@@ -10,7 +10,8 @@
   //model.baseURL = "http://veos.surveillancerights.ca";
   //model.baseURL = "http://192.168.222.108:3000";
   //model.baseURL = "http://192.168.43.221:3000";
-  model.baseURL = "http://backend.test.veos.ca";
+  // model.baseURL = "http://backend.test.veos.ca";
+  model.baseURL = "http://backend.new.surveillancerights.ca";
 
   jQuery.support.cors = true; // enable cross-domain AJAX requests
 
