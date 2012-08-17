@@ -182,11 +182,11 @@
 
       // TODO - confirm that I don't need to do the override check here. If I do, it probably makes more sense to extend the Installations model
       var compliancePin;
-      if (i.get('compliance') === "high") {
+      if (i.get('compliance_level') === 3) {
         compliancePin = '/images/pin-green-full.png';
-      } else if (i.get('compliance') === "medium") {
+      } else if (i.get('compliance_level') === 2) {
         compliancePin = '/images/pin-yellow-full.png';
-      } else if (i.get('compliance') === "low") {
+      } else if (i.get('compliance_level') === 1) {
         compliancePin = '/images/pin-red-full.png';
       } else {
         compliancePin = 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';

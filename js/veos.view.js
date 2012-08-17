@@ -720,15 +720,18 @@
           buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/>" + installation.getLocDescription();
         }
         
-/*                var complianceLevel;                   TODO - add me back in when model supports this
-        if (installation.get('compliance_level_override')) {
-          complianceLevel = "<span class='compliance-"+installation.get('compliance_level_override')+"'></span>";
-        } else if (installation.get('compliance_level')) {
-          complianceLevel = "<span class='compliance-"+installation.get('compliance_level')+"'></span>";
-        } else {
-          complianceLevel = "<span class='compliance-unknown'></span>";
-        }*/
-        var complianceLevel = "<span class='compliance low'></span>";
+        var complianceLevel;
+        if (installation.get('compliance_level')) {
+          if (installation.get('compliance_level') === 1) {
+            complianceLevel = "<span class='compliance low'></span>";
+          } else if (installation.get('compliance_level') === 2) {
+            complianceLevel = "<span class='compliance medium'></span>";
+          } else if (installation.get('compliance_level') === 3) {
+            complianceLevel = "<span class='compliance high'></span>";
+          } else {
+            complianceLevel = "<span class='compliance-unknown'></span>";
+          }
+        }
         
         var thumb = "";
         var obj = installation.get('photos');
@@ -806,16 +809,19 @@
         } else {
           buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/>" + installation.getLocDescription();
         }
-        
-/*                var complianceLevel;                   TODO - add me back in when model supports this
-        if (installation.get('compliance_level_override')) {
-          complianceLevel = "<span class='compliance-"+installation.get('compliance_level_override')+"'></span>";
-        } else if (installation.get('compliance_level')) {
-          complianceLevel = "<span class='compliance-"+installation.get('compliance_level')+"'></span>";
-        } else {
-          complianceLevel = "<span class='compliance-unknown'></span>";
-        }*/
-        var complianceLevel = "<span class='compliance low'></span>";
+
+        var complianceLevel;
+        if (installation.get('compliance_level')) {
+          if (installation.get('compliance_level') === 1) {
+            complianceLevel = "<span class='compliance low'></span>";
+          } else if (installation.get('compliance_level') === 2) {
+            complianceLevel = "<span class='compliance medium'></span>";
+          } else if (installation.get('compliance_level') === 3) {
+            complianceLevel = "<span class='compliance high'></span>";
+          } else {
+            complianceLevel = "<span class='compliance-unknown'></span>";
+          }
+        }        
         
         var thumb;
         var obj = installation.get('photos');
