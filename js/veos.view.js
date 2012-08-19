@@ -672,7 +672,12 @@
         img = jQuery("<img style='display: block' class='photo-list-item' id='photo-"+this.model.id+"' />");
         //img.attr('data-model', this.model);
         img.attr('data-model', JSON.stringify(this.model.toJSON()));
-        this.$el.append(img);
+        
+        // wrap a link around the picture
+        photoDetails = jQuery('<a data-role="button" href="photo-details.html?id='+this.model.id+'"></a>');
+        photoDetails.append(img);
+
+        this.$el.append(photoDetails);
       }
       img.attr('src', this.model.thumbUrl());
       img.attr('alt', this.model.get('notes'));
@@ -925,9 +930,12 @@
         var photo = new veos.model.Photo({id: p.id});
 
         function photoSuccess (model, response) {
-          var img = jQuery('<img />');
-          img.attr('src', model.thumbUrl());
-          photoContainer.append(img);
+          // var img = jQuery('<img />');
+          // img.attr('src', model.thumbUrl());
+          // photoContainer.append(img);
+
+          var photoView = new PhotoView({model: model, el: photoContainer});
+          photoView.render();
         }
 
         function photoError (model, response) {
@@ -949,6 +957,8 @@
 
       this.createPointDetailsMap(installation);
 
+      // TODO: The showPictures function will only add pictures and not reflect pictures getting less
+      // maybe we can reuse the PhotoView.render function??
       if (installation.has('photos')) {
         self.showPictures(installation);
       }
