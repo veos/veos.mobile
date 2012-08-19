@@ -10,7 +10,6 @@
   //model.baseURL = "http://veos.surveillancerights.ca";
   //model.baseURL = "http://192.168.222.108:3000";
   //model.baseURL = "http://192.168.43.221:3000";
-  // model.baseURL = "http://backend.test.veos.ca";
   model.baseURL = "http://backend.new.surveillancerights.ca";
 
   jQuery.support.cors = true; // enable cross-domain AJAX requests
@@ -362,6 +361,37 @@
 
       this.set('tags', tags);
       this.trigger('change');
+    },
+
+    removeTag: function (tag) {
+      var tags = this.get('tags');
+
+      var t;
+      while (t = this.findTag(tag)) {
+        if (t.id) {
+          t._destroy = true;
+        } else {
+          tags.splice(_.indexOf(tags, t), 1);
+        }
+      }
+
+      this.trigger('change');
+    },
+
+    setTags: function (tags) {
+      var ts = [];
+      this.set('tags', ts);
+      _.each(tags, function (t) {
+        ts.push({tag: t});
+      });
+    },
+
+    findTag: function (tag) {
+      var tags = this.get('tags');
+
+      return _.find(tags, function (t) {
+        return t.tag == tag && !t._destroy;
+      });
     },
 
     thumbUrl: function () {
