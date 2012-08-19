@@ -39,128 +39,27 @@
     <body>
         <div data-role="page" id="photo-details-page">
             <div data-theme="a" data-role="header">
-                <span class="edit-button-container">
-                    <a data-role="button" data-theme="e" data-icon="gear" data-iconpos="right" href="report.html">
-                        Edit
-                    </a>
-                </span>
                 <h3>
                     Photo Details
                 </h3>
             </div>
             <div data-role="content">
+
                 <div data-role="fieldcontain">
-                    <fieldset data-role="controlgroup">
-                        <legend><b>Owner Name</b></legend>
-                        <input class="field" name="owner_name" value="" type="text" disabled="disabled" />
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <legend><b>Choose what picture shows:</b></legend>
+                        <input name="is_camera" class="has-sign field" id="is-camera" value="yes" type="radio">
+                        <label for="is-camera"><b>Camera</b></label>
+                        <input name="is_sign" class="has-sign field" id="is-sign" value="no" type="radio">
+                        <label for="is-sign"><b>Sign</b></label>
                     </fieldset>
-                </div>
-                <div data-role="fieldcontain">
-                    <fieldset data-role="controlgroup">
-                        <legend><b>Owner Type</b></legend>
-                        <input class="field" name="owner_type" value="" type="text" disabled="disabled" />
-                    </fieldset>
-                </div>
-                
-                <div data-role="collapsible" data-collapsed="false" id="location-container">
-                    <h3>
-                        Location
-                    </h3>
-                    <div class="map-thumbnail-container">
-                    </div>
-
-                    <div data-role="fieldcontain">
-                        <fieldset data-role="controlgroup">
-                            <legend for="location-address"><b>Address or Place</b></legend>
-                            <input class="field" name="loc_description" value="" type="text" disabled="disabled" />
-                        </fieldset>
-                    </div>
-                </div>
-
-
-                <div data-role="collapsible-set" data-theme="" data-content-theme="" class="report">
-
-                    <div data-role="collapsible" data-collapsed="true" id="photos-container">
-                        <h3>
-                            Photos
-                        </h3>
-                        <fieldset class="dashed-box">
-                            <legend>Cameras</legend>
-
-                            <div class="photo-thumbnail-container">
-                            </div>
-
-                            <hr>
-                            <div data-role="fieldcontain">
-                                <fieldset data-role="controlgroup">
-                                    <legend for="surveilled-space"><b>This installation is looking at</b></legend>
-                                    <input class="field multi-field" name="surveilled_space" value="" type="text" disabled="disabled" />
-                                </fieldset>
-                            </div>
-                            <hr>
-
-                            <div data-role="fieldcontain">
-                                <fieldset data-role="controlgroup">
-                                    <legend for="camera-count"><b>Number of cameras</b></legend>
-                                    <input class="field" name="camera_count" type="number" disabled="disabled" />
-                                </fieldset>
-                            </div>
-                        </fieldset>
-                    </div>
                 </div>
 
                 <div data-role="fieldcontain">
                     <fieldset data-role="controlgroup">
-                        <legend><b>Sign observed</b></legend>
-                        <input class="field" name="has_sign" type="text" disabled="disabled" />
+                        <legend>Note</legend>
+                        <textarea class="field" name="notes" id="report-note" placeholder="Any other observations..."></textarea>
                     </fieldset>
-                </div>
-
-
-                <div data-role="collapsible-set" data-theme="" data-content-theme="">
-                    <div data-role="collapsible" data-collapsed="true" id="sign-details-container">
-                        <h3>
-                            Sign details
-                        </h3>
-                        
-                        <fieldset class="dashed-box">
-                            <legend>Sign</legend>
-                            <div data-role="fieldcontain">
-                                <fieldset data-role="controlgroup">
-                                    <legend><b>Text of sign</b></legend>
-                                    <input class="field" name="sign_text" value="" type="text" disabled="disabled" />
-                                </fieldset>
-                            </div>
-
-                            <div data-role="fieldcontain">
-                                <fieldset data-role="controlgroup">
-                                    <legend><b>Visibility of sign</b></legend>
-                                    <input class="field" name="sign_visibility" value="" type="text" disabled="disabled" />
-                                </fieldset>                                
-                            </div>
-
-                            <div data-role="fieldcontain">
-                                <fieldset data-role="controlgroup">
-                                    <legend><b>Stated purpose of sign</b></legend>
-                                    <input class="field" name="sign_stated_purpose" value="" type="text" disabled="disabled" />
-                                </fieldset>                                
-                            </div>
-
-                            <div data-role="fieldcontain">
-                                <fieldset data-role="controlgroup">
-                                    <legend><b>Stated properties of sign</b></legend>
-                                    <input class="field" name="sign_properties" value="" type="text" disabled="disabled" />
-                                </fieldset>
-                            </div>
-
-                            <div data-role="fieldcontain">
-                                <fieldset data-role="controlgroup">
-                                    <legend><b>Notes</b></legend>
-                                    <input class="field" name="notes" value="" type="text" disabled="disabled" />
-                                </fieldset>
-                            </div>
-                        </fieldset>
-                    </div>
                 </div>
             </div>
             
@@ -168,6 +67,11 @@
                 <a data-role="button" data-theme="b" data-icon="back" data-iconpos="left" href="installations-list.html">
                     Back
                 </a>
+                <a id="cancel-report" data-role="button" data-theme="f" data-icon="delete" data-iconpos="left" href="overview-map.html">
+                    Cancel
+                </a>
+
+                <input id="submit-report" type="submit" data-theme="b" data-icon="check" data-iconpos="left" value="Submit" />
             </div>
         </div>
 
