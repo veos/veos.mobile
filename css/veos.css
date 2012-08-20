@@ -13,6 +13,12 @@
     background: inherit;
 }
 
+/* overwriting jq mobile's header handling so that titles are left justified */
+.ui-header > .ui-title {
+    text-align: left;
+    margin-left: 1em;
+}
+
 .footer-with-buttons {
     display: -moz-box !important;
     display: -webkit-box !important;
@@ -137,8 +143,12 @@
     margin-left: 8%;
 }
 
-
-
+/* this is a really ugly fix - TODO: find the right way to do this; */
+/* and this doesn't work on a phone. Jesus. Coming back to this one */
+/*.multi-container {
+    width: 100%;
+    overflow-x: hidden;
+}*/
 
 /* making radio buttons for Sign same width. CHECK ON PHONE */
 #report-page .ui-radio .ui-btn {
@@ -215,35 +225,16 @@
 
 
 /***** INSTALLATION LIST PAGE *****/
-
-
-.owner_name {
-    font-size: 150%;
-    font-style: bold;
-}
-
-.owner_name.unknown {
-    font-style: italic;
-}
-
-.photo-thumbnail {
-    max-width: 90%;
-    /*max-height: 30%;*/
-    margin-top: 1em;
-    margin-bottom: 1em;
-}
-
 /** this seems kind of hacky - is there a better way to do this? **/
-a.relative {
+/*a.relative {
     height: 100%;
     position: relative;
     padding-left: 2% !important;
-}
+}*/
 
 .compliance {
-    width: 5%;
     position: absolute; top:0px; bottom:0px; left:0px;
-    width: 1.3%;
+    width: 5.5%;
 }
 
 .compliance.high {
@@ -262,8 +253,31 @@ a.relative {
     background-color: white;
 }
 
+.photo-thumbnail {
+    max-width: 90%;
+    /*max-height: 30%;*/
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
 .list-picture {
+    position: absolute; top:0px; bottom:0px; left:5.6%;
+}
+
+.owner_name {
+    font-size: 150%;
+    /*font-style: bold;*/
     position: relative;
+    margin-left: 5%;
+}
+
+.owner_name.unknown {
+    font-style: italic;
+}
+
+.loc_description {
+    position: relative;
+    margin-left: 5%;
 }
 
 

@@ -180,7 +180,6 @@
       var latLng = new google.maps.LatLng(i.get('loc_lat'), i.get('loc_lng'));
       var buttonText = "";
 
-      // TODO - confirm that I don't need to do the override check here. If I do, it probably makes more sense to extend the Installations model
       var compliancePin;
       if (i.get('compliance_level') === 3) {
         compliancePin = '/images/pin-green-full.png';

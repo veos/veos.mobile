@@ -17,8 +17,14 @@
         <script type="text/javascript">
             $.noConflict();
             jQuery(document).bind("mobileinit", function(){
-              jQuery.mobile.defaultPageTransition = 'none'; // disable transitions
+                jQuery.mobile.defaultPageTransition = 'none'; // disable transitions
             });
+            // the following was suggested as a more complete way to disable transitions
+            // jQuery(document).bind("mobileinit", function() {
+            //     $.mobile.defaultPageTransition = 'none';
+            //     $.mobile.page.prototype.options.addBackBtn = true;
+            //     $.mobile.useFastClick  = false;
+            // }
         </script>
         <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
         
@@ -65,10 +71,12 @@
                             <option value>Choose an option</option>
                             <option value="Banking">Banking</option>
                             <option value="Education">Education</option>
-                            <option value="Government">Government</option>
-                            <option value="Office Banking">Office Building</option>
+                            <option value="Government - federal">Government - federal</option>
+                            <option value="Government - provincial">Government - provincial</option>
+                            <option value="Government - municipal">Government - municipal</option>
                             <option value="Police">Police</option>
-                            <option value="Public Transit">Public Transit</option>
+                            <option value="Property manager">Property manager</option>                            
+                            <option value="Public transit">Public transit</option>
                             <option value="Residential">Residential</option>
                             <option value="Retail / Restaurant / Bar">Retail / Restaurant / Bar</option>
                             <option value="Traffic">Traffic</option>
@@ -122,23 +130,20 @@
                                 </div>
                             </div>
                             <hr>
-                            <!-- <div data-role="fieldcontain"> -->
-                                <!-- <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true"> -->
+                            <!-- <div class="multi-container"> -->
                                 <fieldset data-role="controlgroup" data-mini="true">
-                                    <!-- <div data-role="fieldcontain"> -->
-                                        <label class="dropdown-label" for="surveilled-space">What is the installation looking at?</label>
-                                        <select class="multi-field" name="surveilled_space" id="surveilled-space" data-mini="true" multiple="multiple" data-native-menu="false">
-                                            <option>Choose options</option>
-                                            <option value="Mall common area">Mall common area</option>
-                                            <option value="Park">Park</option>
-                                            <option value="Public space">Public space</option>
-                                            <option value="Public plaza">Public plaza</option>
-                                            <option value="Publicly accessible private space">Publicly accessible private space</option>
-                                            <option value="Semi-public">Semi-public</option>
-                                            <option value="Private space">Sidewalk</option>
-                                            <option value="Other type of space">Other type of space</option>
-                                        </select>
-                                    <!-- </div>                                 -->
+                                    <label class="dropdown-label" for="surveilled-space">What is the installation looking at?</label>
+                                    <select class="multi-field" name="surveilled_space" id="surveilled-space" data-mini="true" multiple="multiple" data-native-menu="false">
+                                        <option>Choose options</option>
+                                        <option value="Mall common area">Mall common area</option>
+                                        <option value="Park">Park</option>
+                                        <option value="Public space">Public space</option>
+                                        <option value="Public plaza">Public plaza</option>
+                                        <option value="Publicly accessible private space">Publicly accessible private space</option>
+                                        <option value="Semi-public">Semi-public</option>
+                                        <option value="Private space">Sidewalk</option>
+                                        <option value="Other type of space">Other type of space</option>
+                                    </select>
                                 </fieldset>
                                 <hr>
                             <!-- </div> -->

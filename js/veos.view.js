@@ -606,8 +606,7 @@
       jQuery('#sign-visibility').selectmenu('refresh');                
 
       jQuery('#surveilled-space').selectmenu('refresh', 'true');
-      jQuery('#sign-stated-purpose').selectmenu('refresh', 'true');
-      jQuery('#sign-properties').selectmenu('refresh', 'true');
+      jQuery('#sign-stated-purpose').selectmenu('refresh', 'true'); jQuery('#sign-properties').selectmenu('refresh', 'true');
 
       // TODO: handle other non-trivial fields like , photo, etc.
     },
@@ -720,9 +719,9 @@
         var buttonText = '';
         var ownerName;
         if (installation.get('owner_name')) {
-          buttonText = "<span class='owner_name'>" + installation.get('owner_name') + "</span><br/>" + installation.getLocDescription();
+          buttonText = "<span class='owner_name'>" + installation.get('owner_name') + "</span><br/><span class='loc_description'>" + installation.getLocDescription() + "</span>";
         } else {
-          buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/>" + installation.getLocDescription();
+          buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/><span class='loc_description'>" + installation.getLocDescription() + "</span>";
         }
         
         var complianceLevel;
@@ -788,6 +787,12 @@
       'click .ui-li': function (ev) {
         console.log("clicked ui-li a");
         veos.currentInstallation = jQuery(ev.target).data('installation');      // next used in the report-edit delegate
+      },
+
+      // I assume this is limited to this view (page) and won't be clearing currentReport all over the place
+      'click .add-report-button': function (ev) {
+        console.log("clearing currentReport for extra safety");
+        delete veos.currentReport;
       }
     },
 
@@ -810,10 +815,10 @@
         var buttonText = '';
         var ownerName;
         if (installation.get('owner_name')) {
-          buttonText = "<span class='owner_name'>" + installation.get('owner_name') + "</span><br/>" + installation.getLocDescription();
+          buttonText = "<span class='owner_name'>" + installation.get('owner_name') + "</span><br/><span class='loc_description'>" + installation.getLocDescription() + "</span>";
         } else {
-          buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/>" + installation.getLocDescription();
-        }
+          buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/><span class='loc_description'>" + installation.getLocDescription() + "</span>";
+        }        
 
         var complianceLevel;
         if (installation.get('compliance_level')) {
