@@ -284,32 +284,8 @@
         self.$el.find('.field[name="'+k+'"]').val(self.model.get(k));
       });
       self.updateLocFields();
-      //self.renderPhotos();
     }
-
-    // renderPhotos: function () {
-    //     var photos = this.$el.find('#photos');
-    //     //photos.text(JSON.stringify(this.model.toJSON(), null, 2));
-    //     //photos.append("<br />");
-    //     // _.each(this.model.getPhotos(), function (photo) {
-    //     //     console.log("Photo url: "+photo.thumbUrl());
-    //     //     photos.append("<img src='"+photo.thumbUrl()+"' />")
-    //     // });
-
-    //     console.log("In renderPhotos")
-    //     _.each(this.model.getPhotos(), function (photo) {
-    //         if (this.$el.find('#photo-'+photo.id).length === 0) {
-    //           var img = this.make('img', {src: photo.get('thumb_url')});
-    //           photos.append(img);
-    //         }
-    //     });
-    // }
   });
-
-
-
-
-
 
 
 
@@ -622,7 +598,31 @@
         self.$el.find('.field[name="'+k+'"]').val(self.model.get(k));
       });
       self.updateLocFields();
-      //self.renderPhotos();
+      self.renderPhotos();
+    },
+
+    renderPhotos: function () {
+        var photoContainer = this.$el.find('#photos');
+
+        // we are in edit mode so currentInstallation should be filled otherwise we should not be here
+        if (veos.currentInstallation) {
+          _.each(veos.currentInstallation.get('photos'), function (p) {
+            // create the Photo model for the current photo ID
+            var photo = new veos.model.Photo({id: p.id});
+            // associate a PhotoView with the Photo model
+            var photoView = new PhotoView({model: photo, el: photoContainer});
+            // fetch the model data from the backend (this should trigger PhotoView render and show the picture)
+            photo.fetch();
+          });
+        }
+
+        // console.log("In renderPhotos")
+        // _.each(this.model.getPhotos(), function (photo) {
+        //     if (this.$el.find('#photo-'+photo.id).length === 0) {
+        //       var img = this.make('img', {src: photo.get('thumb_url')});
+        //       photos.append(img);
+        //     }
+        // });
     }
 
   });
@@ -663,6 +663,7 @@
     },
 
     render: function () {
+      var photoDetails;
       console.log("Rendering PhotoView...");
       //this.$el.text(JSON.stringify(this.model.toJSON(), null, 2));
       console.log("Photo url: "+this.model.thumbUrl());
@@ -685,6 +686,50 @@
       jQuery.mobile.hidePageLoadingMsg();
     }
   });
+
+
+
+  // TODO create PhotoDetailsView
+  // var PhotoDetailsView = Backbone.View.extend({
+  //   initialize: function () {
+  //     var view = this;
+
+  //     this.model.on('image_upload image_upload_finish change sync', this.render, this);
+
+  //     this.model.on('image_upload_start', function () {
+  //       jQuery.mobile.showPageLoadingMsg();
+  //       jQuery('.ui-loader h1').text('Uploading photo...');
+  //     }, this);
+
+  //     this.model.on('image_upload_error', function () {
+  //       veos.alert("Image upload failed.");
+  //       jQuery.mobile.hidePageLoadingMsg();
+  //     }, this);
+  //   },
+
+  //   render: function () {
+  //     console.log("Rendering PhotoView...");
+  //     //this.$el.text(JSON.stringify(this.model.toJSON(), null, 2));
+  //     console.log("Photo url: "+this.model.thumbUrl());
+
+  //     var img = this.$el.find('#photo-'+this.model.id);
+  //     if (img.length === 0) {
+  //       img = jQuery("<img style='display: block' class='photo-list-item' id='photo-"+this.model.id+"' />");
+  //       //img.attr('data-model', this.model);
+  //       img.attr('data-model', JSON.stringify(this.model.toJSON()));
+        
+  //       // wrap a link around the picture
+  //       photoDetails = jQuery('<a data-role="button" href="photo-details.html?id='+this.model.id+'"></a>');
+  //       photoDetails.append(img);
+
+  //       this.$el.append(photoDetails);
+  //     }
+  //     img.attr('src', this.model.thumbUrl());
+  //     img.attr('alt', this.model.get('notes'));
+
+  //     jQuery.mobile.hidePageLoadingMsg();
+  //   }
+  // });
 
 
   /**

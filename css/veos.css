@@ -110,8 +110,8 @@
 
 #report-page .photo-list img {
     display: inline;
-    width: 49%;
-    height: auto;
+    /*width: 49%;
+    height: auto;*/
 }
 
 #report-page #photos-container .ui-collapsible-content {
