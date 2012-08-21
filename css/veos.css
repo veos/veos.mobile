@@ -143,6 +143,11 @@
     margin-left: 8%;
 }
 
+#camera-details-container {
+    text-align: center;
+    white-space: nowrap;    
+}
+
 /* this is a really ugly fix - TODO: find the right way to do this; */
 /* and this doesn't work on a phone. Jesus. Coming back to this one */
 /*.multi-container {
@@ -160,11 +165,6 @@
 #sign-details-container {
     text-align: center;
     white-space: nowrap;    
-}
-
-
-#sign-details-container.dashed-box {
-
 }
 
 .dropdown-label {

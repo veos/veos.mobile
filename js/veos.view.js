@@ -301,7 +301,7 @@
 
 
 
-  // this really should be an extension ofthe ReportForm view above
+  // this really should be an extension of the ReportForm view above
 
 
   self.ReportEditForm = Backbone.View.extend({
@@ -1056,140 +1056,6 @@
 
     }
   });
-
-
-  /***********************************************************************************************************************************/
-
-
-  /**
-    ReportList
-    Shows a list of Reports.                LEGACY CODE
-  **/
-  self.ReportList = Backbone.View.extend({
-    MAX_DISTANCE_FROM_CURRENT_LOCATION: 10, // km
-    events: {
-      'click .ui-btn': function (ev) {
-        console.log("clicked ui-button");
-      }
-    },
-
-    initialize: function () {
-      var self = this;
-
-      if (!this.collection) {
-        this.collection = new veos.model.Reports();
-      }
-
-      // TODO: consider binding 'add' and 'remove' to pick up added/removed Reports too?
-      this.collection.on('reset', _.bind(this.render, self)); 
-    },
-
-    fetchNearby: function () {
-      var list = this.$el.find('.reports-list');
-      addLoader(list);
-      this.collection.fetch();
-    },
-
-    render: function () {
-      var list = this.$el.find('.reports-list');
-      list.empty();
-
-      this.collection.each(function (report) {
-        var ownerName;
-        if (report.get('owner_name')) {
-          ownerName = "<span class='owner_name'>" + report.get('owner_name') + "</span><br/>" + report.getLocDescription();
-        } else {
-          ownerName = "<span class='owner_name unknown'>Unknown Owner</span><br/>" + report.getLocDescription();
-        }
-
-        // var thumb;
-        // var obj = report.get('photos');
-        // if (obj && obj.photos && obj.photos[0] && obj.photos[0].thumb_url) {
-        //     thumb = "<img src='"+veos.model.baseURL + obj.photos[0].thumb_url+"' />";
-        // } else {
-        //     thumb = "";
-        // }
-
-        var item = jQuery("<li><a href='report-details.html?id="+report.id+"'>"+ownerName+"</a></li>");
-        list.append(item);
-        list.listview('refresh');
-      });
-    }
-  });
-
-  // WHY YOU NO WORK?!
-/*    self.ReportSelectionListView = self.ReportList.extend({
-    initialize: function () {
-      this.events['click .ui-btn'] = function(ev) {
-        alert("clicked some-other thing");
-      }
-      this.delegateEvents();
-    }
-  });*/
-
-  /**
-    report-details
-    Shows detailed information about a report.          LEGACY CODE
-  **/
-  self.ReportDetail = Backbone.View.extend({
-    initialize: function () {
-      var self = this;
-
-      // TODO: consider binding 'add' and 'remove' to pick up added/removed Reports too?
-      this.model.on('change sync', _.bind(this.render, self)); 
-    },
-
-    showLoader: function () {
-      this.loader = addLoader(this.$el.find('[role="content"]'));
-      // FIXME: this looks ugly
-      this.loader.css({
-        position: 'absolute',
-        top: '30%',
-        width: '100%'
-      });
-    },
-
-    hideLoader: function () {
-      this.loader.remove();
-      delete this.loader;
-    },
-
-    createPointDetailsMap: function(report) {
-      var latLng = report.getLatLng();
-      
-      // note: higher zoom level
-      var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=17&size=150x150&scale=2&sensor=true&center=" + latLng.lat() + "," + latLng.lng();
-      staticMapCriteria += "&markers=size:small%7C" + latLng.lat() + ',' + latLng.lng();
-      
-      var mapThumbnail = jQuery('<img class="map-thumbnail" />');
-      mapThumbnail.attr('src', staticMapCriteria);    
-      var thumbnailContainer = this.$el.find('.map-thumbnail-container');
-      thumbnailContainer.append(mapThumbnail);    
-    },
-
-    render: function () {
-      var report = this.model;
-
-      if (this.loader) {
-        this.hideLoader();
-      }
-
-      this.createPointDetailsMap(report);
-      
-      var photoThumbnail = jQuery('<img class="photo-thumbnail" />');
-      var photoContainer = this.$el.find('.photo-thumbnail-container');
-
-      var ownerName;
-      if (report.get('owner_name')) {
-        ownerName = "<span class='owner_name'>" + report.get('owner_name') + "</span>";
-      } else {
-        ownerName = "<span class='owner_name unknown'>Unknown Owner</span>";
-      }
-
-      this.$el.find('.installation-title').html(ownerName);
-    }
-  });
-
 
   veos.view = self;
 })(window.veos);

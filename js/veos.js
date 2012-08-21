@@ -111,11 +111,30 @@ window.veos = (function(veos) {
         }
         veos.map.refiningMap.addReportRefinerMarker(self.reportForm.model, veos.lastLoc);
         */
-        var map = new veos.map.Map('#refine-location-canvas');
+        var refinerMap = new veos.map.Map('#refine-location-canvas', veos.lastLoc);
 
-        map.addReportRefinerMarker(self.reportForm.model, veos.lastLoc);
+        refinerMap.addReportRefinerMarker(self.reportForm.model, veos.lastLoc);
+
+        //refinerMap.startFollowing();
       })
 
+    /** overview-map.html (overview-map-page) **/
+      // .delegate("#overview-map-page", "pageshow", function() {
+      //   if (!veos.map.overviewMap) {
+      //     veos.map.overviewMap = new veos.map.Map('#overview-map-canvas');
+      //   }
+      //   //var map = new veos.map.Map('#overview-map-canvas');
+
+      //   // add all installation markers
+      //   var installations = new veos.model.Installations();
+      //   installations.on('reset', function(collection) {
+      //     veos.map.overviewMap.addInstallationMarkers(collection);
+      //   });
+      //   installations.fetch();
+
+      //   // start following user
+      //   veos.map.overviewMap.startFollowing();
+      // })
 
     /** installations-list.html (installations-list-page) **/
       .delegate("#installations-list-page", "pageshow", function(ev) {

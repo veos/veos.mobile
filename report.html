@@ -64,11 +64,9 @@
                 </div>
                 <div data-role="fieldcontain">
                     <fieldset data-role="controlgroup">
-                        <label for="owner-type">
-                            Owner Type
-                        </label>
+                        <!-- <label for="owner-type">Owner Type</label> -->
                         <select id="owner-type" class="field" name="owner_type">
-                            <option value>Choose an option</option>
+                            <option value>Owner type</option>
                             <option value="Banking">Banking</option>
                             <option value="Education">Education</option>
                             <option value="Government - federal">Government - federal</option>
@@ -113,10 +111,10 @@
 
                     <div data-role="collapsible" data-collapsed="true" id="photos-container">
                         <h3>
-                            Photos
+                            Add a photo
                         </h3>
-                        <fieldset id="camera-box" class="dashed-box">
-                            <legend>Camera</legend>
+                        <fieldset class="dashed-box">
+                            <legend>Photos</legend>
 
                             <div id="camera-buttons">
                                 <a id="add-camera-photo-button" data-role="button" href="#report-page" data-icon="plus" data-iconpos="left" class="acquire-photo" data-acquire-from="camera" data-photo-of="camera">
@@ -129,33 +127,39 @@
                                     <!-- Images are added dynamically via camera or gallery selection -->
                                 </div>
                             </div>
-                            <hr>
-                            <!-- <div class="multi-container"> -->
-                                <fieldset data-role="controlgroup" data-mini="true">
-                                    <label class="dropdown-label" for="surveilled-space">What is the installation looking at?</label>
-                                    <select class="multi-field" name="surveilled_space" id="surveilled-space" data-mini="true" multiple="multiple" data-native-menu="false">
-                                        <option>Choose options</option>
-                                        <option value="Mall common area">Mall common area</option>
-                                        <option value="Park">Park</option>
-                                        <option value="Public space">Public space</option>
-                                        <option value="Public plaza">Public plaza</option>
-                                        <option value="Publicly accessible private space">Publicly accessible private space</option>
-                                        <option value="Semi-public">Semi-public</option>
-                                        <option value="Private space">Sidewalk</option>
-                                        <option value="Other type of space">Other type of space</option>
-                                    </select>
-                                </fieldset>
-                                <hr>
-                            <!-- </div> -->
-                            <!-- <div data-role="fieldcontain"> -->
-                                <fieldset data-role="controlgroup" data-mini="true">
-                                    <label for="camera-count">How many cameras do you see?</label>
-                                    <input class="field" name="camera_count" id="camera-count" placeholder="#" type="number">
-                                </fieldset>
-                            <!-- </div> -->
                         </fieldset>
                     </div>
                 </div>
+
+                <div data-role="collapsible-set" data-theme="" data-content-theme="">
+                    <div data-role="collapsible" data-collapsed="true" id="camera-details-container">
+                        <h3>
+                            Camera details
+                        </h3>
+                        <fieldset class="dashed-box">
+                            <legend>Cameras</legend>
+                            <div>
+                                <!-- <label class="dropdown-label" for="surveilled-space">Cameras pointed at?</label> -->
+                                <select class="multi-field" name="surveilled_space" id="surveilled-space" data-mini="true" multiple="multiple" data-native-menu="false">
+                                    <option>Surveilled space</option>
+                                    <option value="Mall common area">Mall common area</option>
+                                    <option value="Park">Park</option>
+                                    <option value="Public space">Public space</option>
+                                    <option value="Public plaza">Public plaza</option>
+                                    <option value="Publicly accessible private space">Publicly accessible private space</option>
+                                    <option value="Semi-public">Semi-public</option>
+                                    <option value="Private space">Sidewalk</option>
+                                    <option value="Other type of space">Other type of space</option>
+                                </select>
+                                <hr>
+
+                                <label for="camera-count">How many cameras do you see?</label>
+                                <input class="field" name="camera_count" id="camera-count" placeholder="#" type="number">
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+
 
                 <div data-role="fieldcontain">
                     <fieldset data-role="controlgroup" data-type="horizontal">
@@ -167,7 +171,6 @@
                     </fieldset>
                 </div>
 
-
                 <div data-role="collapsible-set" data-theme="" data-content-theme="">
                     <div data-role="collapsible" data-collapsed="true" id="sign-details-container">
                         <h3>
@@ -176,53 +179,43 @@
                         
                         <fieldset class="dashed-box">
                             <legend>Sign</legend>
-                            <div data-role="fieldcontain">
-                                <fieldset data-role="controlgroup">
-                                    <label for="sign-text">Text of sign</label>
-                                    <input class="field" name="sign_text" id="sign-text" placeholder="Text of sign if it exists..." value="" type="text">
-                                </fieldset>
-                            </div>
-
-                            <div data-role="fieldcontain">
-                                <label class="dropdown-label" for="sign-visibility">Visibility of sign</label>
-                                <select class="field" name="sign_visibility" id="sign-visibility" data-mini="true" data-native-menu="false">
-                                    <option>Choose an option</option>
-                                    <option value="Visible">Visible</option>
-                                    <option value="Obscure">Obscure</option>
-                                </select>
-                            </div>
-
-                            <div data-role="fieldcontain">
-                                <label class="dropdown-label" for="sign-stated-purpose">Stated purpose</label>
-                                <select class="multi-field" name="sign_stated_purpose" id="sign-stated-purpose" data-mini="true" multiple="multiple" data-native-menu="false">
-                                    <option>Choose options</option>
-                                    <option value="None/unknown">None/unknown</option>
-                                    <option value="Crime prevention/prosecution">Crime prevention/prosecution</option>
-                                    <option value="Public safety">Public safety</option>
-                                </select>
-                            </div>
-
-                            <div data-role="fieldcontain">
-                                <label class="dropdown-label" for="sign-properties">Stated properties</label>
-                                <select class="multi-field" name="sign_properties" id="sign-properties" data-mini="true" multiple="multiple" data-native-menu="false">
-                                    <option>Choose options</option>
-                                    <option value="None/unknown">None/unknown</option>
-                                    <option value="# days image will be retained"># days image will be retained</option>
-                                    <option value="Available to police">Available to police</option>
-                                    <option value="Face blurring">Face blurring</option>
-                                    <option value="Face recognition">Face recognition</option>
-                                    <option value="Image encryption">Image encryption</option>
-                                    <option value="Live monitoring">Live monitoring</option>
-                                    <option value="Recording">Recording</option>
-                                </select>
-                            </div>
-
-                            <div data-role="fieldcontain">
-                                <fieldset data-role="controlgroup">
-                                    <legend>Note</legend>
-                                    <textarea class="field" name="notes" id="report-note" placeholder="Any other observations..."></textarea>
-                                </fieldset>
-                            </div>
+                            <fieldset data-role="controlgroup">
+                                <label for="sign-text">Text of sign</label>
+                                <input class="field" name="sign_text" id="sign-text" placeholder="Text of sign if it exists..." value="" type="text">
+                            </fieldset>
+                            <hr>
+                            <!-- <label class="dropdown-label" for="sign-visibility">Visibility of sign</label> -->
+                            <select class="field" name="sign_visibility" id="sign-visibility" data-mini="true" data-native-menu="false">
+                                <option>Visibility of sign</option>
+                                <option value="Visible">Visible</option>
+                                <option value="Obscure">Obscure</option>
+                            </select>
+                            <hr>
+                            <!-- <label class="dropdown-label" for="sign-stated-purpose">Stated purpose</label> -->
+                            <select class="multi-field" name="sign_stated_purpose" id="sign-stated-purpose" data-mini="true" multiple="multiple" data-native-menu="false">
+                                <option>Stated purpose</option>
+                                <option value="None/unknown">None/unknown</option>
+                                <option value="Crime prevention/prosecution">Crime prevention/prosecution</option>
+                                <option value="Public safety">Public safety</option>
+                            </select>
+                            <hr>
+                            <!-- <label class="dropdown-label" for="sign-properties">Stated properties</label> -->
+                            <select class="multi-field" name="sign_properties" id="sign-properties" data-mini="true" multiple="multiple" data-native-menu="false">
+                                <option>Stated properties</option>
+                                <option value="None/unknown">None/unknown</option>
+                                <option value="# days image will be retained"># days image will be retained</option>
+                                <option value="Available to police">Available to police</option>
+                                <option value="Face blurring">Face blurring</option>
+                                <option value="Face recognition">Face recognition</option>
+                                <option value="Image encryption">Image encryption</option>
+                                <option value="Live monitoring">Live monitoring</option>
+                                <option value="Recording">Recording</option>
+                            </select>
+                            <hr>
+                            <fieldset data-role="controlgroup">
+                                <legend>Note</legend>
+                                <textarea class="field" name="notes" id="report-note" placeholder="Any other observations..."></textarea>
+                            </fieldset>
                         </fieldset>
                     </div>
                 </div>
