@@ -57,13 +57,32 @@ window.veos = (function(veos) {
 
     /** report.html (report-page) **/
       .delegate("#report-page", "pageshow", function(ev) {
-        // edit report
-        if (self.currentInstallation) {
-          var newReport = self.currentInstallation.startAmending();
-          var reportEditView = new self.view.ReportEditForm({model: newReport, el: '#report-page'});
-          jQuery('#report-header-text').text('Editing the Installation');
+        var installationId = 0;
 
-          reportEditView.render();
+        if (window.location.href.match("[\\?&]installationId=(\\d+)")) {
+          installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
+        }
+
+        // edit report
+        // if (self.currentInstallation) {
+        if (installationId > 0) {
+          var installation = new veos.model.Installation({id: installationId});
+
+          var installationSuccess = function (model, response) {
+            self.currentInstallation = model;
+            var newReport = model.startAmending();
+            var reportEditView = new self.view.ReportEditForm({model: newReport, el: '#report-page'});
+            jQuery('#report-header-text').text('Editing the Installation');
+
+            reportEditView.render();
+          };
+
+          var installationError = function (model, response) {
+            console.error("Error fetching installation model with message: "+response);
+            veos.alert("Error fetching installation details");
+          };
+
+          installation.fetch({success: installationSuccess, error: installationError});
         }
         // new report
         else {
