@@ -107,7 +107,7 @@ window.veos = (function(veos) {
             console.log("Pointing ReportForm to "+ev.target);
             self.reportForm.setElement(ev.target);
             self.reportForm.$el.data('initialized', true);
-          }
+          }       
           
           self.reportForm.render();          
         }
@@ -125,35 +125,10 @@ window.veos = (function(veos) {
           return;
         }
 
-/*        if (!veos.map.refiningMap) {
-          veos.map.refiningMap = new veos.map.Map('#refine-location-canvas');
-        }
-        veos.map.refiningMap.addReportRefinerMarker(self.reportForm.model, veos.lastLoc);
-        */
         var refinerMap = new veos.map.Map('#refine-location-canvas', veos.lastLoc);
 
         refinerMap.addReportRefinerMarker(self.reportForm.model, veos.lastLoc);
-
-        //refinerMap.startFollowing();
       })
-
-    /** overview-map.html (overview-map-page) **/
-      // .delegate("#overview-map-page", "pageshow", function() {
-      //   if (!veos.map.overviewMap) {
-      //     veos.map.overviewMap = new veos.map.Map('#overview-map-canvas');
-      //   }
-      //   //var map = new veos.map.Map('#overview-map-canvas');
-
-      //   // add all installation markers
-      //   var installations = new veos.model.Installations();
-      //   installations.on('reset', function(collection) {
-      //     veos.map.overviewMap.addInstallationMarkers(collection);
-      //   });
-      //   installations.fetch();
-
-      //   // start following user
-      //   veos.map.overviewMap.startFollowing();
-      // })
 
     /** installations-list.html (installations-list-page) **/
       .delegate("#installations-list-page", "pageshow", function(ev) {
@@ -196,36 +171,38 @@ window.veos = (function(veos) {
         view.model.fetch();             // I don't think this is right - the whole 'view doesn't call this stuff on itself' (should be moved to the init in view?)
       })
 
+    /** photo-details.html (photo-details-page) **/
+      // .delegate("#photo-details-page", "pageshow", function(ev) {
+      //   console.log("Showing photo details page at "+window.location.href);
+      //   var photoId = window.location.href.match("[\\?&]id=(\\d+)")[1];
+      //   console.log("Showing details for photo "+photoId);
 
+      //   var photo = new veos.model.Photo({id: photoId});
 
-
-    /** reports-list.html (reports-list-page) LEGACY CODE **/
-      .delegate("#reports-list-page", "pageshow", function(ev) {
-        var view = new veos.view.ReportList({
-          el: ev.target
-        });
+      //   var view = new veos.view.PhotoDetails({
+      //     el: ev.target,
+      //     model: photo
+      //   });
         
-        view.fetchNearby();
-      })
-    /** report-details.html (report-details-page)  LEGACY CODE **/
-      .delegate("#report-details-page", "pageshow", function(ev) {
-        console.log("Showing details page at "+window.location.href);
-        var reportId = window.location.href.match("[\\?&]id=(\\d+)")[1];
-        console.log("Showing details for report "+reportId);
+      //   view.showLoader();  
+      //   photo.fetch();
 
-        var report = new veos.model.Report({id: reportId});
+      // })
 
-        var view = new veos.view.ReportDetail({
-          el: ev.target,
-          model: report
-        });
-        
-        view.showLoader();
-        view.model.fetch();
-      });
-
-      
   };
+
+  self.showModal = function() {
+    console.log('photo clicked!');
+    jQuery('#photo-details-content').modal();
+    //return false;    
+  };
+
+  // // click event for photo details overlays
+  // jQuery(".photo-list-item").click(function () {
+  //   console.log('photo clicked');
+
+  // });  
+
 
   self.initPhonegapStuff = function () {
     veos.captureImage = function (from, photo) {

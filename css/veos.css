@@ -82,7 +82,7 @@
 /***** REPORT *****/
 
 #report-page .ui-checkbox {
-    width: 40%;
+    width: 80%;
 }
 
 #report-page .ui-checkbox label {
@@ -184,7 +184,6 @@
 #report-page .ui-radio .ui-btn {
     width: 120px;
     text-align: center;
-
 }
 
 #sign-details-container {
@@ -291,6 +290,56 @@
 
 #installation-details-page .edit-button-container {
     float: right;
-    padding: 5px 5px 0px 0px;                   /* using px = bad, but since jQuery Mobile is already full of them */
+    padding: 5px 5px 0px 0px;                   /* using px = bad, but since jQuery Mobile is already full of them... */
+}
+
+
+
+
+
+/**** PHOTO DETAILS OVERLAY ***/
+
+/* Hiding content until modal popup */
+#photo-details-content {
+    display:none;
+}
+
+/* Overlay */
+#simplemodal-overlay {
+    background-color:#000;
+    cursor:wait; /*pretty irrelevant, but why not*/
+}
+
+/* Container */
+#simplemodal-container {
+    height:80%;
+    width:55%;
+    color:#bbb;
+    background-color:#333;
+    border:4px solid #444;
+    padding:12px;
+}
+#simplemodal-container a {
+    color:#ddd;
+}
+#simplemodal-container a.modalCloseImg {
+    background:url(/images/x.png) no-repeat;
+    width:42px;
+    height:42px;
+    display:inline;
+    z-index:3200;
+    position:absolute;
+    top:-15px;
+    right:-16px;
+    cursor:pointer;
+}
+#simplemodal-container h3 {
+    color:#84b8d9;
+}
+
+
+#photo-details-tag-buttons .ui-btn {
+    width: 105px;
+    text-align: center;
 }
 

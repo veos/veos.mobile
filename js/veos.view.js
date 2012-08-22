@@ -288,6 +288,7 @@
       // ok, this is obviously insane - but if anyone can find a better way to keep the multi-selects from growing off the screen (on the phone, please let me know)
       // and this doesn't actually work well with screen rotation (since it doesn't rerender)
       // TODO!
+      // see also ReportEdit version
       var multiWidth = jQuery(window).width() * 4/5;
       jQuery('.ui-select').width(multiWidth);
     }
@@ -300,14 +301,7 @@
 
 
 
-
-
-
-
-
-
-
-  // this really should be an extension of the ReportForm view above
+  // this really should be an extension of the ReportForm view above - massive duplication
 
 
   self.ReportEditForm = Backbone.View.extend({
@@ -605,6 +599,10 @@
       });
       self.updateLocFields();
       self.renderPhotos();
+
+      // see ReportEdit for explanation (uggggg)
+      var multiWidth = jQuery(window).width() * 4/5;
+      jQuery('.ui-select').width(multiWidth);      
     },
 
     renderPhotos: function () {
@@ -676,15 +674,15 @@
 
       var img = this.$el.find('#photo-'+this.model.id);
       if (img.length === 0) {
-        img = jQuery("<img style='display: block' class='photo-list-item' id='photo-"+this.model.id+"' />");
+        img = jQuery("<img style='display: block' class='photo-list-item' id='photo-"+this.model.id+"' onclick='veos.showModal()'/>");
         //img.attr('data-model', this.model);
         img.attr('data-model', JSON.stringify(this.model.toJSON()));
         
         // wrap a link around the picture
-        photoDetails = jQuery('<a data-role="button" href="photo-details.html?id='+this.model.id+'"></a>');
-        photoDetails.append(img);
+        // photoDetails = jQuery('<a data-role="button" href="photo-details.html?id='+this.model.id+'"></a>');
+        // photoDetails.append(img);
 
-        this.$el.append(photoDetails);
+        this.$el.append(img);
       }
       img.attr('src', this.model.thumbUrl());
       img.attr('alt', this.model.get('notes'));
