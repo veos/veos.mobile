@@ -50,39 +50,42 @@
                 </h3>
             </div>
             <div data-role="content">
-                <div data-role="fieldcontain">
-                    <div>
-                        <b>Owner:</b> who do you think this surveillance belongs to?
-                    </div>
+                <div>
+                    <b>Owner:</b> who do you think this surveillance belongs to?
+                </div>
 
-                    <fieldset data-role="controlgroup">
-                        <legend>Owner Name</legend>
-                        <input class="field" name="owner_name" id="owner" placeholder="Owner name if identifiable..." value="" type="text" />
-                        <input type="checkbox" name="unidentified-owner-checkbox" id="unidentified-owner-checkbox" class="custom" />
-                        <label for="unidentified-owner-checkbox" data-theme="e">Cannot identify owner</label>
-                    </fieldset>
-                </div>
-                <div data-role="fieldcontain">
-                    <fieldset data-role="controlgroup">
-                        <!-- <label for="owner-type">Owner Type</label> -->
-                        <select id="owner-type" class="field" name="owner_type">
-                            <option value>Owner type</option>
-                            <option value="Banking">Banking</option>
-                            <option value="Education">Education</option>
-                            <option value="Government - federal">Government - federal</option>
-                            <option value="Government - provincial">Government - provincial</option>
-                            <option value="Government - municipal">Government - municipal</option>
-                            <option value="Police">Police</option>
-                            <option value="Property manager">Property manager</option>                            
-                            <option value="Public transit">Public transit</option>
-                            <option value="Residential">Residential</option>
-                            <option value="Retail / Restaurant / Bar">Retail / Restaurant / Bar</option>
-                            <option value="Traffic">Traffic</option>
-                            <option value="Other">Other</option>
-                        </select>
-                        <!-- <input id="type" placeholder="" value="" type="text" /> -->
-                    </fieldset>
-                </div>
+                <fieldset data-role="controlgroup">
+                    <legend>Owner Name</legend>
+                    <input class="field" name="owner_name" id="owner" placeholder="Owner name if identifiable..." value="" type="text" />
+                    <input type="checkbox" name="unidentified-owner-checkbox" id="unidentified-owner-checkbox" class="custom" />
+                    <label for="unidentified-owner-checkbox" data-theme="e">Cannot identify owner</label>
+                </fieldset>
+
+                <fieldset data-role="controlgroup">
+                    <!-- <label for="owner-type">Owner Type</label> -->
+                    <select id="owner-type" class="field" name="owner_type">
+                        <option value>Owner type</option>
+                        <option value="Banking">Banking</option>
+                        <option value="Education">Education</option>
+                        <option value="Government - federal">Government - federal</option>
+                        <option value="Government - provincial">Government - provincial</option>
+                        <option value="Government - municipal">Government - municipal</option>
+                        <option value="Police">Police</option>
+                        <option value="Property manager">Property manager</option>                            
+                        <option value="Public transit">Public transit</option>
+                        <option value="Residential">Residential</option>
+                        <option value="Retail / Restaurant / Bar">Retail / Restaurant / Bar</option>
+                        <option value="Traffic">Traffic</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </fieldset>
+
+                <fieldset data-role="controlgroup">
+                    <legend>Operator Name</legend>
+                    <input class="field" name="operator_name" id="operator" placeholder="Camera operator name if identifiable..." value="" type="text" />
+                </fieldset>
+
+                <hr>
                 
                 <div data-role="collapsible" data-collapsed="false" id="location-container">
                     <h3>
@@ -106,9 +109,9 @@
                     </div>
                 </div>
 
+                <hr>
 
                 <div data-role="collapsible-set" data-theme="" data-content-theme="" class="report">
-
                     <div data-role="collapsible" data-collapsed="true" id="photos-container">
                         <h3>
                             Add a photo
@@ -130,6 +133,8 @@
                         </fieldset>
                     </div>
                 </div>
+
+                <hr>
 
                 <div data-role="collapsible-set" data-theme="" data-content-theme="">
                     <div data-role="collapsible" data-collapsed="true" id="camera-details-container">
@@ -160,16 +165,15 @@
                     </div>
                 </div>
 
+                <hr>
 
-                <div data-role="fieldcontain">
-                    <fieldset data-role="controlgroup" data-type="horizontal">
-                        <legend><b>I see a sign</b></legend>
-                        <input name="has_sign" class="has-sign field" id="sign-yes" value="yes" type="radio">
-                        <label for="sign-yes"><b>Yes</b></label>
-                        <input name="has_sign" class="has-sign field" id="sign-no" value="no" type="radio">
-                        <label for="sign-no"><b>No</b></label>
-                    </fieldset>
-                </div>
+                <fieldset data-role="controlgroup" data-type="horizontal">
+                    <legend><b>Do you see a sign?</b></legend>
+                    <input name="has_sign" class="has-sign field" id="sign-yes" value="yes" type="radio">
+                    <label for="sign-yes"><b>Yes</b></label>
+                    <input name="has_sign" class="has-sign field" id="sign-no" value="no" type="radio">
+                    <label for="sign-no"><b>No</b></label>
+                </fieldset>
 
                 <div data-role="collapsible-set" data-theme="" data-content-theme="">
                     <div data-role="collapsible" data-collapsed="true" id="sign-details-container">
@@ -200,6 +204,8 @@
                             </select>
                             <hr>
                             <!-- <label class="dropdown-label" for="sign-properties">Stated properties</label> -->
+                            
+
                             <select class="multi-field" name="sign_properties" id="sign-properties" data-mini="true" multiple="multiple" data-native-menu="false">
                                 <option>Stated properties</option>
                                 <option value="None/unknown">None/unknown</option>
@@ -211,6 +217,8 @@
                                 <option value="Live monitoring">Live monitoring</option>
                                 <option value="Recording">Recording</option>
                             </select>
+                            
+
                             <hr>
                             <fieldset data-role="controlgroup">
                                 <legend>Note</legend>

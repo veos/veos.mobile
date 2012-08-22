@@ -284,6 +284,12 @@
         self.$el.find('.field[name="'+k+'"]').val(self.model.get(k));
       });
       self.updateLocFields();
+
+      // ok, this is obviously insane - but if anyone can find a better way to keep the multi-selects from growing off the screen (on the phone, please let me know)
+      // and this doesn't actually work well with screen rotation (since it doesn't rerender)
+      // TODO!
+      var multiWidth = jQuery(window).width() * 4/5;
+      jQuery('.ui-select').width(multiWidth);
     }
   });
 
@@ -582,7 +588,8 @@
       jQuery('#sign-visibility').selectmenu('refresh');                
 
       jQuery('#surveilled-space').selectmenu('refresh', 'true');
-      jQuery('#sign-stated-purpose').selectmenu('refresh', 'true'); jQuery('#sign-properties').selectmenu('refresh', 'true');
+      jQuery('#sign-stated-purpose').selectmenu('refresh', 'true');
+      jQuery('#sign-properties').selectmenu('refresh', 'true');
 
       // TODO: handle other non-trivial fields like , photo, etc.
     },

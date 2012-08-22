@@ -81,15 +81,11 @@
 
 /***** REPORT *****/
 
-
-#report-page #report-type {
-}
-
-#report-page #report-type .ui-radio {
+#report-page .ui-checkbox {
     width: 40%;
 }
 
-#report-page #report-type .ui-radio label {
+#report-page .ui-checkbox label {
     width: 100%;
     text-align: center;
 }
@@ -145,8 +141,37 @@
 
 #camera-details-container {
     text-align: center;
-    white-space: nowrap;    
+    white-space: nowrap;
 }
+
+@media only screen and (max-device-width: 800px) {
+    #sign-details-container {
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+/*    .ui-select {
+        width: 90% !important;
+        overflow-x: hidden;
+        margin: 0 auto !important;
+        position: relative !important;
+        border-right: 5px #666 outset !important;
+        border-left: 5px #666 outset !important;
+    }*/
+}
+
+/*.ui-select {
+    width: 90% !important;
+}*/
+
+
+/*
+.multi-field {
+    width: 200px;
+}*/
+
+
+
 
 /* this is a really ugly fix - TODO: find the right way to do this; */
 /* and this doesn't work on a phone. Jesus. Coming back to this one */
@@ -172,56 +197,6 @@
     display: inline-block;
     /*width: 21%;*/
 }
-
-#report-note {
-    width: 100%;                                /* TODO: check this on the phone */
-}
-
-/*#report-page .sign-box label {
-    text-align: center;
-}*/
-
-/*#refine-location-page div[data-role="content"] {
-    position: absolute;
-
-}*/
-
-/*@media only screen and (max-device-width: 800px) {
-    phone screens can't fit camera + sign box side by side 
-        so we show them one above the other 
-
-    #report-page #photos-container .ui-collapsible-content {
-        white-space: normal;
-        padding: 2px;
-    }
-
-    #report-page .photo-box {
-        margin-bottom: 10px;
-        width: 95%;
-    }
-}*/
-
-/*
-#refine-location-page #refine-location-button {
-    position: absolute;
-    bottom: 5%;
-    right: 5%;
-    z-index: 1;
-}*/
-
-
-/***** INSTALLATIONS *****/
-
-
-/*#installations-page {
-    min-height: 100%;
-    height: auto !important;
-    height: 100%;
-    margin: 0 auto -4em;
-}
-.footer, .push {
-    height: 4em;
-}*/
 
 
 /***** INSTALLATION LIST PAGE *****/
