@@ -447,27 +447,54 @@
             console.log('Photo Model JSON: ' +photoModelJson);
             var photoModel = JSON.parse(photoModelJson);
 
-            // create a Photo model using the id
-            var photo = new veos.model.Photo({id: photoModel.photo.id});
+            // check if photo in DOM already exists in installation
+            var existingPhoto = null;
+            existingPhoto = _.find(veos.currentInstallation.get('photos'), function (p) {
+              var existingPhotoId = p.id;
+              var domPhotoId = photoModel.photo.id;
+              return existingPhotoId === domPhotoId;
+            }); 
 
-            // once photo model is available (via fetch) we attach the photo to the report
-            var photoFetchSuccess = function (model, response) {
-              console.log("We made it and are about tot attach Photos");
+           
+            // if photo already exists do not add the photo to the report again
+            if (existingPhoto) {
+              console.log('Photo with ID: '+photoModel.photo.id+' already exits');
+              successCounter++;
+              if (successCounter === photoCount) {
+                console.log("All photos attached!");
+                doneSubmit();
+                return;
+              }
+            } else {
+              console.log('Attach the new photo');
+              // create a Photo model using the id
+              var photo = new veos.model.Photo({id: photoModel.photo.id});
 
-              report.attachPhoto(model, function () {
-                successCounter++;
-                if (successCounter === photoCount) {
-                  console.log("All photos attached!");
-                  doneSubmit();
-                  return;
-                }
-              });
-            };
+              // once photo model is available (via fetch) we attach the photo to the report
+              var photoFetchSuccess = function (model, response) {
+                console.log("We made it and are about tot attach Photos");
 
-            // TODO: Implement a error function. What would the behaviour be?
-            photo.fetch({success: photoFetchSuccess});
+                report.attachPhoto(model, function () {
+                  successCounter++;
+                  if (successCounter === photoCount) {
+                    console.log("All photos attached!");
+                    doneSubmit();
+                    return;
+                  }
+                });
+              };
 
+              // TODO: think about this since it delets all input on error and returns to map
+              var photoFetchError = function (model, response) {
+                console.error("Fetching photo model " + model.id +" failed with error: " +response);
+                veos.alert("Error fetching Photo data during Report submission!");
+                delete veos.currentReport;
+                delete veos.reportForm;
+                jQuery.mobile.changePage("overview-map.html");
+              };
 
+              photo.fetch({success: photoFetchSuccess, error: photoFetchError});
+            }
           });
         }
       });
@@ -606,27 +633,31 @@
     },
 
     renderPhotos: function () {
-        var photoContainer = this.$el.find('#photos');
+      var photoContainer = this.$el.find('#photos');
 
-        // we are in edit mode so currentInstallation should be filled otherwise we should not be here
-        if (veos.currentInstallation) {
-          _.each(veos.currentInstallation.get('photos'), function (p) {
-            // create the Photo model for the current photo ID
-            var photo = new veos.model.Photo({id: p.id});
-            // associate a PhotoView with the Photo model
-            var photoView = new PhotoView({model: photo, el: photoContainer});
-            // fetch the model data from the backend (this should trigger PhotoView render and show the picture)
-            photo.fetch();
-          });
-        }
+      // we are in edit mode so currentInstallation should be filled otherwise we should not be here
+      if (veos.currentInstallation) {
+        _.each(veos.currentInstallation.get('photos'), function (p) {
+          // create the Photo model for the current photo ID
+          var photo = new veos.model.Photo({id: p.id});
+          // associate a PhotoView with the Photo model
+          var photoView = new PhotoView({model: photo, el: photoContainer});
 
-        // console.log("In renderPhotos")
-        // _.each(this.model.getPhotos(), function (photo) {
-        //     if (this.$el.find('#photo-'+photo.id).length === 0) {
-        //       var img = this.make('img', {src: photo.get('thumb_url')});
-        //       photos.append(img);
-        //     }
-        // });
+          var photoFetchSuccess = function (model, response) {
+            console.log("Add the photo model to the report photos collection");
+            this.model.photos.push(model);
+          };
+
+          // TODO: think about this since it delets all input on error and returns to map
+          var photoFetchError = function (model, response) {
+            console.error("Fetching photo model for Installation List failed with error: " +response);
+            veos.alert("Problem fetching photo model data. This might create problems later on");
+          };
+
+          // fetch the model data from the backend (this should trigger PhotoView render and show the picture)
+          photo.fetch({success: photoFetchSuccess, error: photoFetchError});
+        });
+      }
     }
 
   });
@@ -913,6 +944,9 @@
           thumbPhoto.fetch({success: photoFetchSuccess, error: photoFetchError});
         }
 
+        // create the URL to load report.html in edit mode with prefilled data
+        // the installationId is retrieved in veos.js .delegate and used to load a installation model
+        // and render the ReportEditForm view
         var item = jQuery("<a class='relative' href=report.html?installationId="+ installation.get('id') +">"+complianceLevel+thumb+buttonText+"</a>");
         // item.data('installation', installation);        // add the installation object so that we can retrieve it in the click event
         // item.attr('data-installationId', installation.get('id'));
@@ -1013,6 +1047,8 @@
       var installation = this.model;
 
       // create the URL to load report.html in edit mode with prefilled data
+      // the installationId is retrieved in veos.js .delegate and used to load a installation model
+      // and render the ReportEditForm view
       var editButton = jQuery('#installation-details-page .edit-button');
       editButton.attr('href', 'report.html?installationId='+installation.get('id'));
 
