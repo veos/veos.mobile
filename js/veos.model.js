@@ -244,10 +244,6 @@
       return newReport;
     }
 
-    // ,
-    // getComplianceLevel: function() {
-    //   return this.get('compliance') IF I NEED TO DEAL WITH THE OVERRIDE
-    // }
   });
 
   model.Installations = Backbone.Collection.extend({

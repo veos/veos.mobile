@@ -30,7 +30,10 @@
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       center: center,
       streetViewControl: false,
-      zoomControl: false // use pinch-zoom instead, controls are too small to use on phone
+      zoomControl: true, // changed this back to true - pinch zoom not working on some phones (note ZoomControl must be set to +/- or will not show up on Android 3.0 and later)
+      zoomControlOptions: {
+          style: google.maps.ZoomControlStyle.SMALL
+      }    
     };
 
     jQuery(mapDiv).empty(); // empty out the div in case it was previously used to init another map...
@@ -195,6 +198,7 @@
         position: latLng,
         icon: compliancePin,        
         title: i.get('owner_name') || "Unknown Owner"
+        //metadata: i.get('owner_name')
       });
 
       // duplicating html from InstallationList (veos.view.js)
@@ -215,14 +219,6 @@
       } else {
         buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/>" + i.getLocDescription();
       }
-      
-/*                var thumb;
-      var obj = report.get('sign') || report.get('camera');                       // TODO when we know how photos are going to look
-      if (obj && obj.photos && obj.photos[0] && obj.photos[0].thumb_url) {
-        thumb = "<img src='"+veos.model.baseURL + obj.photos[0].thumb_url+"' />";
-      } else {
-        thumb = "";
-      }*/
 
       mapPopupContent = "<a href=installation-details.html?id="+i.id+">"+buttonText+"</a>";
 
@@ -230,9 +226,22 @@
       google.maps.event.addListener(marker, 'click', function() {
         map.infowindow.setContent(mapPopupContent);
         map.infowindow.open(map.gmap, marker);
+        highlightOwnerPins(i.get('owner_name'));
+        // does it make sense to instead pass an array of ids from the synonym table representing all markers to highlight?
+        // it looks like we'll need to keep track of the markers in an array, with ids?
+        // google - google maps markers metadata attribute
+        // google - google maps iterate through markers
+        // http://www.svennerberg.com/2009/06/dynamically-toggle-markers-in-google-maps/
       });
       marker.setMap(map.gmap);
     });
+  };
+
+
+  var highlightOwnerPins = function(ownerName) {
+    console.log(ownerName);
+
+
   };
 
 
