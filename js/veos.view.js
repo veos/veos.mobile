@@ -748,7 +748,9 @@
     events: {
       'click .ui-li': function (ev) {
         console.log("clicked ui-li a");
-        veos.currentInstallation = jQuery(ev.target).data('installation');      // next used in the report-edit delegate
+        // veos.currentInstallation = jQuery(ev.target).data('installation');      // next used in the report-edit delegate
+        // var id = jQuery(ev.target).attr('data-installationId');
+        // alert(id);
       }
     },
 
@@ -817,7 +819,8 @@
         }
 
         var item = jQuery("<a class='relative' href='installation-details.html?id="+installation.get('id')+"'>"+complianceLevel+thumb+buttonText+"</a>");
-        item.data('installation', installation);        // add the installation object so that we can retrieve it in the click event
+        // item.data('installation', installation);        // add the installation object so that we can retrieve it in the click event
+        // item.attr('data-installationId', installation.get('id'));
         var li = jQuery("<li />");
         li.append(item);
 
@@ -839,6 +842,8 @@
       'click .ui-li': function (ev) {
         console.log("clicked ui-li a");
         veos.currentInstallation = jQuery(ev.target).data('installation');      // next used in the report-edit delegate
+        // var id = jQuery(ev.target).attr('data-installationId');
+        // alert(id);
       },
 
       // I assume this is limited to this view (page) and won't be clearing currentReport all over the place
@@ -910,8 +915,9 @@
           thumbPhoto.fetch({success: photoFetchSuccess, error: photoFetchError});
         }
 
-        var item = jQuery("<a class='relative' href=report.html>"+complianceLevel+thumb+buttonText+"</a>");
-        item.data('installation', installation);        // add the installation object so that we can retrieve it in the click event
+        var item = jQuery("<a class='relative' href=report.html?installationId="+ installation.get('id') +">"+complianceLevel+thumb+buttonText+"</a>");
+        // item.data('installation', installation);        // add the installation object so that we can retrieve it in the click event
+        // item.attr('data-installationId', installation.get('id'));
         var li = jQuery("<li />");
         li.append(item);
 
@@ -1007,6 +1013,10 @@
     render: function () {
       var self = this;
       var installation = this.model;
+
+      // create the URL to load report.html in edit mode with prefilled data
+      var editButton = jQuery('#installation-details-page .edit-button');
+      editButton.attr('href', 'report.html?installationId='+installation.get('id'));
 
       if (this.loader) {
         this.hideLoader();
