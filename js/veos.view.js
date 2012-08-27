@@ -70,12 +70,12 @@
       },          
       'change #sign-yes': function (ev) {
         console.log('sign-yes button clicked');
-        jQuery('#sign-details-container').trigger('expand');
+        jQuery('#report-sign-details-container').trigger('expand');
         this.model.set('has_sign', true);
       },  
       'change #sign-no': function (ev) {
         console.log('sign-no button clicked');
-        jQuery('#sign-details-container').trigger('collapse');
+        jQuery('#report-sign-details-container').trigger('collapse');
         this.model.set('has_sign', false);
       },
 
@@ -360,12 +360,12 @@
       },          
       'change #sign-yes': function (ev) {
         console.log('sign-yes button clicked');
-        jQuery('#sign-details-container').trigger('expand');
+        jQuery('#installation-details-sign-details-container').trigger('expand');
         this.model.set('has_sign', true);
       },  
       'change #sign-no': function (ev) {
         console.log('sign-no button clicked');
-        jQuery('#sign-details-container').trigger('collapse');
+        jQuery('#installation-details-sign-details-container').trigger('collapse');
         this.model.set('has_sign', false);
       },
       'click #add-camera-photo-button': function (ev) {
@@ -1075,15 +1075,24 @@
       }
       
       _.each(installation.attributes, function(v, k) {
+        // base case for filling in the fields
         self.$el.find('.field[name="'+k+'"]').val(installation.get(k));
 
+        // for nested stuff that isn't photos (latest report, tags, etc)
         if (k === "latest_report") {
           _.each(v, function(subv, subk) {
-            self.$el.find('.field[name="'+subk+'"]').val(installation.get('latest_report')[subk]);
+            if (subk === "has_sign") {
+              if (installation.get('latest_report')[subk] === true) {
+                self.$el.find('.field[name="has_sign"]').val('yes');
+              } else {
+                self.$el.find('.field[name="has_sign"]').val('no');
+              }
+            } else {
+              self.$el.find('.field[name="'+subk+'"]').val(installation.get('latest_report')[subk]);  
+            }
           });
         }
-        // TODO add tags functionality when they exist in the backend
-/*        else if (k === "tags") {
+        else if (k === "tags") {
           var purposesArray = [];
           var propertiesArray = [];
           var spacesArray = [];
@@ -1098,11 +1107,13 @@
               console.log("unknown tag type");
             }
           });
-          self.$el.find('*[name="sign_stated_purpose"].multi-field').val(purposesArray);
-          self.$el.find('*[name="sign_properties"].multi-field').val(propertiesArray);
-          self.$el.find('*[name="surveilled_space"].multi-field').val(spacesArray);
+          self.$el.find('*[name="sign_stated_purpose"].field').val(purposesArray);
+          self.$el.find('*[name="sign_properties"].field').val(propertiesArray);
+          self.$el.find('*[name="surveilled_space"].field').val(spacesArray);
         }
-        }*/
+
+
+        
       });
 
     }

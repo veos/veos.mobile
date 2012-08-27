@@ -70,11 +70,12 @@ window.veos = (function(veos) {
 
           var installationSuccess = function (model, response) {
             self.currentInstallation = model;
-            var newReport = model.startAmending();
-            var reportEditView = new self.view.ReportEditForm({model: newReport, el: '#report-page'});
+            self.currentReport = model.startAmending();
+            self.reportForm = new self.view.ReportEditForm({model: self.currentReport, el: '#report-page'});
             jQuery('#report-header-text').text('Editing the Installation');
 
-            reportEditView.render();
+            // self.reportForm is used a globally accessibly variable - don't change the its name
+            self.reportForm.render();
           };
 
           var installationError = function (model, response) {

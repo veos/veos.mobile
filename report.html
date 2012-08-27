@@ -63,7 +63,7 @@
                 </fieldset>
 
                 <fieldset data-role="controlgroup">
-                    <!-- <label for="owner-type">Owner Type</label> -->
+                    <label for="owner-type">Owner Type</label>
                     <select id="owner-type" class="field" name="owner_type">
                         <option value>Owner type</option>
                         <option value="Banking">Banking</option>
@@ -86,9 +86,9 @@
                     <input class="field" name="operator_name" id="operator" placeholder="Camera operator name if identifiable..." value="" type="text" />
                 </fieldset>
 
-                <hr>
+                <hr/>
                 
-                <div data-role="collapsible" data-collapsed="false" id="location-container">
+                <div data-role="collapsible" data-collapsed="false" id="report-location-container">
                     <h3>
                         Location
                     </h3>
@@ -110,10 +110,10 @@
                     </div>
                 </div>
 
-                <hr>
+                <hr/>
 
                 <div data-role="collapsible-set" data-theme="" data-content-theme="" class="report">
-                    <div data-role="collapsible" data-collapsed="true" id="photos-container">
+                    <div data-role="collapsible" data-collapsed="true" id="report-photos-container">
                         <h3>
                             Add a photo
                         </h3>
@@ -162,19 +162,24 @@
                     </div>
                 </div>                
 
-                <hr>
+                <hr/>
 
                 <div data-role="collapsible-set" data-theme="" data-content-theme="">
-                    <div data-role="collapsible" data-collapsed="true" id="camera-details-container">
+                    <div data-role="collapsible" data-collapsed="true" class="camera-details-container">
                         <h3>
                             Camera details
                         </h3>
                         <fieldset class="dashed-box">
                             <legend>Cameras</legend>
                             <div>
-                                <!-- <label class="dropdown-label" for="surveilled-space">Cameras pointed at?</label> -->
+                                <label for="camera-count">How many cameras do you see?</label>
+                                <input class="field" name="camera_count" id="camera-count" placeholder="#" type="number">
+
+                                <hr/>
+
+                                <label class="dropdown-label" for="surveilled-space">Cameras pointed at</label>
                                 <select class="multi-field" name="surveilled_space" id="surveilled-space" data-mini="true" multiple="multiple" data-native-menu="false">
-                                    <option>Surveilled space</option>
+                                    <option>Cameras pointed at</option>
                                     <option value="Mall common area">Mall common area</option>
                                     <option value="Park">Park</option>
                                     <option value="Public space">Public space</option>
@@ -184,16 +189,12 @@
                                     <option value="Private space">Sidewalk</option>
                                     <option value="Other type of space">Other type of space</option>
                                 </select>
-                                <hr>
-
-                                <label for="camera-count">How many cameras do you see?</label>
-                                <input class="field" name="camera_count" id="camera-count" placeholder="#" type="number">
                             </div>
                         </fieldset>
                     </div>
                 </div>
 
-                <hr>
+                <hr/>
 
                 <fieldset data-role="controlgroup" data-type="horizontal">
                     <legend><b>Do you see a sign?</b></legend>
@@ -204,39 +205,32 @@
                 </fieldset>
 
                 <div data-role="collapsible-set" data-theme="" data-content-theme="">
-                    <div data-role="collapsible" data-collapsed="true" id="sign-details-container">
+                    <div data-role="collapsible" data-collapsed="true" id="report-sign-details-container">
                         <h3>
                             Sign details
                         </h3>
                         
                         <fieldset class="dashed-box">
                             <legend>Sign</legend>
-                            <fieldset data-role="controlgroup">
-                                <label for="sign-text">Text of sign</label>
-                                <input class="field" name="sign_text" id="sign-text" placeholder="Text of sign if it exists..." value="" type="text">
-                            </fieldset>
-                            <hr>
-                            <!-- <label class="dropdown-label" for="sign-visibility">Visibility of sign</label> -->
+                            <label class="dropdown-label" for="sign-visibility">Visibility of sign</label>
                             <select class="field" name="sign_visibility" id="sign-visibility" data-mini="true" data-native-menu="false">
                                 <option>Visibility of sign</option>
                                 <option value="Visible">Visible</option>
                                 <option value="Obscure">Obscure</option>
                             </select>
-                            <hr>
-                            <!-- <label class="dropdown-label" for="sign-stated-purpose">Stated purpose</label> -->
+                            <hr/>
+                            <label class="dropdown-label" for="sign-stated-purpose">Stated purpose</label>
                             <select class="multi-field" name="sign_stated_purpose" id="sign-stated-purpose" data-mini="true" multiple="multiple" data-native-menu="false">
                                 <option>Stated purpose</option>
-                                <option value="None/unknown">None/unknown</option>
+                                <option value="None">None</option>
                                 <option value="Crime prevention/prosecution">Crime prevention/prosecution</option>
                                 <option value="Public safety">Public safety</option>
                             </select>
-                            <hr>
-                            <!-- <label class="dropdown-label" for="sign-properties">Stated properties</label> -->
-                            
-
+                            <hr/>
+                            <label class="dropdown-label" for="sign-properties">Stated properties</label>
                             <select class="multi-field" name="sign_properties" id="sign-properties" data-mini="true" multiple="multiple" data-native-menu="false">
                                 <option>Stated properties</option>
-                                <option value="None/unknown">None/unknown</option>
+                                <option value="None">None</option>
                                 <option value="# days image will be retained"># days image will be retained</option>
                                 <option value="Available to police">Available to police</option>
                                 <option value="Face blurring">Face blurring</option>
@@ -245,16 +239,29 @@
                                 <option value="Live monitoring">Live monitoring</option>
                                 <option value="Recording">Recording</option>
                             </select>
-                            
-
-                            <hr>
+                            <hr/>
                             <fieldset data-role="controlgroup">
-                                <legend>Note</legend>
-                                <textarea class="field" name="notes" id="report-note" placeholder="Any other observations..."></textarea>
+                                <label for="sign-text">Text of sign</label>
+                                <input class="field" name="sign_text" id="sign-text" placeholder="Text of sign if it exists..." value="" type="text">
                             </fieldset>
                         </fieldset>
                     </div>
                 </div>
+
+                <hr/>
+
+                <div data-role="collapsible-set" data-theme="" data-content-theme="">
+                    <div data-role="collapsible" data-collapsed="true" id="report-notes-container">
+                        <h3>
+                            Notes
+                        </h3>
+
+                        <fieldset data-role="controlgroup">
+                            <textarea class="field" name="notes" id="report-note" placeholder="Any other observations..."></textarea>
+                        </fieldset>
+                    </div>
+                </div>
+
             </div>
             
             <div data-theme="a" data-role="footer" class="footer-with-buttons">

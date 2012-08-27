@@ -25,6 +25,7 @@
         <script type="text/javascript"
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB75fl3V3AXVEfejWZiIclVB73SuLESB8w&amp;sensor=true"></script>
 
+        <script type="text/javascript" charset="utf-8" src="js/libs/jquery.simplemodal.1.4.2.min.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/libs/underscore-1.3.1.js"></script>     
         <script type="text/javascript" charset="utf-8" src="js/libs/backbone-0.9.2.js"></script>        
         <script type="text/javascript" charset="utf-8" src="js/veos.js"></script>
@@ -62,9 +63,9 @@
                     <input class="field" name="operator_name" value="" type="text" disabled="disabled" />
                 </fieldset>
 
-                <hr>
+                <hr/>
                 
-                <div data-role="collapsible" data-collapsed="false" id="location-container">
+                <div data-role="collapsible" data-collapsed="false" id="installation-details-location-container">
                     <h3>
                         Location
                     </h3>
@@ -79,10 +80,10 @@
                     </div>
                 </div>
 
-                <hr>
+                <hr/>
 
                 <div data-role="collapsible-set" data-theme="" data-content-theme="" class="report">
-                    <div data-role="collapsible" data-collapsed="false" id="photos-container">
+                    <div data-role="collapsible" data-collapsed="false" id="installation-details-photos-container">
                         <h3>
                             Photos
                         </h3>
@@ -91,23 +92,62 @@
 
                             <div class="photo-thumbnail-container">
                             </div>
-
-                            <fieldset data-role="controlgroup">
-                                <legend for="surveilled-space"><b>This installation is looking at</b></legend>
-                                <input class="field multi-field" name="surveilled_space" value="" type="text" disabled="disabled" />
-                            </fieldset>
-
-                            <hr>
-
-                            <fieldset data-role="controlgroup">
-                                <legend for="camera-count"><b>Number of cameras</b></legend>
-                                <input class="field" name="camera_count" disabled="disabled" />
-                            </fieldset>
                         </fieldset>
                     </div>
                 </div>
 
-                <hr>
+                <!-- photo-details overlay... content is hidden until photo is clicked -->
+                <div id="photo-details-content">                <!-- last remaining dup id? -->
+                    <h3>
+                        Photo Details
+                    </h3>
+                    <div data-role="fieldcontain" id="photo-details-tag-buttons">
+                        <fieldset data-role="controlgroup" data-type="horizontal">
+                            <legend><b>What is this picture about?</b></legend>
+                            <input name="is_camera" class="is-camera field" id="is-camera" value="camera" type="checkbox">
+                            <label for="is-camera"><b>Camera</b></label>
+                            <input name="is_sign" class="is-sign field" id="is-sign" value="sign" type="checkbox">
+                            <label for="is-sign"><b>Sign</b></label>
+                            <input name="is_other" class="is-other field" id="is-other" value="other" type="checkbox">
+                            <label for="is-other"><b>Other</b></label>
+                        </fieldset>
+                    </div>
+
+                    <div data-role="fieldcontain">
+                        <fieldset data-role="controlgroup">
+                            <legend><b>Note</b></legend>
+                            <textarea class="field" name="photo-notes" id="photo-note" placeholder="Any other observations..."></textarea>
+                        </fieldset>
+                    </div>
+                </div>
+
+                <hr/>
+
+                <div data-role="collapsible-set" data-theme="" data-content-theme="">
+                    <div data-role="collapsible" data-collapsed="false" class="camera-details-container">
+                        <h3>
+                            Camera details
+                        </h3>
+                        <fieldset class="dashed-box">
+                            <legend>Cameras</legend>
+                            <div>
+                                <fieldset data-role="controlgroup">
+                                    <legend for="camera-count"><b>Number of cameras</b></legend>
+                                    <input class="field" name="camera_count" disabled="disabled" />
+                                </fieldset>
+                                
+                                <hr/>
+
+                                <fieldset data-role="controlgroup">
+                                    <legend for="surveilled-space"><b>Cameras pointed at</b></legend>
+                                    <input class="field multi-field" name="surveilled_space" value="" type="text" disabled="disabled" />
+                                </fieldset>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+
+                <hr/>
 
                 <fieldset data-role="controlgroup">
                     <legend><b>Sign observed</b></legend>
@@ -115,44 +155,54 @@
                 </fieldset>
 
                 <div data-role="collapsible-set" data-theme="" data-content-theme="">
-                    <div data-role="collapsible" data-collapsed="false" id="sign-details-container">
+                    <div data-role="collapsible" data-collapsed="false" id="installation-details-sign-details-container">
                         <h3>
                             Sign details
                         </h3>
                         
                         <fieldset class="dashed-box">
                             <legend>Sign</legend>
-                            <fieldset data-role="controlgroup">
-                                <legend><b>Text of sign</b></legend>
-                                <input class="field" name="sign_text" value="" type="text" disabled="disabled" />
-                            </fieldset>
-                            <hr>
 
                             <fieldset data-role="controlgroup">
                                 <legend><b>Visibility of sign</b></legend>
                                 <input class="field" name="sign_visibility" value="" type="text" disabled="disabled" />
                             </fieldset>
-                            <hr>                                
+                            <hr/>                                
 
                             <fieldset data-role="controlgroup">
                                 <legend><b>Stated purpose of sign</b></legend>
                                 <input class="field" name="sign_stated_purpose" value="" type="text" disabled="disabled" />
                             </fieldset>
-                            <hr>                                
+                            <hr/>                                
 
                             <fieldset data-role="controlgroup">
                                 <legend><b>Stated properties of sign</b></legend>
                                 <input class="field" name="sign_properties" value="" type="text" disabled="disabled" />
                             </fieldset>
-                            <hr>
+                            <hr/>
 
                             <fieldset data-role="controlgroup">
-                                <legend><b>Notes</b></legend>
-                                <input class="field" name="notes" value="" type="text" disabled="disabled" />
+                                <legend><b>Text of sign</b></legend>
+                                <input class="field" name="sign_text" value="" type="text" disabled="disabled" />
                             </fieldset>
                         </fieldset>
                     </div>
                 </div>
+
+                <hr/>
+
+                <div data-role="collapsible-set" data-theme="" data-content-theme="">
+                    <div data-role="collapsible" data-collapsed="false" id="report-notes-container">
+                        <h3>
+                            Notes
+                        </h3>
+
+                        <fieldset data-role="controlgroup">
+                            <input class="field" name="notes" type="text" disabled="disabled" ></input>
+                        </fieldset>
+                    </div>
+                </div>
+
             </div>
             
             <div data-theme="a" data-role="footer" class="footer-with-buttons">

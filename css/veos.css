@@ -116,7 +116,7 @@
     height: auto;*/
 }
 
-#report-page #photos-container .ui-collapsible-content {
+#report-photos-container .ui-collapsible-content {
     text-align: center;
     white-space: nowrap;
 }
@@ -139,56 +139,31 @@
     margin-left: 8%;
 }
 
-#camera-details-container {
+/* also used for installation-details */
+.camera-details-container {
     text-align: center;
     white-space: nowrap;
 }
 
+#report-sign-details-container {
+    text-align: center;
+    white-space: nowrap;    
+}
+
 @media only screen and (max-device-width: 800px) {
-    #sign-details-container {
+    #report-sign-details-container {
+        text-align: center;
+        white-space: nowrap;
         width: 100%;
         overflow-x: hidden;
     }
-
-/*    .ui-select {
-        width: 90% !important;
-        overflow-x: hidden;
-        margin: 0 auto !important;
-        position: relative !important;
-        border-right: 5px #666 outset !important;
-        border-left: 5px #666 outset !important;
-    }*/
 }
 
-/*.ui-select {
-    width: 90% !important;
-}*/
 
-
-/*
-.multi-field {
-    width: 200px;
-}*/
-
-
-
-
-/* this is a really ugly fix - TODO: find the right way to do this; */
-/* and this doesn't work on a phone. Jesus. Coming back to this one */
-/*.multi-container {
-    width: 100%;
-    overflow-x: hidden;
-}*/
-
-/* making radio buttons for Sign same width. CHECK ON PHONE */
+/* making radio buttons for Sign same width */
 #report-page .ui-radio .ui-btn {
     width: 120px;
     text-align: center;
-}
-
-#sign-details-container {
-    text-align: center;
-    white-space: nowrap;    
 }
 
 .dropdown-label {
@@ -257,13 +232,15 @@
 
 /**** INSTALLATION DETAILS CONTAINER ****/
 
-/*#installation-details-page .map-thumbnail-container {
-    text-align: center;
+#installation-details-page .edit-button-container {
+    float: right;
+    padding: 5px 5px 0px 0px;                   /* using px = bad, but since jQuery Mobile is already full of them... */
 }
 
-#installation-details-page .map-thumbnail {
-    max-width: 75%;
-}*/
+#installation-details-photos-container .ui-collapsible-content {
+    text-align: center;
+    white-space: nowrap;
+}
 
 #installation-details-page .dashed-box {
     border: 3px dashed #bbb;
@@ -283,16 +260,15 @@
     margin-left: 8%;
 }
 
+#installation-details-sign-details-container {
+    text-align: center;
+    white-space: nowrap;    
+}
+
 #installation-details-page .report-details-text-container {
     margin-left: 1%;
     margin-top: 1%;
 }
-
-#installation-details-page .edit-button-container {
-    float: right;
-    padding: 5px 5px 0px 0px;                   /* using px = bad, but since jQuery Mobile is already full of them... */
-}
-
 
 
 
