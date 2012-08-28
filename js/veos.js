@@ -192,7 +192,7 @@ window.veos = (function(veos) {
 
   };
 
-  self.showModal = function() {
+  self.showModal = function(photoId) {
     console.log('photo clicked!');
     jQuery('#photo-details-content').modal();
     //return false;    

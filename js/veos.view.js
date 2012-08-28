@@ -705,7 +705,7 @@
 
       var img = this.$el.find('#photo-'+this.model.id);
       if (img.length === 0) {
-        img = jQuery("<img style='display: block' class='photo-list-item' id='photo-"+this.model.id+"' onclick='veos.showModal()'/>");
+        img = jQuery("<img style='display: block' class='photo-list-item' id='photo-"+this.model.id+"' onclick='veos.showModal(this.model.id)'/>"); // might make more sense to pass in this.model?
         //img.attr('data-model', this.model);
         img.attr('data-model', JSON.stringify(this.model.toJSON()));
         
@@ -721,7 +721,6 @@
       jQuery.mobile.hidePageLoadingMsg();
     }
   });
-
 
 
   // TODO create PhotoDetailsView
@@ -960,7 +959,7 @@
   });
 
   /**
-    Extending InstallaionList for report-selection.html TODO - not working
+    Extending InstallationList for report-selection.html TODO - not working
   **/
   // self.InstallationSelectionList = self.InstallationList.extend({
   //   'click a.arrowbutton': function () {
