@@ -722,7 +722,7 @@
 
       var img = this.$el.find('#photo-'+this.model.id);
       if (img.length === 0) {
-        img = jQuery("<img style='display: block' class='photo-list-item' id='photo-"+this.model.id+"' onclick='veos.showModal(this.model.id)'/>"); // might make more sense to pass in this.model?
+        img = jQuery("<img style='display: block' class='photo-list-item' id='photo-"+this.model.id+"' onclick='veos.showModal("+this.model.id+")'/>"); // might make more sense to pass in this.model?
         //img.attr('data-model', this.model);
         img.attr('data-model', JSON.stringify(this.model.toJSON()));
         

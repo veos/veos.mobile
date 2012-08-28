@@ -194,7 +194,9 @@ window.veos = (function(veos) {
 
   self.showModal = function(photoId) {
     console.log('photo clicked!');
-    jQuery('#photo-details-content').modal();
+    //jQuery('#photo-details-content').modal();
+    modalDialog = jQuery('#photo-details-content');
+    jQuery.modal(modalDialog);
     //return false;    
   };
 
