@@ -62,7 +62,9 @@
       
       var msg;
 
-      if (response.status === 422) {
+      // FIXME: a 422 response over cross domain will for some reason return status 0... catching it like this here
+      //        could result in bogus error reporting.
+      if (response.status === 422 || response.status === 0) {
         msg = "Sorry, there is an error in your "+this.singular+". Please check your input and try again.";
         var errors = {};
         try {
