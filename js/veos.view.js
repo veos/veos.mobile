@@ -621,6 +621,7 @@
     render: function () {
       console.log("rendering ReportForm!");
       var self = this;
+
       _.each(this.model.attributes, function(v, k) {
         self.$el.find('.field[name="'+k+'"]').val(self.model.get(k));
       });
@@ -634,6 +635,7 @@
 
     renderPhotos: function () {
       var photoContainer = this.$el.find('#photos');
+      var report = this.model;
 
       // we are in edit mode so currentInstallation should be filled otherwise we should not be here
       if (veos.currentInstallation) {
@@ -645,7 +647,10 @@
 
           var photoFetchSuccess = function (model, response) {
             console.log("Add the photo model to the report photos collection");
-            this.model.photos.push(model);
+            if (!report.photos) {
+              report.photos = [];
+            }
+            report.photos.push(model);
           };
 
           // TODO: think about this since it delets all input on error and returns to map
