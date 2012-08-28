@@ -183,11 +183,17 @@
     },
 
     setTags: function (tags, tagType) {
-      var ts = [];
-      this.set('tags', ts);
-      _.each(tags, function (t) {
+      var ts = _.reject(this.get('tags'), function (t) {
+        return t.tag_type == tagType;
+      });
+      ts = _.uniq(ts, false, function (t) {
+        return [t.tag, t.tag_type];
+      });
+      _.each(_.uniq(tags), function (t) {
         ts.push({tag: t, tag_type: tagType});
       });
+
+      this.set('tags', ts);
     },
 
     findTag: function (tag, tagType) {

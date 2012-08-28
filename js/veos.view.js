@@ -391,6 +391,7 @@
       //var self = this;
       console.log("Initializing ReportForm...");
 
+      // FIXME [matt]: this should bind to render(), which should in turn update any changed fields to match the model.
       this.model.on('change', _.bind(this.updateChangedFields, this));
 
       this.$el.data('initialized', true); // check this later to prevent double-init
