@@ -175,6 +175,7 @@
     console.log("Adding "+installations.length+" installation markers to map...");
 
     var map = this;
+    var markersArray = [];
 
     map.infowindow = new google.maps.InfoWindow({
     });
@@ -198,7 +199,6 @@
         position: latLng,
         icon: compliancePin,        
         title: i.get('owner_name') || "Unknown Owner"
-        //metadata: i.get('owner_name')
       });
 
       // duplicating html from InstallationList (veos.view.js)
@@ -220,54 +220,80 @@
         buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/><span class='trunc-address'>" + i.getTruncatedLocDescription() + "</span>";
       }
 
-      var obj = i.get('photos');
       var thumb = "";
-
       if (i.has('photos') && i.get('photos').length > 0) {
         var photoID = i.get('photos')[0].id;
         thumb = "<img class='list-picture photo-"+photoID+"' />";
-        
-        console.log('Trying to retrieve photo thumb URL for photo with ID: '+photoID);
-
-        var thumbPhoto = new veos.model.Photo({id: photoID});
-
-        var photoFetchSuccess = function (model, response) {
-          console.log("We made it and are about to retrieve Photo thumb URL");
-          var img = jQuery('.photo-'+model.id);
-          img.attr('src', model.thumbUrl());
-        };
-
-        // TODO: think about this since it delets all input on error and returns to map
-        var photoFetchError = function (model, response) {
-          console.error("Fetching photo model for Installation List failed with error: " +response);
-        };
-
-        thumbPhoto.fetch({success: photoFetchSuccess, error: photoFetchError});
-      }
-
+      }  
 
       mapPopupContent = "<a href=installation-details.html?id="+i.id+">"+thumb+buttonText+"</a>";
 
       // binding a popup click event to the marker
       google.maps.event.addListener(marker, 'click', function() {
+        injectThumbnail(i);
         map.infowindow.setContent(mapPopupContent);
         map.infowindow.open(map.gmap, marker);
-        highlightOwnerPins(i.get('owner_name'));
-        // does it make sense to instead pass an array of ids from the synonym table representing all markers to highlight?
-        // it looks like we'll need to keep track of the markers in an array, with ids?
-        // google - google maps markers metadata attribute
-        // google - google maps iterate through markers
-        // http://www.svennerberg.com/2009/06/dynamically-toggle-markers-in-google-maps/
+        highlightOwnerPins(markersArray, i.get('owner_name'));
       });
       marker.setMap(map.gmap);
+      markersArray.push(marker);
     });
   };
 
+  // var injectThumbnail = function(installation) {
+  //   if (installation.has('photos') && installation.get('photos').length > 0) {
+  //     var photoID = installation.get('photos')[0].id;
+  //     // thumb = "<img class='list-picture photo-"+photoID+"' />";
+      
+  //     console.log('Trying to retrieve photo thumb URL for photo with ID: '+photoID);
 
-  var highlightOwnerPins = function(ownerName) {
+  //     var thumbPhoto = new veos.model.Photo({id: photoID});
+
+  //     var photoFetchSuccess = function (model, response) {
+  //       console.log("We made it and are about to retrieve Photo thumb URL");
+  //       var img = jQuery('.photo-'+model.id);
+  //       img.attr('src', model.thumbUrl());
+  //       jQuery('.photo-'+model.id).append(img);
+  //     };
+
+  //     // TODO: think about this since it delets all input on error and returns to map
+  //     var photoFetchError = function (model, response) {
+  //       console.error("Fetching photo model for Installation List failed with error: " +response);
+  //     };
+
+  //     thumbPhoto.fetch({success: photoFetchSuccess, error: photoFetchError});
+  //   }
+  //  };
+
+
+  var highlightOwnerPins = function(markersArray, ownerName) {
+    // clear the marker colors
+    // _.each(markers)
+
     console.log(ownerName);
 
+    var ownerInstallations = new veos.model.Installations();
+    
+    var ownerSuccess = function (model, response) {
+      ownerInstallations.each(function(i) {
+        console.log('sister installations: ' + i.get('id'));
+        //console.log('the array: ' + markersArray);
 
+        // not ideal, but working - would be better to flip the eachs. Also, this will ping once for *each* match... lots of duplicate higlights
+        _.each(markersArray, function(marker) {
+          if (marker.title == i.get('owner_name')) {
+            console.log('found one: ' + i.get('owner_name'));
+            marker.setIcon('/images/pin-green-full.png');
+          }     
+        });
+
+      });
+    };
+
+    ownerInstallations.fetch({
+      success: ownerSuccess,
+      data: {owner_name: ownerName}
+    });
   };
 
 
