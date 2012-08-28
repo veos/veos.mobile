@@ -78,6 +78,18 @@
     background-color: #FFFFFF;
 }
 
+#overview-map-page .owner_name {
+    font-size: 130%;
+}
+
+#overview-map-page .owner_name.unknown {
+    font-style: italic;
+}
+
+#overview-map-page .trunc-address {
+    font-size: 80%;
+}
+
 
 /***** REPORT *****/
 
@@ -213,14 +225,16 @@
     position: absolute; top:0px; bottom:0px; left:5.6%;
 }
 
-.owner_name {
+#installations-list-page .owner_name,
+#report-selection-page .owner_name {
     font-size: 150%;
     /*font-style: bold;*/
     position: relative;
     margin-left: 5%;
 }
 
-.owner_name.unknown {
+#installations-list-page .owner_name.unknown,
+#report-selection-page .owner_name.unknown {
     font-style: italic;
 }
 

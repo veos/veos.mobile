@@ -131,6 +131,7 @@
 
       self.model.save(null, {
         complete: function () {
+          // replace failure with msg here?
           jQuery.mobile.hidePageLoadingMsg();
         },
         success: function () {
@@ -194,7 +195,12 @@
 
             photo.fetch({success: photoFetchSuccess, error: photoFetchError});
           });
-        }
+        },
+        failure: function(model, response) {
+          console.log('Error submitting: ' + response);
+          // check for error codes from Matt
+          // highligh different required fields based on error codes
+        }        
       });
     },
 
@@ -496,6 +502,11 @@
               photo.fetch({success: photoFetchSuccess, error: photoFetchError});
             }
           });
+        },
+        failure: function(model, response) {
+          console.log('Error submitting: ' + response);
+          // check for error codes from Matt
+          // highligh different required fields based on error codes
         }
       });
     },

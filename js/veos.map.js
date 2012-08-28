@@ -215,12 +215,38 @@
       }*/
 
       if (i.get('owner_name')) {
-        buttonText = "<span class='owner_name'>" + i.get('owner_name') + "</span><br/>" + i.getTruncatedLocDescription();
+        buttonText = "<span class='owner_name'>" + i.get('owner_name') + "</span><br/><span class='trunc-address'>" + i.getTruncatedLocDescription() + "</span>";
       } else {
-        buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/>" + i.getLocDescription();
+        buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/><span class='trunc-address'>" + i.getTruncatedLocDescription() + "</span>";
       }
 
-      mapPopupContent = "<a href=installation-details.html?id="+i.id+">"+buttonText+"</a>";
+      var obj = i.get('photos');
+      var thumb = "";
+
+      if (i.has('photos') && i.get('photos').length > 0) {
+        var photoID = i.get('photos')[0].id;
+        thumb = "<img class='list-picture photo-"+photoID+"' />";
+        
+        console.log('Trying to retrieve photo thumb URL for photo with ID: '+photoID);
+
+        var thumbPhoto = new veos.model.Photo({id: photoID});
+
+        var photoFetchSuccess = function (model, response) {
+          console.log("We made it and are about to retrieve Photo thumb URL");
+          var img = jQuery('.photo-'+model.id);
+          img.attr('src', model.thumbUrl());
+        };
+
+        // TODO: think about this since it delets all input on error and returns to map
+        var photoFetchError = function (model, response) {
+          console.error("Fetching photo model for Installation List failed with error: " +response);
+        };
+
+        thumbPhoto.fetch({success: photoFetchSuccess, error: photoFetchError});
+      }
+
+
+      mapPopupContent = "<a href=installation-details.html?id="+i.id+">"+thumb+buttonText+"</a>";
 
       // binding a popup click event to the marker
       google.maps.event.addListener(marker, 'click', function() {

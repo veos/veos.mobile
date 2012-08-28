@@ -235,7 +235,7 @@
 
     getTruncatedLocDescription: function() {
       var locText = this.get('loc_description') || "";
-      return locText.substring(0,20) + '...';
+      return locText.substring(0,24) + '...';
     },
 
     startAmending: function () {
