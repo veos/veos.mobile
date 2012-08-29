@@ -76,6 +76,13 @@
 
 #overview-map-page .map-popup {
     background-color: #FFFFFF;
+    /* make this way nicer */
+}
+
+#overview-map-page .photo {
+    float: left;
+    margin-right: 3%;
+    max-width: 4em;
 }
 
 #overview-map-page .owner_name {

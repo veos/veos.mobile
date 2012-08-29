@@ -134,40 +134,6 @@
 
 
   /**
-    Adds markers for a collection of Reports.           LEGACY CODE (I think - we want installations showing, not reports, right?)
-    @param reports veos.model.Reports
-  **/
-/*  self.Map.prototype.addReportMarkers = function (reports) {
-    console.log("Adding "+reports.length+" report markers to map...");
-
-    var map = this;
-
-    map.infowindow = new google.maps.InfoWindow({
-    });
-
-    reports.each(function(r) {
-      var latLng = r.getLatLng();
-
-      var marker = new google.maps.Marker({
-        position: latLng,
-        title: r.get('owner_name') || "Unknown Owner"
-      });
-
-      var mapPopupContent;
-      mapPopupContent = '<p><b> ' + (r.get('owner_name') || "Unknown Owner") + ' </b> - Camera</p>';
-
-      // binding a popup click event to the marker
-      google.maps.event.addListener(marker, 'click', function() {
-        map.infowindow.setContent(mapPopupContent);
-        map.infowindow.open(map.gmap, marker);
-      });
-      marker.setMap(map.gmap);
-    });
-  };*/
-
-
-
-  /**
     Adds markers for a collection of Installations.
     @param installations veos.model.Installations
   **/
@@ -178,6 +144,9 @@
     var markersArray = [];
 
     map.infowindow = new google.maps.InfoWindow({
+      // do you seriously need a plugin for styling infowindows?!?!
+      // http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/docs/examples.html
+      // http://code.google.com/p/google-maps-utility-library-v3/wiki/Libraries
     });
 
     installations.each(function(i) {
@@ -197,7 +166,9 @@
 
       var marker = new google.maps.Marker({
         position: latLng,
-        icon: compliancePin,        
+        icon: compliancePin,
+        iconUnselected: compliancePin,
+        iconSelected: '/images/pin-green-full.png',
         title: i.get('owner_name') || "Unknown Owner"
       });
 
@@ -223,7 +194,7 @@
       var thumb = "";
       if (i.has('photos') && i.get('photos').length > 0) {
         var photoID = i.get('photos')[0].id;
-        thumb = "<img class='list-picture photo-"+photoID+"' />";
+        thumb = "<img class='photo photo-"+photoID+"' />";
       }  
 
       mapPopupContent = "<a href=installation-details.html?id="+i.id+">"+thumb+buttonText+"</a>";
@@ -240,51 +211,49 @@
     });
   };
 
-  // var injectThumbnail = function(installation) {
-  //   if (installation.has('photos') && installation.get('photos').length > 0) {
-  //     var photoID = installation.get('photos')[0].id;
-  //     // thumb = "<img class='list-picture photo-"+photoID+"' />";
-      
-  //     console.log('Trying to retrieve photo thumb URL for photo with ID: '+photoID);
+  var injectThumbnail = function(installation) {
+    if (installation.has('photos') && installation.get('photos').length > 0) {
+      var photoID = installation.get('photos')[0].id;
+            
+      console.log('Trying to retrieve photo thumb URL for photo with ID: '+photoID);
 
-  //     var thumbPhoto = new veos.model.Photo({id: photoID});
+      var thumbPhoto = new veos.model.Photo({id: photoID});
 
-  //     var photoFetchSuccess = function (model, response) {
-  //       console.log("We made it and are about to retrieve Photo thumb URL");
-  //       var img = jQuery('.photo-'+model.id);
-  //       img.attr('src', model.thumbUrl());
-  //       jQuery('.photo-'+model.id).append(img);
-  //     };
+      var photoFetchSuccess = function (model, response) {
+        console.log("We made it and are about to retrieve Photo thumb URL");
+        var img = jQuery('.photo-'+model.id);
+        img.attr('src', model.thumbUrl());
+      };
 
-  //     // TODO: think about this since it delets all input on error and returns to map
-  //     var photoFetchError = function (model, response) {
-  //       console.error("Fetching photo model for Installation List failed with error: " +response);
-  //     };
+      var photoFetchError = function (model, response) {
+        console.error("Fetching photo model for Installation List failed with error: " +response);
+      };
 
-  //     thumbPhoto.fetch({success: photoFetchSuccess, error: photoFetchError});
-  //   }
-  //  };
+      thumbPhoto.fetch({success: photoFetchSuccess, error: photoFetchError});
+    }
+   };
 
 
   var highlightOwnerPins = function(markersArray, ownerName) {
-    // clear the marker colors
-    // _.each(markers)
-
-    console.log(ownerName);
-
     var ownerInstallations = new veos.model.Installations();
+
+    // clear the markers (set back to initial state)
+    _.each(markersArray, function(marker) {
+      marker.setIcon(marker.iconUnselected);
+    })
     
     var ownerSuccess = function (model, response) {
       ownerInstallations.each(function(i) {
-        console.log('sister installations: ' + i.get('id'));
-        //console.log('the array: ' + markersArray);
+        console.log('related installation ids: ' + i.get('id'));
 
-        // not ideal, but working - would be better to flip the eachs. Also, this will ping once for *each* match... lots of duplicate higlights
+        // this is very inefficient, but working (will ping once for *each* match... lots of duplicate higlights)
+        // can we use pluck or filter or find here? Or even better, can we count on the fact that all ownerInstallations have the same name?        
         _.each(markersArray, function(marker) {
-          if (marker.title == i.get('owner_name')) {
+          // if the owner_names match
+          if (marker.title === i.get('owner_name')) {
             console.log('found one: ' + i.get('owner_name'));
-            marker.setIcon('/images/pin-green-full.png');
-          }     
+            marker.setIcon(marker.iconSelected);
+          }
         });
 
       });
