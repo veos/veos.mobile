@@ -153,37 +153,32 @@
       var latLng = new google.maps.LatLng(i.get('loc_lat'), i.get('loc_lng'));
       var buttonText = "";
 
-      var compliancePin;
+      var compliancePinOn;
+      var compliancePinOff;
       if (i.get('compliance_level') === 3) {
-        compliancePin = '/images/pin-green-full.png';
+        compliancePinOn = '/images/pin-green-on.png';
+        compliancePinOff = '/images/pin-green-off.png';
       } else if (i.get('compliance_level') === 2) {
-        compliancePin = '/images/pin-yellow-full.png';
+        compliancePinOn = '/images/pin-yellow-on.png';
+        compliancePinOff = '/images/pin-yellow-off.png';
       } else if (i.get('compliance_level') === 1) {
-        compliancePin = '/images/pin-red-full.png';
+        compliancePinOn = '/images/pin-red-on.png';
+        compliancePinOff = '/images/pin-red-off.png';
       } else {
         compliancePin = 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
       }
 
       var marker = new google.maps.Marker({
+        //new google.maps.Size(32, 32),
         position: latLng,
-        icon: compliancePin,
-        iconUnselected: compliancePin,
-        iconSelected: '/images/pin-green-full.png',
+        icon: compliancePinOff,
+        iconUnselected: compliancePinOff,
+        iconSelected: compliancePinOn,
         title: i.get('owner_name') || "Unknown Owner"
       });
 
-      // duplicating html from InstallationList (veos.view.js)
+      // duplicating html from InstallationList (veos.view.js) for popup content
       var mapPopupContent;
-      //mapPopupContent = '<p><b> ' + (i.get('owner_name') || "<i>Unknown Owner</i>") + ' </b></p>' + i.getLocDescription();    // TODO - pretty this up, maybe truncate Addr with ellipses?
-
-/*                var complianceLevel;                   TODO - do we really want this? It's duplicate info here, since the pin already shows more info
-      if (installation.get('compliance_level_override')) {
-        complianceLevel = "<span class='compliance-"+installation.get('compliance_level_override')+"'></span>";
-      } else if (installation.get('compliance_level')) {
-        complianceLevel = "<span class='compliance-"+installation.get('compliance_level')+"'></span>";
-      } else {
-        complianceLevel = "<span class='compliance-unknown'></span>";
-      }*/
 
       if (i.get('owner_name')) {
         buttonText = "<span class='owner_name'>" + i.get('owner_name') + "</span><br/><span class='trunc-address'>" + i.getTruncatedLocDescription() + "</span>";
