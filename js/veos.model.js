@@ -83,10 +83,10 @@
           }
 
           errField.addClass("error");
-          jQuery('*[for='+errField.attr('id')+']').addClass("error")
+          jQuery('*[for='+errField.attr('id')+']').addClass("error");
           errField.one('change focus', function() {
             errField.removeClass("error");
-            jQuery('*[for='+errField.attr('id')+']').removeClass("error")
+            jQuery('*[for='+errField.attr('id')+']').removeClass("error");
           });
 
 
@@ -154,7 +154,7 @@
       }
 
       var photo = _.find(report.photos, function (p) {
-        return p.get('image_fingerprint') == fingerprint;
+        return p.get('image_fingerprint') === fingerprint;
       });
 
       if (!photo) {
@@ -197,7 +197,8 @@
       var tags = this.get('tags');
 
       var t;
-      while (t = this.findTag(tag, tagType)) {
+      while (this.findTag(tag, tagType)) {
+        t = this.findTag(tag, tagType);
         tags.splice(_.indexOf(tags, t), 1);
       }
 
@@ -206,7 +207,7 @@
 
     setTags: function (tags, tagType) {
       var ts = _.reject(this.get('tags'), function (t) {
-        return t.tag_type == tagType;
+        return t.tag_type === tagType;
       });
       ts = _.uniq(ts, false, function (t) {
         return [t.tag, t.tag_type];
@@ -222,7 +223,7 @@
       var tags = this.get('tags');
 
       return _.find(tags, function (t) {
-        return t.tag == tag && t.tag_type == tagType;
+        return t.tag === tag && t.tag_type === tagType;
       });
     },
 
@@ -391,7 +392,8 @@
       var tags = this.get('tags');
 
       var t;
-      while (t = this.findTag(tag)) {
+      while (this.findTag(tag)) {
+        t = this.findTag(tag);
         if (t.id) {
           t._destroy = true;
         } else {
@@ -414,7 +416,7 @@
       var tags = this.get('tags');
 
       return _.find(tags, function (t) {
-        return t.tag == tag && !t._destroy;
+        return t.tag === tag && !t._destroy;
       });
     },
 
