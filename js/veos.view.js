@@ -722,15 +722,16 @@
 
       var img = this.$el.find('#photo-'+this.model.id);
       if (img.length === 0) {
-        img = jQuery("<img style='display: block' class='photo-list-item' id='photo-"+this.model.id+"' onclick='veos.showModal("+this.model.id+")'/>"); // might make more sense to pass in this.model?
+        // img = jQuery("<img style='display: block' class='photo-list-item' id='photo-"+this.model.id+"' onclick='veos.showModal("+this.model.id+")'/>"); // might make more sense to pass in this.model?
+        img = jQuery("<img style='display: block' class='photo-list-item' id='photo-"+this.model.id+"'/>");
         //img.attr('data-model', this.model);
         img.attr('data-model', JSON.stringify(this.model.toJSON()));
         
         // wrap a link around the picture
-        // photoDetails = jQuery('<a data-role="button" href="photo-details.html?id='+this.model.id+'"></a>');
-        // photoDetails.append(img);
+        photoDetails = jQuery('<a data-role="button" href="photo-details.html?photoId='+this.model.id+'"></a>');
+        photoDetails.append(img);
 
-        this.$el.append(img);
+        this.$el.append(photoDetails);
       }
       img.attr('src', this.model.thumbUrl());
       img.attr('alt', this.model.get('notes'));
@@ -740,47 +741,84 @@
   });
 
 
-  // TODO create PhotoDetailsView
-  // var PhotoDetailsView = Backbone.View.extend({
-  //   initialize: function () {
-  //     var view = this;
 
-  //     this.model.on('image_upload image_upload_finish change sync', this.render, this);
 
-  //     this.model.on('image_upload_start', function () {
-  //       jQuery.mobile.showPageLoadingMsg();
-  //       jQuery('.ui-loader h1').text('Uploading photo...');
-  //     }, this);
 
-  //     this.model.on('image_upload_error', function () {
-  //       veos.alert("Image upload failed.");
-  //       jQuery.mobile.hidePageLoadingMsg();
-  //     }, this);
-  //   },
 
-  //   render: function () {
-  //     console.log("Rendering PhotoView...");
-  //     //this.$el.text(JSON.stringify(this.model.toJSON(), null, 2));
-  //     console.log("Photo url: "+this.model.thumbUrl());
 
-  //     var img = this.$el.find('#photo-'+this.model.id);
-  //     if (img.length === 0) {
-  //       img = jQuery("<img style='display: block' class='photo-list-item' id='photo-"+this.model.id+"' />");
-  //       //img.attr('data-model', this.model);
-  //       img.attr('data-model', JSON.stringify(this.model.toJSON()));
+  /**
+    PhotoDetailsView
+    Shows the photo details page that allows users to add tags and a note to a picture.
+  **/
+  self.PhotoDetailsView = Backbone.View.extend({
+    events: {
+      'click #submit-photo-details': function (ev) {
+        alert("submitting clicked");
         
-  //       // wrap a link around the picture
-  //       photoDetails = jQuery('<a data-role="button" href="photo-details.html?id='+this.model.id+'"></a>');
-  //       photoDetails.append(img);
+      }
+      // ,
 
-  //       this.$el.append(photoDetails);
-  //     }
-  //     img.attr('src', this.model.thumbUrl());
-  //     img.attr('alt', this.model.get('notes'));
+      // 'click #submit-photo-details': 'submit'//,
+      //'click #cancel-report': 'cancel'
+    },
 
-  //     jQuery.mobile.hidePageLoadingMsg();
-  //   }
-  // });
+    initialize: function () {
+      var view = this;
+
+      this.model.on('change sync', this.render, this);
+    },
+
+    render: function () {
+      console.log("Rendering PhotoDetailsView...");
+      console.log("Photo url: "+this.model.bigUrl());
+      // check if image already exists in DOM (shouldn't at this point)
+      var img = this.$el.find('#photo-'+this.model.id);
+      if (img.length === 0) {
+        img = jQuery("<img style='display: block' class='photo-list-item' id='photo-"+this.model.id+"' />");
+        //img.attr('data-model', this.model);
+        // img.attr('data-model', JSON.stringify(this.model.toJSON()));
+
+        this.$el.append(img);
+      }
+      // adding URL and alt
+      img.attr('src', this.model.thumbUrl());
+      img.attr('alt', this.model.get('notes'));
+
+      // setting the Photo ID in the page header
+      var headerPhotoId = jQuery('#photo-details-page .photo-id');
+      headerPhotoId.text(this.model.id);
+
+      jQuery.mobile.hidePageLoadingMsg();
+    },
+
+    submit: function () {
+      var self = this;
+
+      jQuery.mobile.showPageLoadingMsg();
+      jQuery('.ui-loader h1').text('Submitting...');
+      // use this once we upgrade to jQuery Mobile 1.2
+      //jQuery.mobile.loading( 'show', { theme: "b", text: "Submitting...", textonly: false });
+
+      self.model.save(null, {
+        complete: function () {
+          jQuery.mobile.hidePageLoadingMsg();
+        },
+        success: function () {
+          console.log("Photo detailes saved successfully with id "+self.model.id);
+        },
+        failure: function(model, response) {
+          console.log('Error submitting: ' + response);
+          // check for error codes from Matt
+          // highligh different required fields based on error codes
+        }
+      });
+    }
+  });
+
+
+
+
+
 
 
   /**
