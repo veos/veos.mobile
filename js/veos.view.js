@@ -30,14 +30,6 @@
       // for multipickers
       'change .multi-field': function (ev) {
         var f = jQuery(ev.target);
-
-        // this.model.removeTags()          // TODO when backend functionality is there
-/*        var frozenModel = this.model;                     // 'this' changes inside the each
-        _.each(f.val(), function(el) {
-          frozenModel.addTag(el, f.attr('name'));
-          console.log("Setting "+f.attr("name")+" to "+el);
-        });*/
-
         this.model.setTags(f.val(), f.attr('name'));
         console.log("Setting "+f.attr("name")+" to "+f.val());
       },
@@ -78,13 +70,6 @@
         jQuery('#report-sign-details-container').trigger('collapse');
         this.model.set('has_sign', false);
       },
-
-      // 'click .acquire-photo': function (ev) {
-      //     var from = jQuery(ev.target).data('acquire-from');
-      //     veos.currentPhoto = new veos.model.Photo();
-      //     new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
-      //     veos.captureImage(from, veos.currentPhoto);
-      // }, 
 
       'click #add-camera-photo-button': function (ev) {
         //var from = jQuery(ev.target).data('acquire-from');

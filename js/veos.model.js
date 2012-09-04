@@ -10,7 +10,9 @@
   //model.baseURL = "http://veos.surveillancerights.ca";
   //model.baseURL = "http://192.168.222.108:3000";
   //model.baseURL = "http://192.168.43.221:3000";
+
   model.baseURL = "/backend";
+  // model.baseURL = "http://backend.new.surveillancerights.ca"
 
   jQuery.support.cors = true; // enable cross-domain AJAX requests
 
@@ -102,6 +104,33 @@
     singular: "report",
     plural: "reports",
     nested: ['tags', ['photos', ['tags']], ['installation', ['organization']]],
+
+    // validate: function(attrs) {
+    //   console.log("Validating the model...");
+
+    //   var validationObj = {};
+
+    //   // not checking all 'required' fields since it's pretty conditional requirements for now (if B but not A, then...), and there are only 3
+    //   // better to check using attrs, if possible, rather than the fields using jQuery
+
+    //   // owner_name or owner_identifiable must be filled
+    //   if (!(attrs.owner_name)) {
+    //     if (jQuery('#unidentified-owner-checkbox').is(':checked')) {
+    //       console.log('passing validation...');          
+    //     } else {
+    //       alert('Owner name must be filled in or marked as unidentifiable');
+    //     }
+    //   }
+
+    //   // if owner_name is filled, owner_type must be filled
+    //   if (!(attrs.owner_type)) {
+    //     if (attrs.owner_name) {
+    //       alert('Owner type must be filled out if owner can be identified');
+    //     }
+    //   }
+
+    //   // _.all(jQuery("input.required").val(), funciton (v) { return v != "" })
+    // },  
 
     attachPhoto: function (photo, successCallback) {
       var report = this;
