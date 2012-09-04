@@ -52,6 +52,12 @@
                 </h3>
             </div>
             <div data-role="content">
+                <ul id="error-message-container" style="display: none">
+                    <li style="list-style: none; font-weight: bold; margin-left: 1ex; margin-bottom: 1ex">
+                        Your report could not be submitted because:
+                    </li>
+                </ul>
+
                 <div>
                     <b>Owner:</b> who do you think this surveillance belongs to?
                 </div>
@@ -59,7 +65,7 @@
                 <fieldset data-role="controlgroup">
                     <legend>Owner Name</legend>
                     <input class="field" name="owner_name" id="owner" placeholder="Owner name if identifiable..." value="" type="text" />
-                    <input type="checkbox" name="unidentified-owner-checkbox" id="unidentified-owner-checkbox" class="custom" value"false"/>
+                    <input type="checkbox" name="owner_identifiable" id="unidentified-owner-checkbox" class="custom" value="true"/>
                     <label for="unidentified-owner-checkbox" data-theme="e">Cannot identify owner</label>
                 </fieldset>
 
