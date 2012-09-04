@@ -45,14 +45,14 @@ server.start = function(port) {
 
 server.proxyMap  = [
     {
-        name: "VEOS",
-        match: function(req) { return url.parse(req.url).pathname.match(/^\/veos/); },
+        name: "BACKEND",
+        match: function(req) { return url.parse(req.url).pathname.match(/^\/backend/); },
         proxy: function(req, res) {
-            var veos = "http://veos.surveillancerights.ca";
+            var veos = "http://backend.new.surveillancerights.ca";
             var veosURL = url.parse(veos);
             console.log("PROXY " + req.url + " ==> " + veos);
-            //req.headers['host'] = veosURL.hostname;
-            req.url = url.parse(req.url).path.replace(/^\/veos/,'');
+            req.headers['host'] = veosURL.hostname;
+            req.url = url.parse(req.url).path.replace(/^\/backend/,'');
             console.log(req);
             proxy.proxyRequest(req, res, {
                 host: veosURL.hostname,
