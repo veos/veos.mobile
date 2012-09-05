@@ -169,7 +169,6 @@
       }
 
       var marker = new google.maps.Marker({
-        //new google.maps.Size(32, 32),
         position: latLng,
         icon: compliancePinOff,
         iconUnselected: compliancePinOff,
@@ -248,6 +247,7 @@
           if (marker.title === i.get('owner_name')) {
             console.log('found one: ' + i.get('owner_name'));
             marker.setIcon(marker.iconSelected);
+            marker.setZIndex(1000);                 // move this marker to the front, does not seem to need to be cleared
           }
         });
 

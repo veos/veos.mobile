@@ -69,7 +69,7 @@ window.veos = (function(veos) {
           var installation = new veos.model.Installation({id: installationId});
 
           var installationSuccess = function (model, response) {
-            self.currentInstallation = model;
+            self.currentInstallation = model;                       // used to set initial location for EditReport
             self.currentReport = model.startAmending();
             self.reportForm = new self.view.ReportEditForm({model: self.currentReport, el: '#report-page'});
             jQuery('#report-header-text').text('Editing the Installation');
@@ -145,7 +145,8 @@ window.veos = (function(veos) {
 
     /** report-selection.html (report-selection-page) **/
       .delegate("#report-selection-page", "pageshow", function(ev) {
-        var nearbyInstallations = new veos.model.NearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude, 10);           // TODO I'm pretty sure this is not the right way to access these
+        // fetch instalations ordered by closest to furtherest 
+        var nearbyInstallations = new veos.model.NearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude, 5);           // TODO I'm pretty sure this is not the right way to access these
 
         var view = new veos.view.InstallationListReport({
           el: ev.target,
