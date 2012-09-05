@@ -10,6 +10,8 @@ window.veos = (function(veos) {
     if (navigator === undefined || navigator.notification === undefined) {
       alert(msg);
     } else {
+      if (title === undefined)
+        title = "";
       navigator.notification.alert(msg, null, title);
     }
   };
