@@ -335,16 +335,6 @@
     plural: "photos",
     nested: ['tags'],
 
-    url: function () {
-      var base = 'http://backend.new.surveillancerights.ca/' + this.plural;
-      if (this.isNew()) {
-        return base + '.json';
-      }
-      else {
-        return base + '/' + this.id + '.json';
-      }
-    },
-
     captureFromCamera: function () {
       console.log("Trying to capture photo via camera");
       this.capture(Camera.PictureSourceType.CAMERA);
