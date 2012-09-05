@@ -67,13 +67,16 @@
       // FIXME: a 422 response over cross domain will for some reason return status 0... catching it like this here
       //        could result in bogus error reporting.
       if (response.status === 422 || response.status === 0) {
-        msg = "Sorry, there is an error in your "+this.singular+". Please check your input and try again.";
+        msg = "Sorry, there is a problem in your "+this.singular+". Please check your input and try again.";
         var errors = {};
         try {
           errors = JSON.parse(response.responseText).errors;
         } catch (err) {
           console.error("Couldn't parse response text: "+response.responseText+ " ("+err+")");
         }
+
+        var errContainer = jQuery("#error-message-container");
+
         _.each(errors, function(v, k) {
           var errField = jQuery("*[name='"+k+"'].field");
 
@@ -82,16 +85,30 @@
           }
 
           errField.addClass("error");
+          jQuery('*[for='+errField.attr('id')+']').addClass("error");
           errField.one('change focus', function() {
             errField.removeClass("error");
+            jQuery('*[for='+errField.attr('id')+']').removeClass("error");
           });
+
+
+          if (errContainer.length !== 0) {
+            var humanFieldName = k.replace(/_/, ' ');
+            errContainer.append("<li><strong>"+humanFieldName+"</strong> "+v+"</li>");
+          }
         });
+
+        if (errContainer.length !== 0) {
+          errContainer.show();
+        }
 
       } else if (response.status >= 500 && response.status < 600) {
         msg = "Our apologies, the server responded with an error. There may be a problem with the system.";
       } else {
-        msg = "Sorry, there was some sort of error while performing this action. The server may be temporarily unavailable.";
+        msg = "Sorry, there was an error while performing this action. The server may be temporarily unavailable.";
       }
+
+      jQuery('html, body').animate({ scrollTop: 0 }, 0);
 
       veos.alert(msg, "Error");
     }
@@ -104,6 +121,9 @@
     singular: "report",
     plural: "reports",
     nested: ['tags', ['photos', ['tags']], ['installation', ['organization']]],
+    defaults: {
+      'owner_identifiable': true
+    },
 
     // validate: function(attrs) {
     //   console.log("Validating the model...");
@@ -163,7 +183,7 @@
       }
 
       var photo = _.find(report.photos, function (p) {
-        return p.get('image_fingerprint') == fingerprint;
+        return p.get('image_fingerprint') === fingerprint;
       });
 
       if (!photo) {
@@ -206,7 +226,8 @@
       var tags = this.get('tags');
 
       var t;
-      while (t = this.findTag(tag, tagType)) {
+      while (this.findTag(tag, tagType)) {
+        t = this.findTag(tag, tagType);
         tags.splice(_.indexOf(tags, t), 1);
       }
 
@@ -215,7 +236,7 @@
 
     setTags: function (tags, tagType) {
       var ts = _.reject(this.get('tags'), function (t) {
-        return t.tag_type == tagType;
+        return t.tag_type === tagType;
       });
       ts = _.uniq(ts, false, function (t) {
         return [t.tag, t.tag_type];
@@ -231,7 +252,7 @@
       var tags = this.get('tags');
 
       return _.find(tags, function (t) {
-        return t.tag == tag && t.tag_type == tagType;
+        return t.tag === tag && t.tag_type === tagType;
       });
     },
 
@@ -400,7 +421,8 @@
       var tags = this.get('tags');
 
       var t;
-      while (t = this.findTag(tag)) {
+      while (this.findTag(tag)) {
+        t = this.findTag(tag);
         if (t.id) {
           t._destroy = true;
         } else {
@@ -423,7 +445,7 @@
       var tags = this.get('tags');
 
       return _.find(tags, function (t) {
-        return t.tag == tag && !t._destroy;
+        return t.tag === tag && !t._destroy;
       });
     },
 

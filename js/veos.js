@@ -174,32 +174,34 @@ window.veos = (function(veos) {
       })
 
     /** photo-details.html (photo-details-page) **/
-      // .delegate("#photo-details-page", "pageshow", function(ev) {
-      //   console.log("Showing photo details page at "+window.location.href);
-      //   var photoId = window.location.href.match("[\\?&]id=(\\d+)")[1];
-      //   console.log("Showing details for photo "+photoId);
+      .delegate("#photo-details-page", "pageshow", function(ev) {
+        console.log("Showing photo details page at "+window.location.href);
+        var photoId = window.location.href.match("[\\?&]photoId=(\\d+)")[1];
+        console.log("Showing details for photo "+photoId);
 
-      //   var photo = new veos.model.Photo({id: photoId});
-
-      //   var view = new veos.view.PhotoDetails({
-      //     el: ev.target,
-      //     model: photo
-      //   });
+        // where to render picture into
+        var photoContainer = jQuery('.photo-container');
+        // Photo model for given Photo ID (from URL)
+        var photo = new veos.model.Photo({id: photoId});
+        // PhotoDetailsView renders the picture and aditional information
+        var view = new veos.view.PhotoDetailsView({
+          el: photoContainer,
+          model: photo
+        });
         
-      //   view.showLoader();  
-      //   photo.fetch();
+        // view.showLoader();  
+        view.model.fetch();
 
-      // })
-
+      });
   };
 
-  self.showModal = function(photoId) {
-    console.log('photo clicked!');
-    //jQuery('#photo-details-content').modal();
-    modalDialog = jQuery('#photo-details-content');
-    jQuery.modal(modalDialog);
-    //return false;    
-  };
+  // self.showModal = function(photoId) {
+  //   console.log('photo clicked!');
+  //   //jQuery('#photo-details-content').modal();
+  //   modalDialog = jQuery('#photo-details-content');
+  //   jQuery.modal(modalDialog);
+  //   //return false;    
+  // };
 
   // // click event for photo details overlays
   // jQuery(".photo-list-item").click(function () {

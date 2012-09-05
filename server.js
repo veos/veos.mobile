@@ -1,5 +1,7 @@
 /*jshint node: true */
 
+var BACKEND_URL = "http://backend.new.surveillancerights.ca";
+
 var http = require('http');
 var httpProxy = require('http-proxy');
 var httpStatic = require('node-static');
@@ -48,7 +50,7 @@ server.proxyMap  = [
         name: "BACKEND",
         match: function(req) { return url.parse(req.url).pathname.match(/^\/backend/); },
         proxy: function(req, res) {
-            var veos = "http://backend.new.surveillancerights.ca";
+            var veos = BACKEND_URL;
             var veosURL = url.parse(veos);
             console.log("PROXY " + req.url + " ==> " + veos);
             req.headers['host'] = veosURL.hostname;
