@@ -687,7 +687,7 @@
         jQuery('.ui-loader h1').text('Uploading photo...');
       }, this);
 
-      this.model.on('image_upload_error', function (err) {
+      this.model.on('image_upload_error', function (model, err) {
         veos.alert("Image upload failed: " + err);
         jQuery.mobile.hidePageLoadingMsg();
       }, this);
