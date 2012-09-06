@@ -170,7 +170,7 @@
 
       var marker = new google.maps.Marker({
         position: latLng,
-        icon: compliancePinOff,
+        icon: compliancePinOn,
         iconUnselected: compliancePinOff,
         iconSelected: compliancePinOn,
         title: i.get('owner_name') || "Unknown Owner"
