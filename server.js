@@ -1,6 +1,6 @@
 /*jshint node: true */
 
-var BACKEND_URL = "http://192.168.43.221:3000";
+var BACKEND_URL = "http://backend.new.surveillancerights.ca";
 
 var http = require('http');
 var httpProxy = require('http-proxy');
