@@ -12,8 +12,7 @@
   //model.baseURL = "http://192.168.43.221:3000";
 
   // need full URL for photo uploads to work with reverse proxying
-  model.baseURL = location.protocol + "//" + location.host + (location.port ? ":"+location.port : "") 
-                  + "/backend";
+  model.baseURL = location.protocol + "//" + location.host + "/backend";
 
   // model.baseURL = "http://backend.new.surveillancerights.ca"
 
@@ -355,8 +354,10 @@
       var options = {
         quality: 50,
         destinationType: Camera.DestinationType.FILE_URI,
+        encodingType: Camera.EncodingType.JPEG,
         sourceType: from,
-        correctOrientation: true
+        correctOrientation: true,
+        saveToPhotoAlbum: false // don't save photos captured by VEOS to local library
       };
 
       console.log('Capturing photo from source '+from+' with options: ', options);
@@ -387,6 +388,7 @@
       options.fileKey = "photo[image]";
       options.fileName = photo.imageURL.substr(photo.imageURL.lastIndexOf('/')+1);
       options.mimeType = "image/jpeg";
+      options.chunkedMode = true;
 
       var success = function (res) {
         console.log("Image uploaded successfully; "+res.bytesSent+" bytes sent.");
