@@ -217,7 +217,7 @@
       //var self = this;
       var geoloc;
       if (this.model.getLatLng()) {
-        console.log("Using location from report model...", this.model.getLatLng());
+        console.log("Using location from report model... " + this.model.getLatLng());
         geoloc = this.model.getLatLng();
       } else if (veos.lastLoc) {
         console.log("Using last known location...", veos.lastLoc);

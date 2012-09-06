@@ -1,6 +1,6 @@
 /*jshint node: true */
 
-var BACKEND_URL = "http://backend.new.surveillancerights.ca";
+var BACKEND_URL = "http://192.168.43.221:3000";
 
 var http = require('http');
 var httpProxy = require('http-proxy');
@@ -55,7 +55,7 @@ server.proxyMap  = [
             console.log("PROXY " + req.url + " ==> " + veos);
             req.headers['host'] = veosURL.hostname;
             req.url = url.parse(req.url).path.replace(/^\/backend/,'');
-            console.log(req);
+            //console.log(req);
             proxy.proxyRequest(req, res, {
                 host: veosURL.hostname,
                 port: veosURL.port || 80
