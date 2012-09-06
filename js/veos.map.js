@@ -141,7 +141,7 @@
     console.log("Adding "+installations.length+" installation markers to map...");
 
     var map = this;
-    var markersArray = [];
+    veos.markersArray = [];
 
     map.infowindow = new google.maps.InfoWindow({
       // do you seriously need a plugin for styling infowindows?!?!
@@ -198,12 +198,22 @@
         injectThumbnail(i);
         map.infowindow.setContent(mapPopupContent);
         map.infowindow.open(map.gmap, marker);
-        highlightOwnerPins(markersArray, i.get('owner_name'));
+        highlightOwnerPins(marker, i.get('owner_name'));
       });
       marker.setMap(map.gmap);
-      markersArray.push(marker);
+      veos.markersArray.push(marker);
     });
   };
+
+  self.Map.prototype.clearInstallationMarkers = function() {
+    // deletes everything in the markersArray
+    console.log('clearing all markers...');
+    _.each(veos.markersArray, function(i) {
+      i.setMap(null);
+    });
+    // this may not be necessary (they're going to get overwritten by addInstallationMarkers immediately), but seems safer
+    veos.markersArray = [];
+  }
 
   var injectThumbnail = function(installation) {
     if (installation.has('photos') && installation.get('photos').length > 0) {
@@ -228,13 +238,17 @@
    };
 
 
-  var highlightOwnerPins = function(markersArray, ownerName) {
-    var ownerInstallations = new veos.model.Installations();
+  var highlightOwnerPins = function(marker, ownerName) {
 
     // clear the markers (set back to initial state)
-    _.each(markersArray, function(marker) {
-      marker.setIcon(marker.iconUnselected);
+    _.each(veos.markersArray, function(m) {
+      m.setIcon(m.iconUnselected);
     })
+
+    // set the clicked marker as selected (necessary because the _.each will only catch markers with known owner_names)
+    marker.setIcon(marker.iconSelected);    
+
+    var ownerInstallations = new veos.model.Installations();
     
     var ownerSuccess = function (model, response) {
       ownerInstallations.each(function(i) {
@@ -242,12 +256,12 @@
 
         // this is very inefficient, but working (will ping once for *each* match... lots of duplicate higlights)
         // can we use pluck or filter or find here? Or even better, can we count on the fact that all ownerInstallations have the same name?        
-        _.each(markersArray, function(marker) {
+        _.each(veos.markersArray, function(m) {
           // if the owner_names match
-          if (marker.title === i.get('owner_name')) {
+          if (m.title === i.get('owner_name')) {
             console.log('found one: ' + i.get('owner_name'));
-            marker.setIcon(marker.iconSelected);
-            marker.setZIndex(1000);                 // move this marker to the front, does not seem to need to be cleared
+            m.setIcon(m.iconSelected);
+            m.setZIndex(1000);                 // move this marker to the front, does not seem to need to be cleared
           }
         });
 

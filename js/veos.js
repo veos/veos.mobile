@@ -44,12 +44,14 @@ window.veos = (function(veos) {
         if (!veos.map.overviewMap) {
           veos.map.overviewMap = new veos.map.Map('#overview-map-canvas');
         }
-        //var map = new veos.map.Map('#overview-map-canvas');
+
+        // clear old installation markers
+        veos.map.overviewMap.clearInstallationMarkers();
 
         // add all installation markers
         var installations = new veos.model.Installations();
         installations.on('reset', function(collection) {
-          veos.map.overviewMap.addInstallationMarkers(collection);
+          veos.map.overviewMap.addInstallationMarkers(collection);          
         });
         installations.fetch();
 
