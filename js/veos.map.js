@@ -62,7 +62,12 @@
   self.Map.prototype.startFollowing = function () {
     var map = this;
 
+    if (map.posWatcher)
+      navigator.geolocation.clearWatch(this.posWatcher);
+
+    
     console.log("Started following user...");
+
     map.posWatcher = navigator.geolocation.watchPosition(function (geoloc) {
       jQuery(veos).trigger('haveloc', geoloc);
 

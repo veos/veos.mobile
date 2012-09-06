@@ -1,49 +1,5 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>SurveillanceWatch</title>
-
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css" />
-        <link rel="stylesheet" href="themes/veos.css" />
-        <link rel="stylesheet" href="css/veos.css" /> 
-        
-        <link rel="icon" href="images/favicon.ico"/>
-
-        <script type="text/javascript" charset="utf-8" src="js/libs/cordova-1.5.0.js"></script>
-
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-        <script type="text/javascript">
-            $.noConflict();
-            jQuery(document).bind("mobileinit", function(){
-                jQuery.mobile.defaultPageTransition = 'none'; // disable transitions
-                jQuery.mobile.defaultDialogTransition = 'none';
-            });
-            // the following was suggested as a more complete way to disable transitions
-            // jQuery(document).bind("mobileinit", function() {
-            //     $.mobile.defaultPageTransition = 'none';
-            //     $.mobile.page.prototype.options.addBackBtn = true;
-            //     $.mobile.useFastClick  = false;
-            // }
-        </script>
-        <script src="http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
-        
-        <script type="text/javascript"
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB75fl3V3AXVEfejWZiIclVB73SuLESB8w&amp;sensor=true"></script>
-
-        <script type="text/javascript" charset="utf-8" src="js/libs/jquery.simplemodal.1.4.2.min.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/libs/underscore-1.3.1.js"></script>     
-        <script type="text/javascript" charset="utf-8" src="js/libs/backbone-0.9.2.js"></script>        
-        <script type="text/javascript" charset="utf-8" src="js/veos.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/veos.map.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/veos.model.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/veos.view.js"></script>
-
-        <script type="text/javascript">
-            veos.init();
-        </script>
-    </head>
     <body>
         <div data-role="page" id="report-page">
             <div data-theme="a" data-role="header">

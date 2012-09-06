@@ -1,6 +1,7 @@
 /*jshint node: true */
 
-var BACKEND_URL = "http://192.168.43.221:3000";
+var BACKEND_URL = "http://backend.new.surveillancerights.ca";
+//var BACKEND_URL = "http://192.168.222.114:3000";
 
 var http = require('http');
 var httpProxy = require('http-proxy');
@@ -71,7 +72,7 @@ server.proxyMap  = [
         },
         proxy: function(req, res) {
             req.addListener('end', function() {
-                req.url = "/overview-map.html";
+                req.url = "/app.html";
                 console.log("home STATIC "+req.url);
                 file.serve(req, res);     
             });
