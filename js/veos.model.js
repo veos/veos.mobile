@@ -263,8 +263,10 @@
 
     getLatLng: function() {
       if (this.get('loc_lat_from_user')) {
+        console.log('In getLatLng() returning loc from user. Lat: '+this.get('loc_lat_from_user')+' Lng: '+this.get('loc_lng_from_user')+'');
         return new google.maps.LatLng(this.get('loc_lat_from_user'), this.get('loc_lng_from_user'));
       } else if (this.get('loc_lat_from_gps')) {
+        console.log('In getLatLng() returning loc from GPS. Lat: '+this.get('loc_lat_from_gps')+' Lng: '+this.get('loc_lng_from_gps')+'');
         return new google.maps.LatLng(this.get('loc_lat_from_gps'), this.get('loc_lng_from_gps'));
       } else {
         return null;
