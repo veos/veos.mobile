@@ -141,15 +141,27 @@
 
 }
 
-#report-page .photo-list img {
-    display: inline;
+/*#report-page .photo-list img {
+    display: inline;*/
     /*width: 49%;
     height: auto;*/
+/*}*/
+
+.photo-list-item {
+    display: inline;
+    width: 45%;
+    padding: 1%;
+    /*height: auto;*/
+}
+
+.photo-thumbnail-container  {
+    text-align: center;
+    /*white-space: nowrap;*/
 }
 
 #report-photos-container .ui-collapsible-content {
     text-align: center;
-    white-space: nowrap;
+    /*white-space: nowrap;*/
 }
 
 #report-page .dashed-box {
@@ -272,7 +284,7 @@
 
 #installation-details-photos-container .ui-collapsible-content {
     text-align: center;
-    white-space: nowrap;
+    /*white-space: nowrap;*/
 }
 
 #installation-details-page .dashed-box {
