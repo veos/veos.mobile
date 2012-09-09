@@ -91,6 +91,8 @@
     },
 
     initialize: function () {
+      var report = this.model;
+
       //var self = this;
       console.log("Initializing ReportForm...");
 
@@ -103,6 +105,23 @@
         console.log("User submitted refined location");
         veos.currentReport.set('loc_description_from_user', null); // we'll look it up again from geoloc
         return true; // will now redirect to clicked element's href
+      });
+
+      // setup autocomplete
+      var ownerNameField = this.$el.find("input[name='owner_name']");
+      ownerNameField.autocomplete({
+          method: 'GET', // allows POST as well
+          icon: 'arrow-r', // option to specify icon
+          target: this.$el.find('#owner-name-suggestions'), // the listview to receive results
+          source: veos.model.baseURL + '/installations/autocomplete_owner_name.json', // URL return JSON data
+          callback: function (ev) { 
+            report.set('owner_name', jQuery(ev.currentTarget).text()); 
+            ownerNameField.autocomplete('clear');
+          }, // optional callback function fires upon result selection
+          //link: 'target.html?term=', // link to be attached to each result
+          minLength: 1, // minimum length of search string
+          transition: 'none',// page transition, default is fade
+          matchFromStart: true // search from start, or anywhere in the string
       });
     },
 
@@ -1045,7 +1064,7 @@
       var self = this;
 
       // TODO: consider binding 'add' and 'remove' to pick up added/removed Insts too?
-      this.model.on('change sync', _.bind(this.render, self)); 
+      this.model.on('change sync', _.bind(this.render, self));
     },
 
     showLoader: function () {
