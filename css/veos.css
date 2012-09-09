@@ -31,6 +31,7 @@
     margin-left: 1em;
 }
 
+.header-with-buttons,
 .footer-with-buttons {
     display: -moz-box !important;
     display: -webkit-box !important;
@@ -39,8 +40,13 @@
     -moz-box-orient: horizontal !important;
     -webkit-box-orient: horizontal !important;
     box-orient: horizontal !important;
+
+    padding: 0;
+    padding-bottom: 3px;
+    width: 100%;
 }
 
+.header-with-buttons > .ui-btn,
 .footer-with-buttons > .ui-btn {
     -moz-box-flex: 1 !important;
     -webkit-box-flex: 1 !important;

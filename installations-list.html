@@ -2,10 +2,16 @@
 <html>
     <body>
         <div data-role="page" id="installations-list-page">
-            <div data-theme="a" data-role="header">
-                <h5>
-                    List of Surveillance Installations
-                </h5>
+            <!--<div data-theme="a" data-role="header">
+                <h5>List of Installations</h5>
+            </div>-->
+            <div class="header-with-buttons ui-bar ui-bar-a">
+                <a class="map-view-button" data-role="button" data-inline="true" data-theme="f" data-icon="home" data-iconpos="left" href="overview-map.html">
+                    Back to Map
+                </a>
+                <a class="add-report-button" data-role="button" data-inline="true" data-theme="b" data-icon="plus" data-iconpos="left" href="report.html">
+                    New Installation
+                </a>
             </div>
             <div data-role="content">
                 <ul data-role="listview" class="installations-list">
@@ -13,11 +19,11 @@
                 </ul>
             </div>
             <div data-theme="a" data-role="footer" class="footer-with-buttons">
-                <a class="add-report-button" data-role="button" data-inline="true" data-theme="b" data-icon="plus" data-iconpos="left" href="report.html">
-                    Add Report
+                <a class="map-view-button" data-role="button" data-inline="true" data-theme="f" data-icon="home" data-iconpos="left" href="overview-map.html">
+                    Back to Map
                 </a>
-                <a class="map-view-button" data-role="button" data-inline="true" data-theme="b" data-icon="home" data-iconpos="left" href="overview-map.html">
-                    View Map
+                <a class="add-report-button" data-role="button" data-inline="true" data-theme="b" data-icon="plus" data-iconpos="left" href="report.html">
+                    New Installation
                 </a>
             </div>       
         </div>
