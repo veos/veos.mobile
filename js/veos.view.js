@@ -833,6 +833,15 @@
       this.collection.on('reset', _.bind(this.render, self));   
     },
 
+    showLoader: function () {
+      this.loader = addLoader(this.$el.find('[role="main"]'));
+    },
+
+    hideLoader: function () {
+      this.loader.remove();
+      delete this.loader;
+    },
+
     render: function () {
       var list = this.$el.find('.installations-list');
       list.empty();
@@ -930,6 +939,15 @@
 
       // TODO: consider binding 'add' and 'remove' to pick up added/removed Installations too?
       this.collection.on('reset', _.bind(this.render, self));   
+    },
+
+    showLoader: function () {
+      this.loader = addLoader(this.$el.find('[role="main"]'));
+    },
+
+    hideLoader: function () {
+      this.loader.remove();
+      delete this.loader;
     },
 
     render: function () {

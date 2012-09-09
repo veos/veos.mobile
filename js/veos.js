@@ -162,7 +162,10 @@ window.veos = (function(veos) {
           collection: installations
         });
         
-        installations.fetch();
+        view.showLoader();
+        installations.fetch({
+          success: function () {view.hideLoader()}
+        });
       })              
 
     /** report-selection.html (report-selection-page) **/
@@ -175,7 +178,10 @@ window.veos = (function(veos) {
           collection: nearbyInstallations
         });
         
-        nearbyInstallations.fetch();
+        view.showLoader();
+        nearbyInstallations.fetch({
+          success: function () {view.hideLoader()}
+        });
       })
 
     /** installation-details.html (installation-details-page) **/
