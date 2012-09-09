@@ -114,6 +114,9 @@
       // use this once we upgrade to jQuery Mobile 1.2
       //jQuery.mobile.loading( 'show', { theme: "b", text: "Submitting...", textonly: false });
 
+      if (device)
+        self.model.contributor_id = device.uuid;
+
       self.model.save(null, {
         complete: function () {
           // replace failure with msg here?

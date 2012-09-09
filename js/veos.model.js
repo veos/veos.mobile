@@ -124,8 +124,7 @@
     plural: "reports",
     nested: ['tags', ['photos', ['tags']], ['installation', ['organization']]],
     defaults: {
-      'owner_identifiable': true,
-      'contributor_id': device == undefined ? null : device.uuid 
+      'owner_identifiable': true
     },
 
     // validate: function(attrs) {
