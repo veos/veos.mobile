@@ -38,6 +38,12 @@
 
         <script type="text/javascript">
             veos.init();
+
+            jQuery(document).ready(function () {
+                if (location.hash == "") {
+                    jQuery.mobile.changePage("overview-map.html");
+                }
+            });
         </script>
     </head>
     <body>
