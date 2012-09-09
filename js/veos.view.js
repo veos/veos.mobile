@@ -115,7 +115,7 @@
       //jQuery.mobile.loading( 'show', { theme: "b", text: "Submitting...", textonly: false });
 
       if (device && device.uuid)
-        self.model.contributor_id = device.uuid;
+        self.model.set('contributor_id', device.uuid);
 
       self.model.save(null, {
         complete: function () {
@@ -406,7 +406,7 @@
       //jQuery.mobile.loading( 'show', { theme: "b", text: "Submitting...", textonly: false });
 
       if (device && device.uuid)
-        self.model.contributor_id = device.uuid;
+        self.model.set('contributor_id', device.uuid);
 
       self.model.save(null, {
         complete: function () {
