@@ -388,6 +388,10 @@
       options.fileKey = "photo[image]";
       options.fileName = photo.imageURL.substr(photo.imageURL.lastIndexOf('/')+1);
       options.mimeType = "image/jpeg";
+      // chunkedMode false uses more memory and might lead to crashes after some pictures
+      // chunkedMode true can lead to a situation where no data is transmitted to the server
+      // this seems to be fixed by setting the 6th value in transfer.upload to true (acceptSelfSignedCert)
+      // while I am not sure how that affects a unencrypted http connection it seems to work
       options.chunkedMode = true;
 
       var success = function (res) {
@@ -409,7 +413,10 @@
       };
 
       var transfer = new FileTransfer();
-      transfer.upload(photo.imageURL, photo.url(), success, failure, options);
+      /**
+        filePath, server, successCallback, failureCallback, options, acceptSelfSignedCert
+      **/
+      transfer.upload(photo.imageURL, photo.url(), success, failure, options, true);
     },
 
     addTag: function (tag) {
