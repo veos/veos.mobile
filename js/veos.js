@@ -20,9 +20,11 @@ window.veos = (function(veos) {
     Initializes the whole app. This needs to be called at the bottom of every VEOS page.
   **/
   self.init = function () {
+    console.log("INITIALIZING VEOS!");
+
     if (window.location.pathname === "/") {
-      console.log("Redirecting to /overview-map.html");
-      window.location.href = "/overview-map.html";
+      console.log("Redirecting to /app.html");
+      window.location.href = "/app.html";
       return;
     }
 
@@ -41,17 +43,15 @@ window.veos = (function(veos) {
 
     /** overview-map.html (overview-map-page) **/
       .delegate("#overview-map-page", "pageshow", function() {
-        if (!veos.map.overviewMap) {
+        //if (!veos.map.overviewMap) {
           veos.map.overviewMap = new veos.map.Map('#overview-map-canvas');
-        }
-
-        // clear old installation markers
-        veos.map.overviewMap.clearInstallationMarkers();
+        //}
+        //var map = new veos.map.Map('#overview-map-canvas');
 
         // add all installation markers
         var installations = new veos.model.Installations();
         installations.on('reset', function(collection) {
-          veos.map.overviewMap.addInstallationMarkers(collection);          
+          veos.map.overviewMap.addInstallationMarkers(collection);
         });
         installations.fetch();
 
@@ -98,6 +98,8 @@ window.veos = (function(veos) {
               var initLoc = veos.map.convertGeolocToGmapLatLng(veos.lastLoc);
               self.currentReport.set('loc_lng_from_gps', initLoc.lng());
               self.currentReport.set('loc_lat_from_gps', initLoc.lat());
+            } else {
+              // if we're coming straight from the splash page, we need to locate the user. I think this is the place to do it (bug 33)
             }
           }
 
@@ -133,20 +135,21 @@ window.veos = (function(veos) {
         var refinerMap;
         var refinerLoc;
 
-        // if the user has made a change to the address field, use that location
+        // if the user has made a change to the address bar, use that location
         if (veos.currentReport.get('loc_lat_from_user') && veos.currentReport.get('loc_lng_from_user')) {
           var refinerLoc = new google.maps.LatLng(veos.currentReport.get('loc_lat_from_user'), veos.currentReport.get('loc_lng_from_user'));
+          refinerMap = new veos.map.Map('#refine-location-canvas', refinerLoc);
         }
         // default case - user has not made any changes to location yet
         else if (veos.lastLoc) {
           refinerLoc = veos.lastLoc;
+          refinerMap = new veos.map.Map('#refine-location-canvas', refinerLoc);
         }
         // should never occur
         else {
           console.log("Cannot refine location because there is no lat/lng");
         }
 
-        refinerMap = new veos.map.Map('#refine-location-canvas', refinerLoc);
         refinerMap.addReportRefinerMarker(self.reportForm.model, refinerLoc);
       })
 
@@ -159,7 +162,10 @@ window.veos = (function(veos) {
           collection: installations
         });
         
-        installations.fetch();
+        view.showLoader();
+        installations.fetch({
+          success: function () {view.hideLoader()}
+        });
       })              
 
     /** report-selection.html (report-selection-page) **/
@@ -172,7 +178,10 @@ window.veos = (function(veos) {
           collection: nearbyInstallations
         });
         
-        nearbyInstallations.fetch();
+        view.showLoader();
+        nearbyInstallations.fetch({
+          success: function () {view.hideLoader()}
+        });
       })
 
     /** installation-details.html (installation-details-page) **/

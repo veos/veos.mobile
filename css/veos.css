@@ -31,6 +31,7 @@
     margin-left: 1em;
 }
 
+.header-with-buttons,
 .footer-with-buttons {
     display: -moz-box !important;
     display: -webkit-box !important;
@@ -39,8 +40,13 @@
     -moz-box-orient: horizontal !important;
     -webkit-box-orient: horizontal !important;
     box-orient: horizontal !important;
+
+    padding: 0;
+    padding-bottom: 3px;
+    width: 100%;
 }
 
+.header-with-buttons > .ui-btn,
 .footer-with-buttons > .ui-btn {
     -moz-box-flex: 1 !important;
     -webkit-box-flex: 1 !important;
@@ -146,15 +152,27 @@
 
 }
 
-#report-page .photo-list img {
-    display: inline;
+/*#report-page .photo-list img {
+    display: inline;*/
     /*width: 49%;
     height: auto;*/
+/*}*/
+
+.photo-list-item {
+    display: inline;
+    width: 45%;
+    padding: 1%;
+    /*height: auto;*/
+}
+
+.photo-thumbnail-container  {
+    text-align: center;
+    /*white-space: nowrap;*/
 }
 
 #report-photos-container .ui-collapsible-content {
     text-align: center;
-    white-space: nowrap;
+    /*white-space: nowrap;*/
 }
 
 #report-page .dashed-box {
@@ -277,7 +295,7 @@
 
 #installation-details-photos-container .ui-collapsible-content {
     text-align: center;
-    white-space: nowrap;
+    /*white-space: nowrap;*/
 }
 
 #installation-details-page .dashed-box {
@@ -357,3 +375,6 @@
     text-align: center;
 }
 
+#owner-name-suggestions {
+    margin: 0;
+}
