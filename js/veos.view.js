@@ -732,10 +732,11 @@
         img.attr('data-model', JSON.stringify(this.model.toJSON()));
         
         // wrap a link around the picture
-        photoDetails = jQuery('<a data-role="button" href="photo-details.html?photoId='+this.model.id+'"></a>');
-        photoDetails.append(img);
+        // temporarily disabled for beta release
+        //photoDetails = jQuery('<a data-role="button" href="photo-details.html?photoId='+this.model.id+'"></a>');
+        //photoDetails.append(img);
 
-        this.$el.append(photoDetails);
+        this.$el.append(img);
       }
       img.attr('src', this.model.thumbUrl());
       img.attr('alt', this.model.get('notes'));
@@ -932,7 +933,7 @@
     Shows a list of Installations.
   **/
   self.InstallationListReport = Backbone.View.extend({
-    MAX_DISTANCE_FROM_CURRENT_LOCATION: 10, // km
+    //MAX_DISTANCE_FROM_CURRENT_LOCATION: 10, // km
     
     events: {
       'click .ui-li': function (ev) {

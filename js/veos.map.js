@@ -196,7 +196,7 @@
         thumb = "<img class='photo photo-"+photoID+"' />";
       }  
 
-      mapPopupContent = "<a href=installation-details.html?id="+i.id+">"+thumb+buttonText+"</a>";
+      mapPopupContent = "<a class='styled-link-text' href=installation-details.html?id="+i.id+">"+thumb+buttonText+"</a>";
 
       // binding a popup click event to the marker
       google.maps.event.addListener(marker, 'click', function() {

@@ -115,6 +115,11 @@
     font-size: 80%;
 }
 
+#overview-map-page .styled-link-text {
+    text-decoration: none;
+    color: black;
+;}
+
 
 /***** REPORT *****/
 
