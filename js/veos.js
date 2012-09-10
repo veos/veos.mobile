@@ -171,7 +171,7 @@ window.veos = (function(veos) {
     /** report-selection.html (report-selection-page) **/
       .delegate("#report-selection-page", "pageshow", function(ev) {
         // fetch instalations ordered by closest to furtherest 
-        var nearbyInstallations = new veos.model.NearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude, 5);           // TODO I'm pretty sure this is not the right way to access these
+        var nearbyInstallations = new veos.model.NearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude, 0.15);           // TODO I'm pretty sure this is not the right way to access these
 
         var view = new veos.view.InstallationListReport({
           el: ev.target,
