@@ -392,7 +392,8 @@
       // chunkedMode true can lead to a situation where no data is transmitted to the server
       // this seems to be fixed by setting the 6th value in transfer.upload to true (acceptSelfSignedCert)
       // while I am not sure how that affects a unencrypted http connection it seems to work
-      options.chunkedMode = true;
+      // Sep 11, 2012 doesn't seem to work so set to false
+      options.chunkedMode = false;
 
       var success = function (res) {
         console.log("Image uploaded successfully; "+res.bytesSent+" bytes sent.");
