@@ -899,7 +899,7 @@
           var photoID = photo.id;
           var thumbUrl = veos.model.baseURL + photo.thumb_url;
             
-          console.log('Retrieve photo thumb URL: '+thumbUrl+' for photo with ID: '+photoID);
+          //console.log('Retrieve photo thumb URL: '+thumbUrl+' for photo with ID: '+photoID);
           thumb = "<img class='list-picture photo-"+photoID+"' src='"+thumbUrl+"' />";
         }
 
