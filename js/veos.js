@@ -10,8 +10,9 @@ window.veos = (function(veos) {
     if (navigator === undefined || navigator.notification === undefined) {
       alert(msg);
     } else {
-      if (title === undefined)
+      if (title === undefined) {
         title = "";
+      }
       navigator.notification.alert(msg, null, title);
     }
   };
@@ -98,9 +99,10 @@ window.veos = (function(veos) {
               var initLoc = veos.map.convertGeolocToGmapLatLng(veos.lastLoc);
               self.currentReport.set('loc_lng_from_gps', initLoc.lng());
               self.currentReport.set('loc_lat_from_gps', initLoc.lat());
-            } else {
-              // if we're coming straight from the splash page, we need to locate the user. I think this is the place to do it (bug 33)
             }
+            //else {
+              // if we're coming straight from the splash page, we need to locate the user. I think this is the place to do it (bug 33)
+            //}
           }
 
           if (!self.reportForm) {
@@ -137,7 +139,7 @@ window.veos = (function(veos) {
 
         // if the user has made a change to the address bar, use that location
         if (veos.currentReport.get('loc_lat_from_user') && veos.currentReport.get('loc_lng_from_user')) {
-          var refinerLoc = new google.maps.LatLng(veos.currentReport.get('loc_lat_from_user'), veos.currentReport.get('loc_lng_from_user'));
+          refinerLoc = new google.maps.LatLng(veos.currentReport.get('loc_lat_from_user'), veos.currentReport.get('loc_lng_from_user'));
           refinerMap = new veos.map.Map('#refine-location-canvas', refinerLoc);
         }
         // default case - user has not made any changes to location yet
@@ -164,7 +166,7 @@ window.veos = (function(veos) {
         
         view.showLoader();
         installations.fetch({
-          success: function () {view.hideLoader()}
+          success: function () {view.hideLoader();}
         });
       })              
 
@@ -180,7 +182,7 @@ window.veos = (function(veos) {
         
         view.showLoader();
         nearbyInstallations.fetch({
-          success: function () {view.hideLoader()}
+          success: function () {view.hideLoader();}
         });
       })
 
