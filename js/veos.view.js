@@ -133,8 +133,9 @@
       // use this once we upgrade to jQuery Mobile 1.2
       //jQuery.mobile.loading( 'show', { theme: "b", text: "Submitting...", textonly: false });
 
-      if (typeof device != 'undefined' && device.uuid)
+      if (typeof device != 'undefined' && device.uuid) {
         self.model.set('contributor_id', device.uuid);
+      }
 
       self.model.save(null, {
         complete: function () {
@@ -424,8 +425,9 @@
       // use this once we upgrade to jQuery Mobile 1.2
       //jQuery.mobile.loading( 'show', { theme: "b", text: "Submitting...", textonly: false });
 
-      if (typeof device != 'undefined' && device.uuid)
+      if (typeof device != 'undefined' && device.uuid) {
         self.model.set('contributor_id', device.uuid);
+      }
 
       self.model.save(null, {
         complete: function () {
@@ -889,30 +891,16 @@
         }
         
         var thumb = "";
-        var obj = installation.get('photos');
         
-
-        // if photos are attached to the installation retrieve the thumb URL of the first photo via Photo model
+        // the installations.json now contains photo URL so this got easier and much faster
         if (installation.has('photos') && installation.get('photos').length > 0) {
-          var photoID = installation.get('photos')[0].id;
-          thumb = "<img class='list-picture photo-"+photoID+"' />";
-          
-          console.log('Trying to retrieve photo thumb URL for photo with ID: '+photoID);
-
-          var thumbPhoto = new veos.model.Photo({id: photoID});
-
-          var photoFetchSuccess = function (model, response) {
-            console.log("We made it and are about to retrieve Photo thumb URL");
-            var img = jQuery('.photo-'+model.id);
-            img.attr('src', model.thumbUrl());
-          };
-
-          // TODO: think about this since it delets all input on error and returns to map
-          var photoFetchError = function (model, response) {
-            console.error("Fetching photo model for Installation List failed with error: " +response);
-          };
-
-          thumbPhoto.fetch({success: photoFetchSuccess, error: photoFetchError});
+          var photosOfInstallation = installation.get('photos');
+          var photo = _.first(photosOfInstallation);
+          var photoID = photo.id;
+          var thumbUrl = veos.model.baseURL + photo.thumb_url;
+            
+          //console.log('Retrieve photo thumb URL: '+thumbUrl+' for photo with ID: '+photoID);
+          thumb = "<img class='list-picture photo-"+photoID+"' src='"+thumbUrl+"' />";
         }
 
         var item = jQuery("<a class='relative' href='installation-details.html?id="+installation.get('id')+"'>"+complianceLevel+thumb+buttonText+"</a>");
