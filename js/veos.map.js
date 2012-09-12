@@ -1,5 +1,5 @@
 /*jshint debug:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true */
-/*globals jQuery, google */
+/*globals jQuery, _,google */
 
 (function(veos) {
   var self = {};
@@ -62,8 +62,9 @@
   self.Map.prototype.startFollowing = function () {
     var map = this;
 
-    if (map.posWatcher)
+    if (map.posWatcher) {
       navigator.geolocation.clearWatch(this.posWatcher);
+    }
 
     
     console.log("Started following user...");
@@ -160,6 +161,7 @@
 
       var compliancePinOn;
       var compliancePinOff;
+      var compliancePin;
       if (i.get('compliance_level') === 3) {
         compliancePinOn = '/images/pin-green-on.png';
         compliancePinOff = '/images/pin-green-off.png';
@@ -218,7 +220,7 @@
     });
     // this may not be necessary (they're going to get overwritten by addInstallationMarkers immediately), but seems safer
     veos.markersArray = [];
-  }
+  };
 
   var injectThumbnail = function(installation) {
     if (installation.has('photos') && installation.get('photos').length > 0) {
@@ -248,7 +250,7 @@
     // clear the markers (set back to initial state)
     _.each(veos.markersArray, function(m) {
       m.setIcon(m.iconUnselected);
-    })
+    });
 
     // set the clicked marker as selected (necessary because the _.each will only catch markers with known owner_names)
     marker.setIcon(marker.iconSelected);    
