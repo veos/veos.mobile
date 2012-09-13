@@ -352,7 +352,7 @@
     capture: function (from) {
       var photo = this;
       var options = {
-        quality: 50,
+        quality: 40,
         destinationType: Camera.DestinationType.FILE_URI,
         encodingType: Camera.EncodingType.JPEG,
         sourceType: from,
