@@ -134,7 +134,7 @@
       //jQuery.mobile.loading( 'show', { theme: "b", text: "Submitting...", textonly: false });
 
       if (typeof device != 'undefined' && device.uuid) {
-        self.model.set('contributor_id', device.uuid);
+        //self.model.set('contributor_id', device.uuid);
       }
 
       self.model.save(null, {
