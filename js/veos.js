@@ -33,6 +33,7 @@ window.veos = (function(veos) {
       console.log("PhoneGap: DEVICE READY!!!!");
       self.initPhonegapStuff();
     });
+    self.initPhonegapStuff();
 
 
     jQuery(self).bind('haveloc', function (ev, geoloc) {
@@ -249,9 +250,14 @@ window.veos = (function(veos) {
 
       photo.on('image_capture', captureSuccess, photo);
       
+      var onTakePhotoSuccess = function () {
+        console.log("Got photo!");
+      }
+
       switch (from) {
         case 'camera':
-          photo.captureFromCamera();
+          Camera.takePhoto(onTakePhotoSuccess);
+          //photo.captureFromCamera();
           break;
         case 'gallery':
           photo.captureFromGallery();
