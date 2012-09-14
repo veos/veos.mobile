@@ -225,6 +225,18 @@ window.veos = (function(veos) {
       });
   };
 
+  // Piwik page analytics
+  self.setUpPiwik = function() {
+    var pkBaseURL = (("https:" == document.location.protocol) ? "https://piwik.surveillancerights.ca/" : "http://piwik.surveillancerights.ca/");
+    //document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+
+    try {
+      self.piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
+      piwikTracker.trackPageView();
+      piwikTracker.enableLinkTracking();
+    } catch( err ) {}
+  }
+
   // self.showModal = function(photoId) {
   //   console.log('photo clicked!');
   //   //jQuery('#photo-details-content').modal();

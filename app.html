@@ -27,23 +27,14 @@
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB75fl3V3AXVEfejWZiIclVB73SuLESB8w&amp;sensor=true"></script>        
 
         <!-- <script src="js/libs/jquery.simplemodal.1.4.2.min.js"></script> -->
-        <script src="js/libs/deps.postinit.BUNDLE.js"></script>       
+        <script src="js/libs/deps.postinit.BUNDLE.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/libs/piwik.js"></script>  
         <script type="text/javascript" charset="utf-8" src="js/veos.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/veos.map.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/veos.model.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/veos.view.js"></script>
 
             <!-- Piwik -->
-            <script type="text/javascript">
-                var pkBaseURL = (("https:" == document.location.protocol) ? "https://piwik.surveillancerights.ca/" : "http://piwik.surveillancerights.ca/");
-                document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
-                </script><script type="text/javascript">
-                try {
-                var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
-                piwikTracker.trackPageView();
-                piwikTracker.enableLinkTracking();
-                } catch( err ) {}
-            </script>
             <noscript><p><img src="http://piwik.surveillancerights.ca/piwik.php?idsite=1" style="border:0" alt="" /></p></noscript>
             <!-- End Piwik Tracking Code -->
 
@@ -51,6 +42,7 @@
             veos.init();
 
             jQuery(document).ready(function () {
+                veos.setUpPiwik();
                 if (location.hash == "") {
                     jQuery.mobile.changePage("overview-map.html");
                 }
