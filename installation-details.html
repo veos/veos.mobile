@@ -148,7 +148,8 @@
 
                             <fieldset data-role="controlgroup">
                                 <legend><b>Text of sign</b></legend>
-                                <input class="field" name="sign_text" value="" type="text" disabled="disabled" />
+                                <input class="field" name="sign_text" type="text" disabled="disabled" />
+                                <!-- why can't I make this a textarea?! -->
                             </fieldset>
                         </fieldset>
                     </div>
@@ -163,7 +164,7 @@
                         </h3>
 
                         <fieldset data-role="controlgroup">
-                            <input class="field" name="notes" type="text" disabled="disabled" ></input>
+                            <textarea class="field" name="notes" type="text" disabled="disabled" />
                         </fieldset>
                     </div>
                 </div>
@@ -171,7 +172,7 @@
             </div>
             
             <div data-theme="a" data-role="footer" class="footer-with-buttons">
-                <a data-role="button" data-theme="b" data-icon="back" data-iconpos="left" href="installations-list.html">
+                <a data-role="button" data-theme="f" data-icon="back" data-iconpos="left" href="installations-list.html">
                     Back
                 </a>
             </div>
