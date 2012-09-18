@@ -421,7 +421,7 @@
         veos.currentPhoto = new veos.model.Photo();
         new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
         
-        veos.currentPhoto.captureFromCamera();
+        veos.currentPhoto.captureFromGallery();
       },
 
       'change #photo-from-hard-drive': function (ev) {
