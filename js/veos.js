@@ -1,5 +1,5 @@
 /*jshint debug:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true */
-/*globals jQuery, google */
+/*globals jQuery, Android, google */
 
 window.veos = (function(veos) {
   var self = veos;
@@ -7,13 +7,10 @@ window.veos = (function(veos) {
   self.lastLoc = new google.maps.LatLng(43.6621614579938, -79.39527873417967); // FIXME: default hard-coded to toronto; maybe make it based on last report?
 
   self.alert = function (msg, title) {
-    if (navigator === undefined || navigator.notification === undefined) {
-      alert(msg);
+    if (typeof(Android) === 'undefined') {
+      alert(msg, title);
     } else {
-      if (title === undefined) {
-        title = "";
-      }
-      navigator.notification.alert(msg, null, title);
+      Android.showToast(msg);
     }
   };
 
@@ -28,13 +25,6 @@ window.veos = (function(veos) {
       window.location.href = "/app.html";
       return;
     }
-
-    document.addEventListener('deviceready', function() {
-      console.log("PhoneGap: DEVICE READY!!!!");
-      self.initPhonegapStuff();
-    });
-    self.initPhonegapStuff();
-
 
     jQuery(self).bind('haveloc', function (ev, geoloc) {
       console.log("Got updated gps location: ", geoloc);
@@ -224,48 +214,6 @@ window.veos = (function(veos) {
         view.model.fetch();
 
       });
-  };
-
-  // self.showModal = function(photoId) {
-  //   console.log('photo clicked!');
-  //   //jQuery('#photo-details-content').modal();
-  //   modalDialog = jQuery('#photo-details-content');
-  //   jQuery.modal(modalDialog);
-  //   //return false;    
-  // };
-
-  // // click event for photo details overlays
-  // jQuery(".photo-list-item").click(function () {
-  //   console.log('photo clicked');
-
-  // });  
-
-
-  self.initPhonegapStuff = function () {
-    veos.captureImage = function (from, photo) {
-      var captureSuccess = function () {
-        console.log("Acquired photo.");
-        photo.upload();
-      };
-
-      photo.on('image_capture', captureSuccess, photo);
-      
-      var onTakePhotoSuccess = function () {
-        console.log("Got photo!");
-      }
-
-      switch (from) {
-        case 'camera':
-          Camera.takePhoto(onTakePhotoSuccess);
-          //photo.captureFromCamera();
-          break;
-        case 'gallery':
-          photo.captureFromGallery();
-          break;
-        default:
-          console.error("'"+from+"' is not a valid source for acquiring a photo.");
-      }
-    };
   };
 
   return self;

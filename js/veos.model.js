@@ -1,5 +1,5 @@
 /*jshint sub:true, debug:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true */
-/*global Backbone, _, jQuery, Camera, FileTransfer, FileUploadOptions, google */
+/*global Backbone, _, jQuery, Android, FileTransfer, FileUploadOptions, google */
 
 (function(veos) {
   var model = {};
@@ -340,72 +340,105 @@
     nested: ['tags'],
 
     captureFromCamera: function () {
-      console.log("Trying to capture photo via camera");
-      this.capture(Camera.PictureSourceType.CAMERA);
+      this.capture("camera");
     },
 
     captureFromGallery: function () {
-      console.log("Trying to select photo from gallery");
-      this.capture(Camera.PictureSourceType.PHOTOLIBRARY);
+      this.capture("gallery");
+    },
+
+    // used for desktop browser uploads
+    captureFromFile: function (file) {
+      this.imageFile = file;
+      this.captureSuccess()
+    },
+
+    captureSuccess: function () {
+      var photo = this;
+      photo.trigger('image_capture');
     },
 
     capture: function (from) {
       var photo = this;
-      var options = {
-        quality: 50,
-        destinationType: Camera.DestinationType.FILE_URI,
-        encodingType: Camera.EncodingType.JPEG,
-        sourceType: from,
-        correctOrientation: true,
-        saveToPhotoAlbum: false // don't save photos captured by VEOS to local library
-      };
 
-      console.log('Capturing photo from source '+from+' with options: ', options);
-      navigator.camera.getPicture(
-        function (imageURL) { 
-          photo.imageURL = imageURL;
-          photo.trigger('image_capture', imageURL);
-        }, 
-        function (error) { 
-          console.error("Image capture failed: " + JSON.stringify(error));
-          photo.trigger('image_capture_error', error);
-        }, 
-        options
-      );
+      if (from == "camera")
+        console.log("Trying to select photo from gallery...");
+      else if (from == "gallery")
+        console.log("Trying to capture photo from camera...");
+      else {
+        throw "Trying to capture from unknown source!";
+      }
+
+      // NOTE: scope needs to be global for it to be callable inside android
+
+      window.androidUploadStart = function () {
+        photo.trigger('image_upload_start');
+      }
+
+      window.androidUploadError = function () {
+        photo.trigger('image_upload_error');
+      }
+
+      window.androidUploadSuccess = function (id) {
+        console.log("Image uploaded successfully.");
+      
+        photo.id = id;
+        photo.fetch({
+          success: function () {
+            console.log("Assigned id to photo: "+photo.id);
+            photo.trigger('image_upload_finish');
+          }
+        });
+      }
+
+      window.androidCaptureSuccess = function () {
+        photo.captureSuccess();
+      };
+      
+      // need to pass callback funciton name as string so that 
+      // it can be executed on the Android side
+
+      if (from == "camera")
+        Android.getPhotoFromCamera(this.url(), 'window.androidCaptureSuccess');
+      else if (from == "gallery")
+        Android.getPhotoFromGallery(this.url(), 'window.androidCaptureSuccess');
+      
     },
 
     upload: function () {
       var photo = this;
 
-      if (!photo.imageURL) {
-        throw new Error("Cannot upload photo because it does not have an imageURL! You need to capture an image before uploading.");
+      // if (!photo.imageURL) {
+      //   throw new Error("Cannot upload photo because it does not have an imageURL! You need to capture an image before uploading.");
+      // }
+      if (!photo.imageFile) {
+        throw new Error("Cannot upload photo because it does not have a imageFile property! You need to capture an image before uploading.");
       }
 
-      console.log("Uploading photo: "+photo.imageURL);
+      console.log("Uploading photo: "+photo.imageFile.name);
       photo.trigger('image_upload_start');
 
-      var options = new FileUploadOptions();
-      options.fileKey = "photo[image]";
-      options.fileName = photo.imageURL.substr(photo.imageURL.lastIndexOf('/')+1);
-      options.mimeType = "image/jpeg";
+      // var options = new FileUploadOptions();
+      // options.fileKey = "photo[image]";
+      // options.fileName = photo.imageURL.substr(photo.imageURL.lastIndexOf('/')+1);
+      // options.mimeType = "image/jpeg";
       // chunkedMode false uses more memory and might lead to crashes after some pictures
       // chunkedMode true can lead to a situation where no data is transmitted to the server
       // this seems to be fixed by setting the 6th value in transfer.upload to true (acceptSelfSignedCert)
       // while I am not sure how that affects a unencrypted http connection it seems to work
       // Sep 11, 2012 doesn't seem to work so set to false
-      options.chunkedMode = false;
+      // options.chunkedMode = false;
 
-      var success = function (res) {
-        console.log("Image uploaded successfully; "+res.bytesSent+" bytes sent.");
+      var success = function (data) {
+        console.log("Image uploaded successfully; "+data.image_file_size+" bytes uploaded.");
         
-        res.photo = JSON.parse(res.response);
-        photo.set('id', res.photo.id);
+        photo.set('id', data.id);
 
-        console.log("Assigned id to photo: "+photo.id);
+        console.log("Assigned id to photo: "+data.id);
 
-        photo.set(res.photo);
+        photo.set(data);
 
-        photo.trigger('image_upload_finish', res);
+        photo.trigger('image_upload_finish', data);
       };
 
       var failure = function (error) {
@@ -413,11 +446,28 @@
         photo.trigger('image_upload_error', error);
       };
 
-      var transfer = new FileTransfer();
-      /**
-        filePath, server, successCallback, failureCallback, options, acceptSelfSignedCert
-      **/
-      transfer.upload(photo.imageURL, photo.url(), success, failure, options, true);
+      // WARNING: This uses XHR2 to upload the file. This is not supported by older browsers.
+      //          See http://caniuse.com/xhr2 and http://stackoverflow.com/questions/4856917/jquery-upload-progress-and-ajax-file-upload/4943774#4943774
+      formData = new FormData();
+      formData.append('photo[image]', photo.imageFile);
+
+      jQuery.ajax({
+        url: photo.url(),
+        type: 'POST',
+        // xhr: function () {
+        //   myXhr = $.ajaxSettings.xhr();
+        //   if(myXhr.upload){ // if upload property exists
+        //       myXhr.upload.addEventListener('progress', progressHandlingFunction, false); // progressbar
+        //   }
+        //   return myXhr;
+        // },
+        success: success,
+        error: failure,
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false
+      }, 'json');
     },
 
     addTag: function (tag) {

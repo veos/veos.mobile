@@ -1,5 +1,5 @@
 /*jshint debug:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true */
-/*global Backbone, _, jQuery, Camera, FileTransfer, FileUploadOptions, google */
+/*global Backbone, _, jQuery, Android, FileTransfer, FileUploadOptions, google */
 
 (function(veos) {
   var self = {};
@@ -75,14 +75,30 @@
         //var from = jQuery(ev.target).data('acquire-from');
         veos.currentPhoto = new veos.model.Photo();
         new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
-        veos.captureImage('camera', veos.currentPhoto);
+
+        veos.currentPhoto.captureFromCamera();
       }, 
 
       'click #select-camera-photo-button': function (ev) {
         //var from = jQuery(ev.target).data('acquire-from');
         veos.currentPhoto = new veos.model.Photo();
         new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
-        veos.captureImage('gallery', veos.currentPhoto);
+        
+        veos.currentPhoto.captureFromGallery();
+      },
+
+
+      'change #photo-from-hard-drive': function (ev) {
+        veos.currentPhoto = new veos.model.Photo();
+        new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
+
+        var fileInput = this.$el.find('#photo-from-hard-drive');
+
+        veos.currentPhoto.on('image_capture', function (ev, photo) {
+          veos.currentPhoto.upload();
+        });
+
+        veos.currentPhoto.captureFromFile(fileInput[0].files.item(0));
       },
 
 
@@ -294,6 +310,17 @@
     render: function () {
       console.log("rendering ReportForm!");
       var self = this;
+
+      if (typeof(Android) === 'undefined') {
+        // we're in a regular browser
+        this.$el.find('.web-only').show();
+        this.$el.find('.android-only').hide();
+      } else {
+        // we're in the Android app
+        this.$el.find('.web-only').hide();
+        this.$el.find('.android-only').show();
+      }
+
       _.each(this.model.attributes, function(v, k) {
         self.$el.find('.field[name="'+k+'"]').val(self.model.get(k));
       });
@@ -385,14 +412,29 @@
         //var from = jQuery(ev.target).data('acquire-from');
         veos.currentPhoto = new veos.model.Photo();
         new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
-        veos.captureImage('camera', veos.currentPhoto);
-      }, 
+ 
+        veos.currentPhoto.captureFromCamera();
+      },
 
       'click #select-camera-photo-button': function (ev) {
         //var from = jQuery(ev.target).data('acquire-from');
         veos.currentPhoto = new veos.model.Photo();
         new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
-        veos.captureImage('gallery', veos.currentPhoto);
+        
+        veos.currentPhoto.captureFromCamera();
+      },
+
+      'change #photo-from-hard-drive': function (ev) {
+        veos.currentPhoto = new veos.model.Photo();
+        new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
+
+        var fileInput = this.$el.find('#photo-from-hard-drive');
+
+        veos.currentPhoto.on('image_capture', function (ev, photo) {
+          veos.currentPhoto.upload();
+        });
+
+        veos.currentPhoto.captureFromFile(fileInput[0].files.item(0));
       },
 
 
@@ -645,6 +687,16 @@
     render: function () {
       console.log("rendering ReportForm!");
       var self = this;
+
+      if (typeof(Android) === 'undefined') {
+        // we're in a regular browser
+        this.$el.find('.web-only').show();
+        this.$el.find('.android-only').hide();
+      } else {
+        // we're in the Android app
+        this.$el.find('.web-only').hide();
+        this.$el.find('.android-only').show();
+      }
 
       _.each(this.model.attributes, function(v, k) {
         self.$el.find('.field[name="'+k+'"]').val(self.model.get(k));
