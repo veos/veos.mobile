@@ -330,6 +330,10 @@
     height: 350px;
 }
 
+#installation-details-sign-details-container textarea {
+    height: 150px;
+}
+
 
 /**** PHOTO DETAILS OVERLAY ***/
 
