@@ -4,7 +4,17 @@
 window.veos = (function(veos) {
   var self = veos;
 
-  self.lastLoc = new google.maps.LatLng(43.6621614579938, -79.39527873417967); // FIXME: default hard-coded to toronto; maybe make it based on last report?
+  var initLastLoc = function () {
+    if (typeof(google) === 'undefined') {
+      setTimeout(initLastLoc, 500); // wait until google stuff is loaded
+    } else {
+      if (!self.lastLoc) {
+        self.lastLoc = new google.maps.LatLng(43.6621614579938, -79.39527873417967); // FIXME: default hard-coded to toronto; maybe make it based on last report?
+      }
+    }
+  };
+
+
 
   self.alert = function (msg, title) {
     if (typeof(Android) === 'undefined') {
