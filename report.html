@@ -85,12 +85,13 @@
                             <legend>Photos</legend>
 
                             <div id="camera-buttons">
-                                <a id="add-camera-photo-button" data-role="button" href="#report-page" data-icon="plus" data-iconpos="left" class="acquire-photo" data-acquire-from="camera" data-photo-of="camera">
+                                <a id="add-camera-photo-button" data-role="button" href="#report-page" data-icon="plus" data-iconpos="left" class="acquire-photo android-only" data-acquire-from="camera" data-photo-of="camera">
                                     Take Photo
                                 </a>
-                                <a id="select-camera-photo-button" data-role="button" data-icon="plus" data-iconpos="left" class="acquire-photo" data-acquire-from="gallery" data-photo-of="camera">
+                                <a id="select-camera-photo-button" data-role="button" data-icon="plus" data-iconpos="left" class="acquire-photo android-only" data-acquire-from="gallery" data-photo-of="camera">
                                     Select Photo from Gallery
                                 </a>
+                                <input type="file" name="photo-from-hard-drive" id="photo-from-hard-drive" class="web-only" />
                                 <div id="photos" class="photo-list">
                                     <!-- Images are added dynamically via camera or gallery selection -->
                                 </div>
