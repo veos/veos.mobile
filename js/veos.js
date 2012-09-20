@@ -221,8 +221,21 @@ window.veos = (function(veos) {
         
         // view.showLoader();  
         view.model.fetch();
+      })
 
-      });
+    /** privacy-compliance.html (privacy-compliance-page) **/
+      .delegate("#privacy-compliance-page", "pageshow", function(ev) {
+        var installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
+        var installation = new veos.model.Installation({id: installationId});
+
+        var view = new veos.view.PrivacyComplianceView({
+          el: ev.target,
+          model: installation
+        });
+        
+        view.showLoader();  
+        view.model.fetch();
+      });      
   };
 
   // Piwik page analytics
