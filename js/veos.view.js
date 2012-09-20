@@ -1236,21 +1236,38 @@
       var backButton = jQuery('#privacy-compliance-page .back-button');
       backButton.attr('href', 'installation-details.html?id='+installation.get('id'));
 
+      jQuery('.compliance-text').hide();
+
       var complianceButton = jQuery('#privacy-compliance-page .compliance-banner');
       if (installation.get('compliance_level')) {
         if (installation.get('compliance_level') === 1) {
           complianceButton.text('Not privacy compliant: no notification signage');
           complianceButton.addClass('compliance-low-color');
+          jQuery('#compliance-low-text').show();
         } else if (installation.get('compliance_level') === 2) {
           complianceButton.text('Not privacy compliant: missing information');
           complianceButton.addClass('compliance-medium-color');
+          jQuery('#compliance-medium-text').show();
         } else if (installation.get('compliance_level') === 3) {
           complianceButton.text('Complies with Canadian privacy regulation');
           complianceButton.addClass('compliance-high-color');
+          jQuery('#compliance-high-text').show();
         } else {
           console.log('this should never happen - no compliance level?');
         }
-      }      
+      }
+
+      var ownerName;
+      if (installation.has('owner_name')) {
+        self.$el.find('.field[name="owner_name"]').text(installation.get('owner_name'));
+      } else {
+        self.$el.find('.field[name="owner_name"]').text('Unknown Owner');
+        //self.$el.find('.field[name="owner_name"]').addClass('unknown');
+      }  
+      
+      self.$el.find('.field[name="owner_type"]').text(installation.get('owner_type'));
+      self.$el.find('.field[name="address"]').text(installation.get('loc_description'));
+
     }
   });
 
