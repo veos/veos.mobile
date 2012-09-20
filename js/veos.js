@@ -1,5 +1,5 @@
 /*jshint debug:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true */
-/*globals jQuery, Android, google */
+/*globals jQuery, Android, google, Piwik */
 
 window.veos = (function(veos) {
   var self = veos;
@@ -218,15 +218,15 @@ window.veos = (function(veos) {
 
   // Piwik page analytics
   self.setUpPiwik = function() {
-    var pkBaseURL = (("https:" == document.location.protocol) ? "https://piwik.surveillancerights.ca/" : "http://piwik.surveillancerights.ca/");
+    var pkBaseURL = "//piwik.surveillancerights.ca/";
     //document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
 
     try {
       self.piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
-      piwikTracker.trackPageView();
-      piwikTracker.enableLinkTracking();
+      self.piwikTracker.trackPageView();
+      self.piwikTracker.enableLinkTracking();
     } catch( err ) {}
-  }
+  };
 
   return self;
 })(window.veos || {});
