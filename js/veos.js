@@ -6,9 +6,11 @@ window.veos = (function(veos) {
 
   var initLastLoc = function () {
     if (typeof(google) === 'undefined') {
+      console.log("'google' is not defined... maps api probably not loaded yet... waiting 500 ms before trying again");
       setTimeout(initLastLoc, 500); // wait until google stuff is loaded
     } else {
       if (!self.lastLoc) {
+        console.log("veos.lastLoc not initialized... setting to default location")
         self.lastLoc = new google.maps.LatLng(43.6621614579938, -79.39527873417967); // FIXME: default hard-coded to toronto; maybe make it based on last report?
       }
     }
