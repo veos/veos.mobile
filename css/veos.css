@@ -339,6 +339,9 @@
     margin-top: 1%;
 }
 
+#report-notes-container textarea {
+    height: 350px;
+}
 
 
 /**** PHOTO DETAILS OVERLAY ***/
