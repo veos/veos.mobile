@@ -240,15 +240,15 @@
     width: 5.5%;
 }
 
-.compliance.high {
+.compliance-high-color {
     background-color: #87BA1A;                  /* green */
 }
 
-.compliance.medium {
+.compliance-medium-color {
     background-color: #E6CC1C;                  /* amber */
 }
 
-.compliance.low {
+.compliance-low-color {
     background-color: #BE1D23;                  /* red */
 }
 
@@ -288,9 +288,22 @@
 
 /**** INSTALLATION DETAILS CONTAINER ****/
 
-#installation-details-page .edit-button-container {
+.edit-button-container {
     float: right;
     padding: 5px 5px 0px 0px;                   /* using px = bad, but since jQuery Mobile is already full of them... */
+}
+
+.compliance-banner {
+
+    display: block;
+    /*height: 3em;*/
+    width: 102%;
+    padding: 1%;    
+    margin-left: -1%;
+    margin-bottom: 1%;
+    text-align: center;
+    text-decoration: none;
+    color: black !important;
 }
 
 #installation-details-photos-container .ui-collapsible-content {
