@@ -733,12 +733,19 @@
         //img.attr('data-model', this.model);
         img.attr('data-model', JSON.stringify(this.model.toJSON()));
         
-        // wrap a link around the picture
-        // temporarily disabled for beta release
-        //photoDetails = jQuery('<a data-role="button" href="photo-details.html?photoId='+this.model.id+'"></a>');
-        //photoDetails.append(img);
+        var href = location.href;
+        var photoDetails = jQuery('<a />');
 
-        this.$el.append(img);
+        // Only add a link to details (big picture) if on installation-details page
+        if (href.match(/installation-details.html/)) {
+          // wrap a link around the picture
+          // temporarily disabled for beta release
+          photoDetails = jQuery('<a data-role="button" href="photo-details.html?photoId='+this.model.id+'&installationId='+this.options.installationId+'"></a>');
+        }
+
+        photoDetails.append(img);
+
+        this.$el.append(photoDetails);
       }
       img.attr('src', this.model.thumbUrl());
       img.attr('alt', this.model.get('notes'));
@@ -788,7 +795,7 @@
         this.$el.append(img);
       }
       // adding URL and alt
-      img.attr('src', this.model.thumbUrl());
+      img.attr('src', this.model.bigUrl());
       img.attr('alt', this.model.get('notes'));
 
       // setting the Photo ID in the page header
@@ -1094,7 +1101,7 @@
           // img.attr('src', model.thumbUrl());
           // photoContainer.append(img);
 
-          var photoView = new PhotoView({model: model, el: photoContainer});
+          var photoView = new PhotoView({model: model, el: photoContainer, installationId: installation.get('id')});
           photoView.render();
         }
 
