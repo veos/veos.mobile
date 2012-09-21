@@ -840,7 +840,7 @@
       // check if image already exists in DOM (shouldn't at this point)
       var img = this.$el.find('#photo-'+this.model.id);
       if (img.length === 0) {
-        img = jQuery("<img class='photo-list-item' id='photo-"+this.model.id+"' />");
+        img = jQuery("<img class='photo-details-item' id='photo-"+this.model.id+"' />");
         //img.attr('data-model', this.model);
         // img.attr('data-model', JSON.stringify(this.model.toJSON()));
 

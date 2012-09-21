@@ -165,6 +165,10 @@
     /*height: auto;*/
 }
 
+.photo-details-item {
+    width: 100%;
+}
+
 .photo-thumbnail-container  {
     text-align: center;
     /*white-space: nowrap;*/
