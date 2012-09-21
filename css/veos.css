@@ -348,6 +348,17 @@
 }
 
 
+/**** PRIVACY COMPLIANCE ****/
+
+#privacy-compliance-page .owner-name {
+    font-weight: bold;
+}
+
+#privacy-compliance-page .owner_name.unknown {
+    font-style: italic;
+}
+
+
 /**** PHOTO DETAILS OVERLAY ***/
 
 /* Hiding content until modal popup */
@@ -396,4 +407,12 @@
 
 #owner-name-suggestions {
     margin: 0;
+}
+
+#photo-from-hard-drive {
+    font-size: 12pt;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
 }
