@@ -1,19 +1,28 @@
 /*jshint debug:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true */
-/*globals jQuery, google */
+/*globals jQuery, Android, google, Piwik */
 
 window.veos = (function(veos) {
   var self = veos;
 
-  self.lastLoc = new google.maps.LatLng(43.6621614579938, -79.39527873417967); // FIXME: default hard-coded to toronto; maybe make it based on last report?
+  var initLastLoc = function () {
+    if (typeof(google) === 'undefined') {
+      console.log("'google' is not defined... maps api probably not loaded yet... waiting 500 ms before trying again");
+      setTimeout(initLastLoc, 500); // wait until google stuff is loaded
+    } else {
+      if (!self.lastLoc) {
+        console.log("veos.lastLoc not initialized... setting to default location")
+        self.lastLoc = new google.maps.LatLng(43.6621614579938, -79.39527873417967); // FIXME: default hard-coded to toronto; maybe make it based on last report?
+      }
+    }
+  };
+
+
 
   self.alert = function (msg, title) {
-    if (navigator === undefined || navigator.notification === undefined) {
-      alert(msg);
+    if (typeof(Android) === 'undefined') {
+      alert(msg, title);
     } else {
-      if (title === undefined) {
-        title = "";
-      }
-      navigator.notification.alert(msg, null, title);
+      Android.showToast(msg);
     }
   };
 
@@ -28,12 +37,6 @@ window.veos = (function(veos) {
       window.location.href = "/app.html";
       return;
     }
-
-    document.addEventListener('deviceready', function() {
-      console.log("PhoneGap: DEVICE READY!!!!");
-      self.initPhonegapStuff();
-    });
-
 
     jQuery(self).bind('haveloc', function (ev, geoloc) {
       console.log("Got updated gps location: ", geoloc);
@@ -206,6 +209,13 @@ window.veos = (function(veos) {
     /** photo-details.html (photo-details-page) **/
       .delegate("#photo-details-page", "pageshow", function(ev) {
         console.log("Showing photo details page at "+window.location.href);
+        // retrieve installationId from URL
+        var installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
+        // and set it in the href of the back button
+        var backButton = jQuery('.photo-details-page-back-button');
+        backButton.attr('href', 'installation-details.html?id='+installationId);
+
+        // retrieve photoId from URL
         var photoId = window.location.href.match("[\\?&]photoId=(\\d+)")[1];
         console.log("Showing details for photo "+photoId);
 
@@ -240,51 +250,14 @@ window.veos = (function(veos) {
 
   // Piwik page analytics
   self.setUpPiwik = function() {
-    var pkBaseURL = (("https:" == document.location.protocol) ? "https://piwik.surveillancerights.ca/" : "http://piwik.surveillancerights.ca/");
+    var pkBaseURL = "//piwik.surveillancerights.ca/";
     //document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
 
     try {
       self.piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
-      piwikTracker.trackPageView();
-      piwikTracker.enableLinkTracking();
+      self.piwikTracker.trackPageView();
+      self.piwikTracker.enableLinkTracking();
     } catch( err ) {}
-  }
-
-  // self.showModal = function(photoId) {
-  //   console.log('photo clicked!');
-  //   //jQuery('#photo-details-content').modal();
-  //   modalDialog = jQuery('#photo-details-content');
-  //   jQuery.modal(modalDialog);
-  //   //return false;    
-  // };
-
-  // // click event for photo details overlays
-  // jQuery(".photo-list-item").click(function () {
-  //   console.log('photo clicked');
-
-  // });  
-
-
-  self.initPhonegapStuff = function () {
-    veos.captureImage = function (from, photo) {
-      var captureSuccess = function () {
-        console.log("Acquired photo.");
-        photo.upload();
-      };
-
-      photo.on('image_capture', captureSuccess, photo);
-      
-      switch (from) {
-        case 'camera':
-          photo.captureFromCamera();
-          break;
-        case 'gallery':
-          photo.captureFromGallery();
-          break;
-        default:
-          console.error("'"+from+"' is not a valid source for acquiring a photo.");
-      }
-    };
   };
 
   return self;
