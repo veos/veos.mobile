@@ -1122,14 +1122,16 @@
 
       if (installation.get('compliance_level')) {
         if (installation.get('compliance_level') === 1) {
-          complianceButton.text('Not privacy compliant: no notification signage');
-          complianceButton.addClass('compliance-low-color');
+          //complianceButton.text('Not privacy compliant: no notification signage');          
+          complianceButton.find('.ui-btn-text').text('Not privacy compliant: no signage');
+          complianceButton.find('.ui-btn-inner').addClass('compliance-low-color');
+          complianceButton.find('.ui-btn-inner').addClass('white');
         } else if (installation.get('compliance_level') === 2) {
-          complianceButton.text('Not privacy compliant: missing information');
-          complianceButton.addClass('compliance-medium-color');
+          complianceButton.find('.ui-btn-text').text('Not privacy compliant: missing information');
+          complianceButton.find('.ui-btn-inner').addClass('compliance-medium-color');
         } else if (installation.get('compliance_level') === 3) {
-          complianceButton.text('Complies with Canadian privacy regulation');
-          complianceButton.addClass('compliance-high-color');
+          complianceButton.find('.ui-btn-text').text('Complies with Canadian privacy regulation');
+          complianceButton.find('.ui-btn-inner').addClass('compliance-high-color');
         } else {
           console.log('this should never happen - no compliance level?');
         }
@@ -1241,16 +1243,16 @@
       var complianceButton = jQuery('#privacy-compliance-page .compliance-banner');
       if (installation.get('compliance_level')) {
         if (installation.get('compliance_level') === 1) {
-          complianceButton.text('Not privacy compliant: no notification signage');
-          complianceButton.addClass('compliance-low-color');
+          complianceButton.find('.ui-btn-text').text('Not privacy compliant: no signage');
+          complianceButton.find('.ui-btn-inner').addClass('compliance-low-color');
           jQuery('#compliance-low-text').show();
         } else if (installation.get('compliance_level') === 2) {
-          complianceButton.text('Not privacy compliant: missing information');
-          complianceButton.addClass('compliance-medium-color');
+          complianceButton.find('.ui-btn-text').text('Not privacy compliant: missing information');
+          complianceButton.find('.ui-btn-inner').addClass('compliance-medium-color');
           jQuery('#compliance-medium-text').show();
         } else if (installation.get('compliance_level') === 3) {
-          complianceButton.text('Complies with Canadian privacy regulation');
-          complianceButton.addClass('compliance-high-color');
+          complianceButton.find('.ui-btn-text').text('Complies with Canadian privacy regulation');
+          complianceButton.find('.ui-btn-inner').addClass('compliance-high-color');
           jQuery('#compliance-high-text').show();
         } else {
           console.log('this should never happen - no compliance level?');
@@ -1262,7 +1264,7 @@
         self.$el.find('.field[name="owner_name"]').text(installation.get('owner_name'));
       } else {
         self.$el.find('.field[name="owner_name"]').text('Unknown Owner');
-        //self.$el.find('.field[name="owner_name"]').addClass('unknown');
+        jQuery('#privacy-compliance-page .owner-name').addClass('unknown');
       }  
       
       self.$el.find('.field[name="owner_type"]').text(installation.get('owner_type'));
