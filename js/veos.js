@@ -16,13 +16,15 @@ window.veos = (function(veos) {
     }
   };
 
-
+  self.isAndroid = function () {
+    return typeof(Android) !== 'undefined';
+  };
 
   self.alert = function (msg, title) {
-    if (typeof(Android) === 'undefined') {
-      alert(msg, title);
-    } else {
+    if (veos.isAndroid()) {
       Android.showToast(msg);
+    } else {
+      alert(msg, title);
     }
   };
 
