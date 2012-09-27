@@ -209,6 +209,13 @@ window.veos = (function(veos) {
     /** photo-details.html (photo-details-page) **/
       .delegate("#photo-details-page", "pageshow", function(ev) {
         console.log("Showing photo details page at "+window.location.href);
+        // retrieve installationId from URL
+        var installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
+        // and set it in the href of the back button
+        var backButton = jQuery('.photo-details-page-back-button');
+        backButton.attr('href', 'installation-details.html?id='+installationId);
+
+        // retrieve photoId from URL
         var photoId = window.location.href.match("[\\?&]photoId=(\\d+)")[1];
         console.log("Showing details for photo "+photoId);
 

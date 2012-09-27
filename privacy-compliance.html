@@ -3,26 +3,29 @@
     <body>
         <div data-role="page" id="privacy-compliance-page">
             <div data-theme="a" data-role="header">
-                <span class="edit-button-container">
+<!--                 <span class="edit-button-container">
                     <a class="edit-button" data-role="button" data-theme="e" data-icon="gear" data-iconpos="right" href="">
                         Edit
                     </a>
-                </span>
+                </span> -->
                 <h3>
-                    Installation: Privacy Compliance
+                    Privacy Compliance
                 </h3>
             </div>
             <div data-role="content">
-                <a class="compliance-banner"></a>
+                <a class="compliance-banner" data-role="button" data-theme="a" disabled="disabled"></a>
+                <br />
 
                 <!-- owner info -->
                 <div>
-                    <p class="field owner-name" name="owner_name"></p>
-                    <p class="field" name="owner_type"></p>
-                    <p class="field" name="address"></p>
+                    <a class="field owner-name owner-info" name="owner_name"></a><br />
+                    <a class="field owner-info" name="owner_type"></a><br />
+                    <a class="field owner-info" name="address"></a><br />
                 </div>
 
                 <br />
+
+                <!-- Fix bugs from Andrew's email -->
 
                 <!-- variable boilerplates -->
                 <div id="compliance-low-text" class="compliance-text" disabled="disabled">
@@ -31,10 +34,9 @@
                     <div>In Canada, video surveillance operated by public bodies or for commercial purposes must be accompanied by <b>clearly visible signs</b> that provide passersby with basic information about their operation</div>
 
                     <br />
-                    <div>If you believe this information is incorrect, please edit the installation or contact us at SurveillanceRights@gmail.com</div>
+                    <div>If you believe the reported details for this installation are incorrect or incomplete, please edit the installation or contact us at SurveillanceRights@gmail.com</div>
                     <br />
-                    <div><b>We offer a $100 reward for the first person to bring a fully compliant private sector installation to our attention</b></div>                     
-
+                    <div><b>We offer a $100 reward for the first person to bring a fully compliant private sector installation to our attention</b></div>
                 </div>
 
                 <div id="compliance-medium-text" class="compliance-text" disabled="disabled">
@@ -45,7 +47,7 @@
                         <li>The purpose(s) of the surveillance</li>
                         <li>Whether recording is taking place, and how long any recordings are kept</li>
                     </ul>
-                    <div>If you believe this information is incorrect, please edit the installation or contact us at SurveillanceRights@gmail.com</div>
+                    <div>If you believe the reported details for this installation are incorrect or incomplete, please edit the installation or contact us at SurveillanceRights@gmail.com</div>
                     <br />
                     <div><b>We offer a $100 reward for the first person to bring a fully compliant private sector installation to our attention</b></div>                    
                 </div>
@@ -61,7 +63,7 @@
                         </ul>
                     </ul>
 
-                    <div>If you believe this information is incorrect, please edit the installation or contact us at SurveillanceRights@gmail.com</div>                        
+                    <div>If you believe the reported details for this installation are incorrect or incomplete, please edit the installation or contact us at SurveillanceRights@gmail.com</div>                        
                 </div>                
 
 

@@ -207,10 +207,22 @@
         map.infowindow.open(map.gmap, marker);
         highlightOwnerPins(marker, i.get('owner_name'));
       });
+
+      // binding a click event that triggers when the infowindow is closed
+      google.maps.event.addListener(map.infowindow, 'closeclick', function() {
+        _.each(veos.markersArray, function(m) {
+          m.setIcon(m.iconSelected);
+        });        
+      });
+
       marker.setMap(map.gmap);
       veos.markersArray.push(marker);
     });
   };
+
+  var closeMarker = function() {
+    console.log('it triggered');
+  }
 
   self.Map.prototype.clearInstallationMarkers = function() {
     // deletes everything in the markersArray
@@ -246,7 +258,6 @@
 
 
   var highlightOwnerPins = function(marker, ownerName) {
-
     // clear the markers (set back to initial state)
     _.each(veos.markersArray, function(m) {
       m.setIcon(m.iconUnselected);
@@ -280,7 +291,6 @@
       data: {owner_name: ownerName}
     });
   };
-
 
   /**
     Adds a draggable report marker, used for refining report location.
