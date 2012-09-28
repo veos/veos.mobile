@@ -1,5 +1,5 @@
 ## VESO Mobile - The Mobile Web app for the VEOS Project
-### Copyright (C) 2012  Andrew Clement
+### Copyright (C) 2012  Andrew Clement, [Armin Krauss](https://github.com/mackrauss "mackrauss' github profile"), [Colin McCann](https://github.com/colinmccann "Colin's github profile") and [Matt Zukowski](https://github.com/zuk "zuk's github profile")
 
 # LICENSE
 
