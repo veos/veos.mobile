@@ -1182,11 +1182,11 @@
       if (installation.get('compliance_level')) {
         if (installation.get('compliance_level') === 1) {
           //complianceButton.text('Not privacy compliant: no notification signage');          
-          complianceButton.find('.ui-btn-text').text('Not privacy compliant: no signage');
+          complianceButton.find('.ui-btn-text').text('Not compliant: no signage');
           complianceButton.find('.ui-btn-inner').addClass('compliance-low-color');
           complianceButton.find('.ui-btn-inner').addClass('white');
         } else if (installation.get('compliance_level') === 2) {
-          complianceButton.find('.ui-btn-text').text('Not privacy compliant: missing information');
+          complianceButton.find('.ui-btn-text').text('Not compliant: missing information');
           complianceButton.find('.ui-btn-inner').addClass('compliance-medium-color');
         } else if (installation.get('compliance_level') === 3) {
           complianceButton.find('.ui-btn-text').text('Complies with Canadian privacy regulation');
@@ -1302,15 +1302,15 @@
       var complianceButton = jQuery('#privacy-compliance-page .compliance-banner');
       if (installation.get('compliance_level')) {
         if (installation.get('compliance_level') === 1) {
-          complianceButton.find('.ui-btn-text').text('Not privacy compliant: no signage');
+          complianceButton.find('.ui-btn-text').text('Not compliant: no sign');
           complianceButton.find('.ui-btn-inner').addClass('compliance-low-color');
           jQuery('#compliance-low-text').show();
         } else if (installation.get('compliance_level') === 2) {
-          complianceButton.find('.ui-btn-text').text('Not privacy compliant: missing information');
+          complianceButton.find('.ui-btn-text').text('Not compliant: missing information');
           complianceButton.find('.ui-btn-inner').addClass('compliance-medium-color');
           jQuery('#compliance-medium-text').show();
         } else if (installation.get('compliance_level') === 3) {
-          complianceButton.find('.ui-btn-text').text('Complies with Canadian privacy regulation');
+          complianceButton.find('.ui-btn-text').text('Fully privacy compliant');
           complianceButton.find('.ui-btn-inner').addClass('compliance-high-color');
           jQuery('#compliance-high-text').show();
         } else {
