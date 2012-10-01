@@ -165,12 +165,12 @@
       if (i.get('compliance_level') === 'compliant') {
         compliancePinOn = '/images/pin-green-on.png';
         compliancePinOff = '/images/pin-green-off.png';
-      } else if (i.get('compliance_level') === 'missing_info') {           // FIX ME
+      } else if (i.get('compliance_level') === 'missing_info') {
         compliancePinOn = '/images/pin-yellow-on.png';
         compliancePinOff = '/images/pin-yellow-off.png';
       } else if (i.get('compliance_level') === 'min_compliant') {
-        compliancePinOn = '/images/pin-yellow-on.png';
-        compliancePinOff = '/images/pin-yellow-off.png';
+        compliancePinOn = '/images/pin-yellow-green-on.png';
+        compliancePinOff = '/images/pin-yellow-green-off.png';
       } else if (i.get('compliance_level') === 'no_sign') {
         compliancePinOn = '/images/pin-red-on.png';
         compliancePinOff = '/images/pin-red-off.png';

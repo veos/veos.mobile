@@ -247,7 +247,21 @@
 }
 
 .min-compliant-color {
-    background-color: blue;
+/* FIX ME */
+    background-image: linear-gradient(bottom, #87BA1A 44%, rgb(124,196,96) 17%, #E6CC1C 85%);
+    background-image: -o-linear-gradient(bottom, #87BA1A 44%, rgb(124,196,96) 17%, #E6CC1C 85%);
+    background-image: -moz-linear-gradient(bottom, #87BA1A 44%, rgb(124,196,96) 17%, #E6CC1C 85%);
+    background-image: -webkit-linear-gradient(bottom, #87BA1A 44%, rgb(124,196,96) 17%, #E6CC1C 85%);
+    background-image: -ms-linear-gradient(bottom, #87BA1A 44%, rgb(124,196,96) 17%, #E6CC1C 85%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.44, #87BA1A),
+        color-stop(0.17, rgb(124,196,96)),
+        color-stop(0.85, #E6CC1C)
+    );
 }
 
 .compliant-color {
