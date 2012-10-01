@@ -238,16 +238,34 @@
     width: 5.5%;
 }
 
-.compliance-high-color {
-    background-color: #87BA1A;                  /* green */
+.no-sign-color {
+    background-color: #BE1D23;                  /* red */
 }
 
-.compliance-medium-color {
+.missing-info-color {
     background-color: #E6CC1C;                  /* amber */
 }
 
-.compliance-low-color {
-    background-color: #BE1D23;                  /* red */
+.min-compliant-color {
+/* FIX ME */
+    background-image: linear-gradient(bottom, #87BA1A 44%, rgb(124,196,96) 17%, #E6CC1C 85%);
+    background-image: -o-linear-gradient(bottom, #87BA1A 44%, rgb(124,196,96) 17%, #E6CC1C 85%);
+    background-image: -moz-linear-gradient(bottom, #87BA1A 44%, rgb(124,196,96) 17%, #E6CC1C 85%);
+    background-image: -webkit-linear-gradient(bottom, #87BA1A 44%, rgb(124,196,96) 17%, #E6CC1C 85%);
+    background-image: -ms-linear-gradient(bottom, #87BA1A 44%, rgb(124,196,96) 17%, #E6CC1C 85%);
+
+    background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        left top,
+        color-stop(0.44, #87BA1A),
+        color-stop(0.17, rgb(124,196,96)),
+        color-stop(0.85, #E6CC1C)
+    );
+}
+
+.compliant-color {
+    background-color: #87BA1A;                  /* green */
 }
 
 .compliance-unknown {

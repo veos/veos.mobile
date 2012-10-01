@@ -947,12 +947,14 @@
         
         var complianceLevel;
         if (installation.get('compliance_level')) {
-          if (installation.get('compliance_level') === 1) {
-            complianceLevel = "<span class='compliance compliance-low-color'></span>";
-          } else if (installation.get('compliance_level') === 2) {
-            complianceLevel = "<span class='compliance compliance-medium-color'></span>";
-          } else if (installation.get('compliance_level') === 3) {
-            complianceLevel = "<span class='compliance compliance-high-color'></span>";
+          if (installation.get('compliance_level') === 'no_sign') {
+            complianceLevel = "<span class='compliance no-sign-color'></span>";
+          } else if (installation.get('compliance_level') === 'missing_info') {
+            complianceLevel = "<span class='compliance missing-info-color'></span>";
+          } else if (installation.get('compliance_level') === 'min_compliant') {
+            complianceLevel = "<span class='compliance min-compliant-color'></span>";
+          } else if (installation.get('compliance_level') === 'compliant') {
+            complianceLevel = "<span class='compliance compliant-color'></span>";
           } else {
             complianceLevel = "<span class='compliance-unknown'></span>";
           }
@@ -1041,12 +1043,14 @@
 
         var complianceLevel;
         if (installation.get('compliance_level')) {
-          if (installation.get('compliance_level') === 1) {
-            complianceLevel = "<span class='compliance compliance-low-color'></span>";
-          } else if (installation.get('compliance_level') === 2) {
-            complianceLevel = "<span class='compliance compliance-medium-color'></span>";
-          } else if (installation.get('compliance_level') === 3) {
-            complianceLevel = "<span class='compliance compliance-high-color'></span>";
+          if (installation.get('compliance_level') === 'no_sign') {
+            complianceLevel = "<span class='compliance no-sign-color'></span>";
+          } else if (installation.get('compliance_level') === 'missing_info') {
+            complianceLevel = "<span class='compliance missing-info-color'></span>";
+          } else if (installation.get('compliance_level') === 'min_compliant') {
+            complianceLevel = "<span class='compliance min-compliant-color'></span>";
+          } else if (installation.get('compliance_level') === 'compliant') {
+            complianceLevel = "<span class='compliance compliant-color'></span>";
           } else {
             complianceLevel = "<span class='compliance-unknown'></span>";
           }
@@ -1189,17 +1193,19 @@
       complianceButton.attr('href', 'privacy-compliance.html?installationId='+installation.get('id'));
 
       if (installation.get('compliance_level')) {
-        if (installation.get('compliance_level') === 1) {
-          //complianceButton.text('Not privacy compliant: no notification signage');          
-          complianceButton.find('.ui-btn-text').text('Not privacy compliant: no signage');
-          complianceButton.find('.ui-btn-inner').addClass('compliance-low-color');
+        if (installation.get('compliance_level') === 'no_sign') {
+          complianceButton.find('.ui-btn-text').text('Not compliant: no sign');
+          complianceButton.find('.ui-btn-inner').addClass('no-sign-color');
           complianceButton.find('.ui-btn-inner').addClass('white');
-        } else if (installation.get('compliance_level') === 2) {
-          complianceButton.find('.ui-btn-text').text('Not privacy compliant: missing information');
-          complianceButton.find('.ui-btn-inner').addClass('compliance-medium-color');
-        } else if (installation.get('compliance_level') === 3) {
-          complianceButton.find('.ui-btn-text').text('Complies with Canadian privacy regulation');
-          complianceButton.find('.ui-btn-inner').addClass('compliance-high-color');
+        } else if (installation.get('compliance_level') === 'missing_info') {
+          complianceButton.find('.ui-btn-text').text('Not compliant');
+          complianceButton.find('.ui-btn-inner').addClass('missing-info-color');
+        } else if (installation.get('compliance_level') === 'min_compliant') {
+          complianceButton.find('.ui-btn-text').text('Minimally compliant');
+          complianceButton.find('.ui-btn-inner').addClass('min-compliant-color');
+        } else if (installation.get('compliance_level') === 'compliant') {
+          complianceButton.find('.ui-btn-text').text('Fully compliant');
+          complianceButton.find('.ui-btn-inner').addClass('compliant-color');
         } else {
           console.log('this should never happen - no compliance level?');
         }
@@ -1310,18 +1316,23 @@
 
       var complianceButton = jQuery('#privacy-compliance-page .compliance-banner');
       if (installation.get('compliance_level')) {
-        if (installation.get('compliance_level') === 1) {
-          complianceButton.find('.ui-btn-text').text('Not privacy compliant: no signage');
-          complianceButton.find('.ui-btn-inner').addClass('compliance-low-color');
-          jQuery('#compliance-low-text').show();
-        } else if (installation.get('compliance_level') === 2) {
-          complianceButton.find('.ui-btn-text').text('Not privacy compliant: missing information');
-          complianceButton.find('.ui-btn-inner').addClass('compliance-medium-color');
-          jQuery('#compliance-medium-text').show();
-        } else if (installation.get('compliance_level') === 3) {
-          complianceButton.find('.ui-btn-text').text('Complies with Canadian privacy regulation');
-          complianceButton.find('.ui-btn-inner').addClass('compliance-high-color');
-          jQuery('#compliance-high-text').show();
+        if (installation.get('compliance_level') === 'no_sign') {
+          complianceButton.find('.ui-btn-text').text('Not compliant: no sign');
+          complianceButton.find('.ui-btn-inner').addClass('no-sign-color');
+          complianceButton.find('.ui-btn-inner').addClass('white');
+          jQuery('#no-sign-text').show();
+        } else if (installation.get('compliance_level') === 'missing_info') {
+          complianceButton.find('.ui-btn-text').text('Not compliant');
+          complianceButton.find('.ui-btn-inner').addClass('missing-info-color');
+          jQuery('#missing-info-text').show();
+        } else if (installation.get('compliance_level') === 'min_compliant') {
+          complianceButton.find('.ui-btn-text').text('Minimally compliant');
+          complianceButton.find('.ui-btn-inner').addClass('min-compliant-color');
+          jQuery('#min-compliant-text').show();
+        } else if (installation.get('compliance_level') === 'compliant') {
+          complianceButton.find('.ui-btn-text').text('Fully compliant');
+          complianceButton.find('.ui-btn-inner').addClass('compliant-color');
+          jQuery('#compliant-text').show();
         } else {
           console.log('this should never happen - no compliance level?');
         }
