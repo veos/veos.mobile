@@ -311,14 +311,14 @@
       console.log("rendering ReportForm!");
       var self = this;
 
-      if (typeof(Android) === 'undefined') {
-        // we're in a regular browser
-        this.$el.find('.web-only').show();
-        this.$el.find('.android-only').hide();
-      } else {
+      if (veos.isAndroid()) {
         // we're in the Android app
         this.$el.find('.web-only').hide();
         this.$el.find('.android-only').show();
+      } else {
+        // we're in a regular browser
+        this.$el.find('.web-only').show();
+        this.$el.find('.android-only').hide();
       }
 
       _.each(this.model.attributes, function(v, k) {
@@ -688,14 +688,14 @@
       console.log("rendering ReportForm!");
       var self = this;
 
-      if (typeof(Android) === 'undefined') {
-        // we're in a regular browser
-        this.$el.find('.web-only').show();
-        this.$el.find('.android-only').hide();
-      } else {
+      if (veos.isAndroid()) {
         // we're in the Android app
         this.$el.find('.web-only').hide();
         this.$el.find('.android-only').show();
+      } else {
+        // we're in a regular browser
+        this.$el.find('.web-only').show();
+        this.$el.find('.android-only').hide();
       }
 
       _.each(this.model.attributes, function(v, k) {
@@ -792,7 +792,16 @@
         if (href.match(/installation-details.html/)) {
           // wrap a link around the picture
           // temporarily disabled for beta release
-          photoDetails = jQuery('<a data-role="button" href="photo-details.html?photoId='+this.model.id+'&installationId='+this.options.installationId+'"></a>');
+          if (veos.isAndroid()) {
+            photoDetails = jQuery('<a data-role="button" href="#"></a>');
+            var photo = this.model;
+            photoDetails.click(function (ev) {
+              ev.preventDefault();
+              Android.viewPhoto(photo.bigUrl());
+            });
+          } else {
+            photoDetails = jQuery('<a data-role="button" href="photo-details.html?photoId='+this.model.id+'&installationId='+this.options.installationId+'"></a>');
+          }
         }
 
         photoDetails.append(img);
