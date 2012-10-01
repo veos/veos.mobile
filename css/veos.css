@@ -238,16 +238,20 @@
     width: 5.5%;
 }
 
-.compliance-high-color {
-    background-color: #87BA1A;                  /* green */
+.no-sign-color {
+    background-color: #BE1D23;                  /* red */
 }
 
-.compliance-medium-color {
+.missing-info-color {
     background-color: #E6CC1C;                  /* amber */
 }
 
-.compliance-low-color {
-    background-color: #BE1D23;                  /* red */
+.min-compliant-color {
+    background-color: blue;
+}
+
+.compliant-color {
+    background-color: #87BA1A;                  /* green */
 }
 
 .compliance-unknown {
