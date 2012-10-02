@@ -150,7 +150,7 @@
     veos.markersArray = [];
 
     map.infowindow = new google.maps.InfoWindow({
-      // do you seriously need a plugin for styling infowindows?!?!
+      // do you seriously need a plugin for styling infowindows?!?! Puke
       // http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/docs/examples.html
       // http://code.google.com/p/google-maps-utility-library-v3/wiki/Libraries
     });
