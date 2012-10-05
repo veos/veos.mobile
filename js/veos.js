@@ -253,16 +253,16 @@ window.veos = (function(veos) {
   };
 
   // Piwik page analytics
-  self.setUpPiwik = function() {
-    var pkBaseURL = "//piwik.surveillancerights.ca/";
-    //document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+  // self.setUpPiwik = function() {
+  //   var pkBaseURL = "//piwik.surveillancerights.ca/";
+  //   //document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
 
-    try {
-      self.piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
-      self.piwikTracker.trackPageView();
-      self.piwikTracker.enableLinkTracking();
-    } catch( err ) {}
-  };
+  //   try {
+  //     self.piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
+  //     self.piwikTracker.trackPageView();
+  //     self.piwikTracker.enableLinkTracking();
+  //   } catch( err ) {}
+  // };
 
   return self;
 })(window.veos || {});
