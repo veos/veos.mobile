@@ -15,7 +15,7 @@
                 </ul>
 
                 <div>
-                    <b>Owner:</b> who do you think this surveillance belongs to?
+                    <b>Owner:</b> who does this surveillance appear to belong to?
                 </div>
 
                 <fieldset data-role="controlgroup">
@@ -30,7 +30,30 @@
                     <label for="owner-type">Owner Type</label>
                     <select id="owner-type" class="field" name="owner_type">
                         <option value>Owner type</option>
-                        <option value="Banking">Banking</option>
+                        <option value="Retail / Shop">Retail / Shop</option>
+                        <option value="Interior of Shopping Mall">Interior of Shopping Mall</option>
+                        <option value="Restaurant / Bar">Restaurant / Bar</option>
+                        <option value="Office">Office</option>
+                        <option value="School / University">School / University</option>
+                        <option value="Hospital / Clinic">Hospital / Clinic</option>
+                        <option value="Apartment / Condo Building">Apartment / Condo Building</option>
+                        <option value="Hotel">Hotel</option>
+                        <option value="Public Transit Vehicle / Terminal">Public Transit Vehicle / Terminal</option>
+                        <option value="Taxi">Taxi</option>
+                        <option value="Government Building - Federal">Government Building - Federal</option>
+                        <option value="Government Building - Provincial">Government Building - Provincial</option>
+                        <option value="Government Building - Municipal">Government Building - Municipal</option>
+                        <option value="Police">Police</option>
+                        <option value="Traffic/Red Light Camera">Traffic / Red Light Camera</option>
+                        <option value="Parking Garage">Parking Garage</option>
+                        <option value="Private Residence">Private Residence</option>
+                        <option value="Park / Beach">Park / Beach</option>
+                        <option value="Military">Military</option>
+                        <option value="Airport">Airport</option>
+                        <option value="Port">Port</option>
+                        <option value="Stadium / Arena">Stadium / Arena</option>
+
+<!--                         <option value="Banking">Banking</option>
                         <option value="Education">Education</option>
                         <option value="Government - federal">Government - federal</option>
                         <option value="Government - provincial">Government - provincial</option>
@@ -41,7 +64,7 @@
                         <option value="Residential">Residential</option>
                         <option value="Retail / Restaurant / Bar">Retail / Restaurant / Bar</option>
                         <option value="Traffic">Traffic</option>
-                        <option value="Other">Other</option>
+                        <option value="Other">Other</option> -->
                     </select>
                 </fieldset>
 
@@ -100,10 +123,10 @@
                     </div>
                 </div>
 
-                <!-- photo-details overlay... content is hidden until photo is clicked -->
+                <!-- photo-details overlay... content is hidden until photo is clicked - CURRENTLY DESCOPED -->
                 <div id="photo-details-content">
                     <h3>
-                        Photo Details
+                        Photo
                     </h3>
                     <div data-role="fieldcontain" id="photo-details-tag-buttons">
                         <fieldset data-role="controlgroup" data-type="horizontal">
@@ -130,7 +153,7 @@
                 <div data-role="collapsible-set" data-theme="" data-content-theme="">
                     <div data-role="collapsible" data-collapsed="true" class="camera-details-container">
                         <h3>
-                            Camera details
+                            Camera
                         </h3>
                         <fieldset class="dashed-box">
                             <legend>Cameras</legend>
@@ -143,14 +166,21 @@
                                 <label class="dropdown-label" for="surveilled-space">Cameras pointed at</label>
                                 <select class="multi-field" name="surveilled_space" id="surveilled-space" data-mini="true" multiple="multiple" data-native-menu="false">
                                     <option>Cameras pointed at</option>
-                                    <option value="Mall common area">Mall common area</option>
+
+                                    <option value="Interior of Building / Vehicle">Interior of Building / Vehicle</option>
+                                    <option value="Exterior of Building/Vehicle">Exterior of Building / Vehicle</option>
+                                    <option value="Outdoor Space Accessible to Public">Outdoor Space Accessible to Public</option>
+                                    <option value="Sidewalk">Sidewalk</option>
+                                    <option value="Road">Road</option>
+
+<!--                                     <option value="Mall common area">Mall common area</option>
                                     <option value="Park">Park</option>
                                     <option value="Public space">Public space</option>
                                     <option value="Public plaza">Public plaza</option>
                                     <option value="Publicly accessible private space">Publicly accessible private space</option>
                                     <option value="Semi-public">Semi-public</option>
                                     <option value="Sidewalk">Sidewalk</option>
-                                    <option value="Other type of space">Other type of space</option>
+                                    <option value="Other type of space">Other type of space</option> -->
                                 </select>
                             </div>
                         </fieldset>
@@ -178,22 +208,53 @@
                             <label class="dropdown-label" for="sign-visibility">Visibility of sign</label>
                             <select class="field" name="sign_visibility" id="sign-visibility" data-mini="true" data-native-menu="false">
                                 <option>Visibility of sign</option>
-                                <option value="Visible">Visible</option>
-                                <option value="Obscure">Obscure</option>
+                                <option value="Easily Visible">Easily Visible</option>
+                                <option value="Easily Readable">Easily Readable</option>
+                                <option value="Easily Readable Before Entering Surveilled Area">Easily Readable Before Entering Surveilled Area</option>
+
+<!--                                 <option value="Visible">Visible</option>
+                                <option value="Obscure">Obscure</option> -->
                             </select>
                             <hr/>
                             <label class="dropdown-label" for="sign-stated-purpose">Stated purpose</label>
                             <select class="multi-field" name="sign_stated_purpose" id="sign-stated-purpose" data-mini="true" multiple="multiple" data-native-menu="false">
                                 <option>Stated purpose</option>
                                 <option value="None">None</option>
+                                <option value="Public Safety">Public Safety</option>
+                                <option value="Personal Safety">Personal Safety</option>
+                                <option value="Traffic Safety">Traffic Safety</option>
+                                <option value="Crime Prevention">Crime Prevention</option>
+                                <option value="Crime Investigation">Crime Investigation</option>
+                                <option value="Crime Prosecution">Crime Prosecution</option>
+                                <option value="Shoplifting/theft">Shoplifting / Theft</option>
+                                <option value="Vandalism">Vandalism</option>
+                                <option value="Loitering">Loitering</option>
+                                <option value="Terrorism">Terrorism</option>
+                                <option value="Analysis of Consumer Behaviour">Analysis of Consumer Behaviour</option>
+
+                                <!-- <option value="None">None</option>
                                 <option value="Crime prevention/prosecution">Crime prevention/prosecution</option>
-                                <option value="Public safety">Public safety</option>
+                                <option value="Public safety">Public safety</option> -->
                             </select>
                             <hr/>
                             <label class="dropdown-label" for="sign-properties">Stated properties</label>
                             <select class="multi-field" name="sign_properties" id="sign-properties" data-mini="true" multiple="multiple" data-native-menu="false">
                                 <option>Stated properties</option>
                                 <option value="None">None</option>
+                                <option value="Images Recorded / Archived">Images Recorded / Archived</option>
+                                <option value="Duration of Image Retention">Duration of Image Retention</option>
+                                <option value="Images Monitored Live">Images Monitored Live</option>
+                                <option value="Timely Contact Information">Timely Contact Information</option>
+                                <option value="URL for Organization’s Privacy Officer or Policy">URL for Organization’s Privacy Officer or Policy</option>
+                                <option value="Contact for Access to Imagery">Contact for Access to Imagery</option>
+                                <option value="Video or Still Photography">Video or Still Photography</option>
+                                <option value="Cameras Fixed or Pan-Tilt-Zoom">Cameras Fixed or Pan-Tilt-Zoom</option>
+                                <option value="Audio Monitoring/Recording">Audio Monitoring/Recording</option>
+                                <option value="Basis for Disclosure to Law Enforcement">Basis for Disclosure to Law Enforcement</option>
+                                <option value="Use of Automated Facial Recognition">Use of Automated Facial Recognition</option>
+                                <option value="Security Measures Used">Security Measures Used</option>
+
+<!--                                 <option value="None">None</option>
                                 <option value="# days image will be retained"># days image will be retained</option>
                                 <option value="Available to police">Available to police</option>
                                 <option value="Face blurring">Face blurring</option>
@@ -201,7 +262,7 @@
                                 <option value="Image encryption">Image encryption</option>
                                 <option value="Live monitoring">Live monitoring</option>
                                 <option value="Recording">Recording</option>
-                            </select>
+ -->                            </select>
                             <hr/>
                             <fieldset data-role="controlgroup">
                                 <label for="sign-text">Text of sign</label>
