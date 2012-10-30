@@ -142,6 +142,10 @@
     },
 
     submit: function () {
+      // clear out previous server generated error messages
+      jQuery('#error-message-container li').not('.error-message-header').remove()
+
+
       var self = this;
 
       jQuery.mobile.showPageLoadingMsg();
