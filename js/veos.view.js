@@ -1088,7 +1088,8 @@
         // create the URL to load report.html in edit mode with prefilled data
         // the installationId is retrieved in veos.js .delegate and used to load a installation model
         // and render the ReportEditForm view
-        var item = jQuery("<a class='relative' href=report.html?installationId="+ installation.get('id') +">"+complianceLevel+thumb+buttonText+"</a>");
+        // Adding a referrer so that the cancel button can lead back to installation details page / This is to fix bug 68.1
+        var item = jQuery("<a class='relative' href=report.html?installationId="+ installation.get('id') +"&ref=report-selection>"+complianceLevel+thumb+buttonText+"</a>");
         // item.data('installation', installation);        // add the installation object so that we can retrieve it in the click event
         // item.attr('data-installationId', installation.get('id'));
         var li = jQuery("<li />");
@@ -1191,7 +1192,8 @@
       // the installationId is retrieved in veos.js .delegate and used to load a installation model
       // and render the ReportEditForm view
       var editButton = jQuery('#installation-details-page .edit-button');
-      editButton.attr('href', 'report.html?installationId='+installation.get('id'));
+      // Adding a referrer so that the cancel button can lead back to installation details page / This is to fix bug 68.1
+      editButton.attr('href', 'report.html?installationId='+installation.get('id')+'&ref=installation-details');
 
       var complianceButton = jQuery('#installation-details-page .compliance-banner');
       complianceButton.attr('href', 'privacy-compliance.html?installationId='+installation.get('id'));
