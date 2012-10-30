@@ -5,15 +5,14 @@ window.veos = (function(veos) {
   var self = veos;
 
   var initLastLoc = function () {
-    if (typeof(google) === 'undefined') {
-      console.log("'google' is not defined... maps api probably not loaded yet... waiting 500 ms before trying again");
-      setTimeout(initLastLoc, 500); // wait until google stuff is loaded
-    } else {
-      if (!self.lastLoc) {
-        console.log("veos.lastLoc not initialized... setting to default location")
-        self.lastLoc = new google.maps.LatLng(43.6621614579938, -79.39527873417967); // FIXME: default hard-coded to toronto; maybe make it based on last report?
-      }
-    }
+    // There are rare occations where the phone doesn't return location information when inside
+    // a building (could be a user setting or just a temporary glitch on the phone - happened to Armin serveral times)
+    // Should this be the case the callback "haveloc" is never triggered and self.lastLoc stays undefined
+    // which leads to an error in .delegate("#report-selection-page" because undefined.coords doesn't work
+    // as a result the user get's stuck on the page with buttons not working
+    self.lastLoc = JSON.parse('{"coords": {"latitude": 43.6621614579938,"longitude": -79.39527873417967}}');
+    //self.lastLoc.coords.latitude = 43.6621614579938;
+    //lastLoc.coords.longitude = 79.39527873417967;
   };
 
   self.isAndroid = function () {
@@ -39,6 +38,9 @@ window.veos = (function(veos) {
       window.location.href = "/app.html";
       return;
     }
+
+    // important to do in order to avoid undefined error later on
+    initLastLoc();
 
     jQuery(self).bind('haveloc', function (ev, geoloc) {
       console.log("Got updated gps location: ", geoloc);
@@ -251,16 +253,16 @@ window.veos = (function(veos) {
   };
 
   // Piwik page analytics
-  self.setUpPiwik = function() {
-    var pkBaseURL = "//piwik.surveillancerights.ca/";
-    //document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+  // self.setUpPiwik = function() {
+  //   var pkBaseURL = "//piwik.surveillancerights.ca/";
+  //   //document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
 
-    try {
-      self.piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
-      self.piwikTracker.trackPageView();
-      self.piwikTracker.enableLinkTracking();
-    } catch( err ) {}
-  };
+  //   try {
+  //     self.piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
+  //     self.piwikTracker.trackPageView();
+  //     self.piwikTracker.enableLinkTracking();
+  //   } catch( err ) {}
+  // };
 
   return self;
 })(window.veos || {});

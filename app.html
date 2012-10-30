@@ -27,21 +27,21 @@
 
         <!-- <script src="js/libs/jquery.simplemodal.1.4.2.min.js"></script> -->
         <script src="js/libs/deps.postinit.BUNDLE.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/libs/piwik.js"></script>  
+        <!-- <script type="text/javascript" charset="utf-8" src="js/libs/piwik.js"></script> -->  
         <script type="text/javascript" charset="utf-8" src="js/veos.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/veos.map.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/veos.model.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/veos.view.js"></script>
 
             <!-- Piwik -->
-            <noscript><p><img src="http://piwik.surveillancerights.ca/piwik.php?idsite=1" style="border:0" alt="" /></p></noscript>
+            <!-- <noscript><p><img src="http://piwik.surveillancerights.ca/piwik.php?idsite=1" style="border:0" alt="" /></p></noscript> -->
             <!-- End Piwik Tracking Code -->
 
         <script type="text/javascript">
             veos.init();
 
             jQuery(document).ready(function () {
-                veos.setUpPiwik();
+                // veos.setUpPiwik();
                 if (location.hash == "") {
                     jQuery.mobile.changePage("overview-map.html");
                 }
