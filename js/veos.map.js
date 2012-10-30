@@ -18,8 +18,8 @@
     var center;
     var zoom;
     if (!initLoc) {
-      center = new google.maps.LatLng(43.6621614579938, -79.39527873417967);            // TODO map should be zoomed out (zoom = 3) under some conditions (when not near insts?)
-      zoom = 3;
+      center = new google.maps.LatLng(43.6621614579938, -79.39527873417967);
+      zoom = 4;
     } else {
       center = veos.map.convertGeolocToGmapLatLng(initLoc);
       zoom = 13;
@@ -150,7 +150,7 @@
     veos.markersArray = [];
 
     map.infowindow = new google.maps.InfoWindow({
-      // do you seriously need a plugin for styling infowindows?!?! Puke
+      // do you seriously need a plugin for styling infowindows?!?! Puke  
       // http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/docs/examples.html
       // http://code.google.com/p/google-maps-utility-library-v3/wiki/Libraries
     });
