@@ -1,4 +1,4 @@
-/*jshint debug:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true */
+/*jshint debug:true, noarg:true, noempty:true, eqeqeq:false, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true unused:false */
 /*global Backbone, _, jQuery, Android, FileTransfer, FileUploadOptions, google */
 
 (function(veos) {
@@ -143,7 +143,7 @@
 
     submit: function () {
       // clear out previous server generated error messages
-      jQuery('#error-message-container li').not('.error-message-header').remove()
+      jQuery('#error-message-container li').not('.error-message-header').remove();
 
 
       var self = this;
@@ -153,9 +153,9 @@
       // use this once we upgrade to jQuery Mobile 1.2
       //jQuery.mobile.loading( 'show', { theme: "b", text: "Submitting...", textonly: false });
 
-      if (typeof device != 'undefined' && device.uuid) {
-        //self.model.set('contributor_id', device.uuid);
-      }
+      // if (typeof device != 'undefined' && device.uuid) {
+      //   //self.model.set('contributor_id', device.uuid);
+      // }
 
       self.model.save(null, {
         complete: function () {
@@ -301,11 +301,49 @@
     updateChangedFields: function () {
       console.log("updating changed fields in ReportForm: "+_.keys(this.model.changed).join(", "));
       var self = this;
-      _.each(this.model.changed, function(v, k) {
-        self.$el.find('*[name="'+k+'"].field').val(self.model.get(k));
+      _.each(this.model.changed, function(v, k) {                 // this whole thing needs to be checked over. These refreshes seem wrong. Also, the following 15 lines are 'verbose'... I can only assume Matt will rewrite this in 3 lines
+        if (k === "tags") {
+          var purposesArray = [];
+          var propertiesArray = [];
+          var spacesArray = [];
+          _.each(v, function(i) {
+            if (i.tag_type === "sign_stated_purpose") {
+              purposesArray.push(i.tag);
+            } else if (i.tag_type === "sign_properties") {
+              propertiesArray.push(i.tag);
+            } else if (i.tag_type === "surveilled_space") {
+              spacesArray.push(i.tag);
+            } else {
+              console.log("unknown tag type");
+            }
+          });
+          self.$el.find('*[name="sign_stated_purpose"].multi-field').val(purposesArray);
+          self.$el.find('*[name="sign_properties"].multi-field').val(propertiesArray);
+          self.$el.find('*[name="surveilled_space"].multi-field').val(spacesArray);
+        } else if (k === "has_sign") {
+          if (self.model.get(k)) {
+            jQuery('#sign-yes').attr("checked",true).checkboxradio("refresh"); 
+            console.log('true');
+          } else if (!self.model.get(k)) {
+            jQuery('#sign-no').attr("checked",true).checkboxradio("refresh"); 
+            console.log('false');
+          }
+        }
+         else {
+          self.$el.find('*[name="'+k+'"].field').val(self.model.get(k));
+        }
+   
       });
 
-      // TODO: handle other non-trivial fields like report type, photo, etc.
+
+      jQuery('#owner-type').selectmenu('refresh');                          // why doesn't this work with classes? Would be much cleaner. Also refresh, really?
+      jQuery('#sign-visibility').selectmenu('refresh');                
+
+      jQuery('#surveilled-space').selectmenu('refresh', 'true');
+      jQuery('#sign-stated-purpose').selectmenu('refresh', 'true');
+      jQuery('#sign-properties').selectmenu('refresh', 'true');
+
+      // TODO: handle other non-trivial fields like , photo, etc.
     },
 
     /**
@@ -325,9 +363,13 @@
         this.$el.find('.android-only').hide();
       }
 
+      // TODO we need to trigger a change of the multi selector field and yes/no button to make updateChangedFields() work
+
+
       _.each(this.model.attributes, function(v, k) {
         self.$el.find('.field[name="'+k+'"]').val(self.model.get(k));
       });
+
       self.updateLocFields();
 
       // ok, this is obviously insane - but if anyone can find a better way to keep the multi-selects from growing off the screen (on the phone, please let me know)
@@ -471,9 +513,9 @@
       // use this once we upgrade to jQuery Mobile 1.2
       //jQuery.mobile.loading( 'show', { theme: "b", text: "Submitting...", textonly: false });
 
-      if (typeof device != 'undefined' && device.uuid) {
-        self.model.set('contributor_id', device.uuid);
-      }
+      // if (typeof device != 'undefined' && device.uuid) {
+      //   self.model.set('contributor_id', device.uuid);
+      // }
 
       self.model.save(null, {
         complete: function () {
@@ -777,7 +819,7 @@
     },
 
     render: function () {
-      var photoDetails;
+      //var photoDetails;
       console.log("Rendering PhotoView...");
       //this.$el.text(JSON.stringify(this.model.toJSON(), null, 2));
       console.log("Photo url: "+this.model.thumbUrl());
