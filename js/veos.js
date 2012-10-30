@@ -70,14 +70,27 @@ window.veos = (function(veos) {
     /** report.html (report-page) **/
       .delegate("#report-page", "pageshow", function(ev) {
         var installationId = 0;
+        var editReport = false;
+        var ref = '';
 
         if (window.location.href.match("[\\?&]installationId=(\\d+)")) {
           installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
+
+          // we know that we edit report and we want to change the cancel button if referrer available
+          if (installationId > 0) {
+            editReport = true;
+
+            if (window.location.href.match("[\\&&]ref=(\\w+-\\w+)")) {
+              ref = window.location.href.match("[\\&&]ref=(\\w+-\\w+)")[1];
+              // change href in the cancel button to referrer (ref) from URL
+              jQuery('#cancel-report').attr('href', ref+'.html?id='+installationId);
+            }
+          }
         }
 
         // edit report
         // if (self.currentInstallation) {
-        if (installationId > 0) {
+        if (editReport) {
           var installation = new veos.model.Installation({id: installationId});
 
           var installationSuccess = function (model, response) {
