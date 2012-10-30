@@ -1,4 +1,4 @@
-/*jshint debug:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true */
+/*jshint debug:true, noarg:true, noempty:true, eqeqeq:false, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true unused:false */
 /*global Backbone, _, jQuery, Android, FileTransfer, FileUploadOptions, google */
 
 (function(veos) {
@@ -143,7 +143,7 @@
 
     submit: function () {
       // clear out previous server generated error messages
-      jQuery('#error-message-container li').not('.error-message-header').remove()
+      jQuery('#error-message-container li').not('.error-message-header').remove();
 
 
       var self = this;
@@ -153,9 +153,9 @@
       // use this once we upgrade to jQuery Mobile 1.2
       //jQuery.mobile.loading( 'show', { theme: "b", text: "Submitting...", textonly: false });
 
-      if (typeof device != 'undefined' && device.uuid) {
-        //self.model.set('contributor_id', device.uuid);
-      }
+      // if (typeof device != 'undefined' && device.uuid) {
+      //   //self.model.set('contributor_id', device.uuid);
+      // }
 
       self.model.save(null, {
         complete: function () {
@@ -471,9 +471,9 @@
       // use this once we upgrade to jQuery Mobile 1.2
       //jQuery.mobile.loading( 'show', { theme: "b", text: "Submitting...", textonly: false });
 
-      if (typeof device != 'undefined' && device.uuid) {
-        self.model.set('contributor_id', device.uuid);
-      }
+      // if (typeof device != 'undefined' && device.uuid) {
+      //   self.model.set('contributor_id', device.uuid);
+      // }
 
       self.model.save(null, {
         complete: function () {
@@ -777,7 +777,7 @@
     },
 
     render: function () {
-      var photoDetails;
+      //var photoDetails;
       console.log("Rendering PhotoView...");
       //this.$el.text(JSON.stringify(this.model.toJSON(), null, 2));
       console.log("Photo url: "+this.model.thumbUrl());

@@ -1,5 +1,5 @@
-/*jshint debug:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true */
-/*globals jQuery, Android, google, Piwik */
+/*jshint debug:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, unused: false, undef:true, curly:true, browser: true, devel: true, jquery:true */
+/*globals jQuery, Android, google */
 
 window.veos = (function(veos) {
   var self = veos;
