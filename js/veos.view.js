@@ -142,9 +142,12 @@
     },
 
     submit: function () {
-      // clear out previous server generated error messages
+      // clear out previous server generated error messages and highlights
+      // generally redundant, but necessary due to owner_identifiable, which affects multiple otherwise unrelated fields
       jQuery('#error-message-container li').not('.error-message-header').remove();
-
+      jQuery('label').removeClass('error');
+      jQuery('.field').removeClass('error');
+      // jQuery('ui-radio').removeClass('error');
 
       var self = this;
 
@@ -817,7 +820,7 @@
       jQuery('#owner-type').selectmenu('refresh');                          // why doesn't this work with classes? Would be much cleaner. Also refresh, really?
       jQuery('#sign-visibility').selectmenu('refresh');
 
-      
+
       self.updateLocFields();
       self.renderPhotos();
 
