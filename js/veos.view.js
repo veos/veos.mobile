@@ -156,9 +156,12 @@
       // use this once we upgrade to jQuery Mobile 1.2
       //jQuery.mobile.loading( 'show', { theme: "b", text: "Submitting...", textonly: false });
 
-      // if (typeof device != 'undefined' && device.uuid) {
-      //   //self.model.set('contributor_id', device.uuid);
-      // }
+      if (typeof device != 'undefined' && device.uuid) {
+        self.model.set('contributor_id', device.uuid);
+      } else {
+        // backend changed and does MD5 hashing on contributor_id now so it need to be a string and not null
+        self.model.set('contributor_id', '');
+      }
 
       self.model.save(null, {
         complete: function () {
@@ -530,7 +533,7 @@
 
       // FIXME [matt]: this should bind to render(), which should in turn update any changed fields to match the model.
       // [colin]: all done in render now, for reasons explain there
-      this.model.on('change', _.bind(this.updateChangedFields, this));
+      //this.model.on('change', _.bind(this.updateChangedFields, this));
 
       this.$el.data('initialized', true); // check this later to prevent double-init
 
@@ -550,9 +553,12 @@
       // use this once we upgrade to jQuery Mobile 1.2
       //jQuery.mobile.loading( 'show', { theme: "b", text: "Submitting...", textonly: false });
 
-      // if (typeof device != 'undefined' && device.uuid) {
-      //   self.model.set('contributor_id', device.uuid);
-      // }
+      if (typeof device != 'undefined' && device.uuid) {
+        self.model.set('contributor_id', device.uuid);
+      } else {
+        // backend changed and does MD5 hashing on contributor_id now so it need to be a string and not null
+        self.model.set('contributor_id', '');
+      }
 
       self.model.save(null, {
         complete: function () {
@@ -716,55 +722,55 @@
       });
     },
 
-    updateChangedFields: function () {
-      console.log("updating changed fields in ReportForm: "+_.keys(this.model.changed).join(", "));
-      var self = this;
-      _.each(this.model.attributes, function(v, k) {                 // this whole thing needs to be checked over. These refreshes seem wrong. Also, the following 15 lines are 'verbose'... I can only assume Matt will rewrite this in 3 lines
-        if (k === "tags") {
-          var purposesArray = [];
-          var propertiesArray = [];
-          var spacesArray = [];
-          _.each(v, function(i) {
-            if (i.tag_type === "sign_stated_purpose") {
-              purposesArray.push(i.tag);
-            } else if (i.tag_type === "sign_properties") {
-              propertiesArray.push(i.tag);
-            } else if (i.tag_type === "surveilled_space") {
-              spacesArray.push(i.tag);
-            } else {
-              console.log("unknown tag type");
-            }
-          });
-          self.$el.find('*[name="sign_stated_purpose"].multi-field').val(purposesArray);
-          self.$el.find('*[name="sign_properties"].multi-field').val(propertiesArray);
-          self.$el.find('*[name="surveilled_space"].multi-field').val(spacesArray);
-          jQuery('#surveilled-space').selectmenu('refresh', 'true');
-          jQuery('#sign-stated-purpose').selectmenu('refresh', 'true');
-          jQuery('#sign-properties').selectmenu('refresh', 'true'); 
-        } else if (k === "has_sign") {
-          if (self.model.get(k)) {
-            jQuery('#sign-yes').attr("checked",true).checkboxradio("refresh"); 
-            console.log('true');
-          } else if (!self.model.get(k)) {
-            jQuery('#sign-no').attr("checked",true).checkboxradio("refresh"); 
-            console.log('false');
-          }
-        }
-         else {
-          self.$el.find('*[name="'+k+'"].field').val(self.model.get(k));
-        }
+    // updateChangedFields: function () {
+    //   console.log("updating changed fields in ReportForm: "+_.keys(this.model.changed).join(", "));
+    //   var self = this;
+    //   _.each(this.model.changed, function(v, k) {                 // this whole thing needs to be checked over. These refreshes seem wrong. Also, the following 15 lines are 'verbose'... I can only assume Matt will rewrite this in 3 lines
+    //     if (k === "tags") {
+    //       var purposesArray = [];
+    //       var propertiesArray = [];
+    //       var spacesArray = [];
+    //       _.each(v, function(i) {
+    //         if (i.tag_type === "sign_stated_purpose") {
+    //           purposesArray.push(i.tag);
+    //         } else if (i.tag_type === "sign_properties") {
+    //           propertiesArray.push(i.tag);
+    //         } else if (i.tag_type === "surveilled_space") {
+    //           spacesArray.push(i.tag);
+    //         } else {
+    //           console.log("unknown tag type");
+    //         }
+    //       });
+    //       self.$el.find('*[name="sign_stated_purpose"].multi-field').val(purposesArray);
+    //       self.$el.find('*[name="sign_properties"].multi-field').val(propertiesArray);
+    //       self.$el.find('*[name="surveilled_space"].multi-field').val(spacesArray);
+    //       // jQuery('#surveilled-space').selectmenu('refresh', 'true');
+    //       // jQuery('#sign-stated-purpose').selectmenu('refresh', 'true');
+    //       // jQuery('#sign-properties').selectmenu('refresh', 'true'); 
+    //     } else if (k === "has_sign") {
+    //       if (self.model.get(k)) {
+    //         jQuery('#sign-yes').attr("checked",true).checkboxradio("refresh"); 
+    //         console.log('true');
+    //       } else if (!self.model.get(k)) {
+    //         jQuery('#sign-no').attr("checked",true).checkboxradio("refresh"); 
+    //         console.log('false');
+    //       }
+    //     }
+    //      else {
+    //       self.$el.find('*[name="'+k+'"].field').val(self.model.get(k));
+    //     }
    
-      });
+    //   });
 
 
-      jQuery('#owner-type').selectmenu('refresh');                          // why doesn't this work with classes? Would be much cleaner. Also refresh, really?
-      jQuery('#sign-visibility').selectmenu('refresh');                
+    //   jQuery('#owner-type').selectmenu('refresh');                          // why doesn't this work with classes? Would be much cleaner. Also refresh, really?
+    //   jQuery('#sign-visibility').selectmenu('refresh');                
 
-      jQuery('#surveilled-space').selectmenu('refresh', 'true');
-      jQuery('#sign-stated-purpose').selectmenu('refresh', 'true');
-      jQuery('#sign-properties').selectmenu('refresh', 'true');
+    //   jQuery('#surveilled-space').selectmenu('refresh', 'true');
+    //   jQuery('#sign-stated-purpose').selectmenu('refresh', 'true');
+    //   jQuery('#sign-properties').selectmenu('refresh', 'true');
 
-    },
+    // },
 
     /**
       Triggers full update of all dynamic elements in the report page.

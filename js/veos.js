@@ -94,13 +94,16 @@ window.veos = (function(veos) {
           var installation = new veos.model.Installation({id: installationId});
 
           var installationSuccess = function (model, response) {
-            self.currentInstallation = model;                       // used to set initial location for EditReport
+            self.currentInstallation = model; // used to set initial location for EditReport
             self.currentReport = model.startAmending();
-            self.reportForm = new self.view.ReportEditForm({model: self.currentReport, el: '#report-page'});
+                      
+            self.reportForm = new self.view.ReportEditForm({el: '#report-page', model: self.currentReport});
+            self.currentReport.on('change', self.reportForm.render, self.reportForm);
+
             jQuery('#report-header-text').text('Editing the Installation');
 
             // self.reportForm is used a globally accessibly variable - don't change the its name
-            self.reportForm.render();
+            //self.reportForm.render();
           };
 
           var installationError = function (model, response) {
