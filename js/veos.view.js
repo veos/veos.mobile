@@ -1,5 +1,5 @@
 /*jshint debug:true, noarg:true, noempty:true, eqeqeq:false, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true unused:false */
-/*global Backbone, _, jQuery, Android, FileTransfer, FileUploadOptions, google */
+/*global Backbone, _, jQuery, Android, FileTransfer, FileUploadOptions, google, device */
 
 (function(veos) {
   var self = {};
