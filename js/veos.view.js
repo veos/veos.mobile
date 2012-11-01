@@ -485,12 +485,12 @@
       },          
       'change #sign-yes': function (ev) {
         console.log('sign-yes button clicked');
-        jQuery('#installation-details-sign-details-container').trigger('expand');
+        jQuery('#report-sign-details-container').trigger('expand');
         this.model.set('has_sign', true);
       },  
       'change #sign-no': function (ev) {
         console.log('sign-no button clicked');
-        jQuery('#installation-details-sign-details-container').trigger('collapse');
+        jQuery('#report-sign-details-container').trigger('collapse');
         this.model.set('has_sign', false);
       },
       'click #add-camera-photo-button': function (ev) {
