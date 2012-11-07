@@ -84,7 +84,7 @@ window.veos = (function(veos) {
           var index = window.location.href.match("[\\&&]fresh=true").index;
           var url = window.location.href;
           
-          url = url.slice(0,86) + "&fresh=false";
+          url = url.slice(0,index) + "&fresh=false";
           window.location.href = url;
           console.log(window.location.href);
         } else {
