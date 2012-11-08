@@ -88,6 +88,7 @@ window.veos = (function(veos) {
           window.location.href = url;
           console.log(window.location.href);
         } else {
+          console.log('Not a fresh start. Called again?');
           freshStart = false;
         }
 
@@ -110,9 +111,11 @@ window.veos = (function(veos) {
         // if (self.currentInstallation) {
         if (editReport) {
           if (freshStart) {
+            console.log('Fetching model for installation '+installationId+'...');
             var installation = new veos.model.Installation({id: installationId});
 
             var installationSuccess = function (model, response) {
+              console.log('...found installation now starting to amend');
               self.currentInstallation = model; // used to set initial location for EditReport
               self.currentReport = model.startAmending();
                         
