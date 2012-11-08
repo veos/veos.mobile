@@ -3,6 +3,7 @@
 
 window.veos = (function(veos) {
   var self = veos;
+  self.amendingInst = false;
 
   var initLastLoc = function () {
     // There are rare occations where the phone doesn't return location information when inside
@@ -72,25 +73,25 @@ window.veos = (function(veos) {
         var installationId = 0;
         var editReport = false;
         var ref = '';
-        var freshStart;
+        // var freshStart;
 
-        if (window.location.href.match("[\\?&]fresh=true")) {
-          freshStart = true;
-          console.log("This is a fresh start :)");
-          // The goal is to change fresh to false so that we only do the model creation and
-          // view binding if we enter for the first time (not after leaving a multipicker)
-          // Right now this only works if fresh=true is at the end. Should be changed so
-          // it can be anywhere in the URL
-          var index = window.location.href.match("[\\&&]fresh=true").index;
-          var url = window.location.href;
+        // if (window.location.href.match("[\\?&]fresh=true")) {
+        //   freshStart = true;
+        //   console.log("This is a fresh start :)");
+        //   // The goal is to change fresh to false so that we only do the model creation and
+        //   // view binding if we enter for the first time (not after leaving a multipicker)
+        //   // Right now this only works if fresh=true is at the end. Should be changed so
+        //   // it can be anywhere in the URL
+        //   var index = window.location.href.match("[\\&&]fresh=true").index;
+        //   var url = window.location.href;
           
-          url = url.slice(0,index) + "&fresh=false";
-          window.location.href = url;
-          console.log(window.location.href);
-        } else {
-          console.log('Not a fresh start. Called again?');
-          freshStart = false;
-        }
+        //   url = url.slice(0,index) + "&fresh=false";
+        //   window.location.href = url;
+        //   console.log(window.location.href);
+        // } else {
+        //   console.log('Not a fresh start. Called again?');
+        //   freshStart = false;
+        // }
 
         if (window.location.href.match("[\\?&]installationId=(\\d+)")) {
           installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
@@ -110,7 +111,8 @@ window.veos = (function(veos) {
         // edit report
         // if (self.currentInstallation) {
         if (editReport) {
-          if (freshStart) {
+          if (self.amendingInst) {
+            self.amendingInst = false;
             console.log('Fetching model for installation '+installationId+'...');
             var installation = new veos.model.Installation({id: installationId});
 
