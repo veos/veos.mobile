@@ -51,13 +51,14 @@ window.veos = (function(veos) {
     jQuery(document)
 
     /** overview-map.html (overview-map-page) **/
-      .delegate("#overview-map-page", "pageshow", function() {
-        self.trackPageView();
-        
+      .delegate("#overview-map-page", "pageshow", function(ev) {
         //if (!veos.map.overviewMap) {
           veos.map.overviewMap = new veos.map.Map('#overview-map-canvas');
         //}
         //var map = new veos.map.Map('#overview-map-canvas');
+
+        // Google Analytics
+        self.analytics(ev);
 
         // add all installation markers
         var installations = new veos.model.Installations();
@@ -75,25 +76,9 @@ window.veos = (function(veos) {
         var installationId = 0;
         var editReport = false;
         var ref = '';
-        // var freshStart;
-
-        // if (window.location.href.match("[\\?&]fresh=true")) {
-        //   freshStart = true;
-        //   console.log("This is a fresh start :)");
-        //   // The goal is to change fresh to false so that we only do the model creation and
-        //   // view binding if we enter for the first time (not after leaving a multipicker)
-        //   // Right now this only works if fresh=true is at the end. Should be changed so
-        //   // it can be anywhere in the URL
-        //   var index = window.location.href.match("[\\&&]fresh=true").index;
-        //   var url = window.location.href;
-          
-        //   url = url.slice(0,index) + "&fresh=false";
-        //   window.location.href = url;
-        //   console.log(window.location.href);
-        // } else {
-        //   console.log('Not a fresh start. Called again?');
-        //   freshStart = false;
-        // }
+        
+        // Google Analytics
+        self.analytics(ev);
 
         if (window.location.href.match("[\\?&]installationId=(\\d+)")) {
           installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
@@ -179,7 +164,7 @@ window.veos = (function(veos) {
 
   
     /** refine-location.html (refine-location-page) **/
-      .delegate("#refine-location-page", "pageshow", function() {
+      .delegate("#refine-location-page", "pageshow", function(ev) {
         if (!veos.reportForm) {
           console.error("Cannot refine location because there is no report currently in progress.");
           jQuery.mobile.changePage("report.html");
@@ -188,6 +173,9 @@ window.veos = (function(veos) {
 
         var refinerMap;
         var refinerLoc;
+
+        // Google Analytics
+        self.analytics(ev);
 
         // if the user has made a change to the address bar, use that location
         if (veos.currentReport.get('loc_lat_from_user') && veos.currentReport.get('loc_lng_from_user')) {
@@ -211,6 +199,9 @@ window.veos = (function(veos) {
       .delegate("#installations-list-page", "pageshow", function(ev) {
         var installations = new veos.model.Installations();
 
+        // Google Analytics
+        self.analytics(ev);
+
         var view = new veos.view.InstallationList({
           el: ev.target,
           collection: installations
@@ -226,6 +217,9 @@ window.veos = (function(veos) {
       .delegate("#report-selection-page", "pageshow", function(ev) {
         // fetch instalations ordered by closest to furtherest 
         var nearbyInstallations = new veos.model.NearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude, 0.15);           // TODO I'm pretty sure this is not the right way to access these
+
+        // Google Analytics
+        self.analytics(ev);
 
         var view = new veos.view.InstallationListReport({
           el: ev.target,
@@ -244,6 +238,9 @@ window.veos = (function(veos) {
         var installationId = window.location.href.match("[\\?&]id=(\\d+)")[1];
         console.log("Showing details for installation "+installationId);
 
+        // Google Analytics
+        self.analytics(ev);
+
         var installation = new veos.model.Installation({id: installationId});
 
         var view = new veos.view.InstallationDetails({
@@ -258,6 +255,10 @@ window.veos = (function(veos) {
     /** photo-details.html (photo-details-page) **/
       .delegate("#photo-details-page", "pageshow", function(ev) {
         console.log("Showing photo details page at "+window.location.href);
+
+        // Google Analytics
+        self.analytics(ev);
+
         // retrieve installationId from URL
         var installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
         // and set it in the href of the back button
@@ -287,6 +288,9 @@ window.veos = (function(veos) {
         var installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
         var installation = new veos.model.Installation({id: installationId});
 
+        // Google Analytics
+        self.analytics(ev);
+
         var view = new veos.view.PrivacyComplianceView({
           el: ev.target,
           model: installation
@@ -294,23 +298,19 @@ window.veos = (function(veos) {
         
         view.showLoader();  
         view.model.fetch();
-      });      
+      });
+
   };
 
-  // Google Analytics
-  self.trackPageView = function() {
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-37322083-2']);
-    _gaq.push(['_setDomainName', 'watch.surveillancerights.ca']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
+  self.analytics = function (ev) {
+    try {
+      veos._gaq.push( ['_trackPageview', ev.target.id] );
+      console.log('Recorded Google Analytics data for page: ' + ev.target.id);
+    } catch(err) {
+      console.err('Unable to record Google Analytics data for page: ' + ev.target.id);
+    }
   }
-       
+
   // Piwik page analytics
   // self.setUpPiwik = function() {
   //   var pkBaseURL = "//piwik.surveillancerights.ca/";
