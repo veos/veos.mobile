@@ -58,7 +58,7 @@ window.veos = (function(veos) {
         //var map = new veos.map.Map('#overview-map-canvas');
 
         // Google Analytics
-        self.analytics(ev);
+        // self.analytics(ev);
 
         // add all installation markers
         var installations = new veos.model.Installations();
@@ -78,7 +78,7 @@ window.veos = (function(veos) {
         var ref = '';
         
         // Google Analytics
-        self.analytics(ev);
+        // self.analytics(ev);
 
         if (window.location.href.match("[\\?&]installationId=(\\d+)")) {
           installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
@@ -175,7 +175,7 @@ window.veos = (function(veos) {
         var refinerLoc;
 
         // Google Analytics
-        self.analytics(ev);
+        // self.analytics(ev);
 
         // if the user has made a change to the address bar, use that location
         if (veos.currentReport.get('loc_lat_from_user') && veos.currentReport.get('loc_lng_from_user')) {
@@ -200,7 +200,7 @@ window.veos = (function(veos) {
         var installations = new veos.model.Installations();
 
         // Google Analytics
-        self.analytics(ev);
+        // self.analytics(ev);
 
         var view = new veos.view.InstallationList({
           el: ev.target,
@@ -219,7 +219,7 @@ window.veos = (function(veos) {
         var nearbyInstallations = new veos.model.NearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude, 0.15);           // TODO I'm pretty sure this is not the right way to access these
 
         // Google Analytics
-        self.analytics(ev);
+        // self.analytics(ev);
 
         var view = new veos.view.InstallationListReport({
           el: ev.target,
@@ -239,7 +239,7 @@ window.veos = (function(veos) {
         console.log("Showing details for installation "+installationId);
 
         // Google Analytics
-        self.analytics(ev);
+        // self.analytics(ev);
 
         var installation = new veos.model.Installation({id: installationId});
 
@@ -257,7 +257,7 @@ window.veos = (function(veos) {
         console.log("Showing photo details page at "+window.location.href);
 
         // Google Analytics
-        self.analytics(ev);
+        // self.analytics(ev);
 
         // retrieve installationId from URL
         var installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
@@ -289,7 +289,7 @@ window.veos = (function(veos) {
         var installation = new veos.model.Installation({id: installationId});
 
         // Google Analytics
-        self.analytics(ev);
+        // self.analytics(ev);
 
         var view = new veos.view.PrivacyComplianceView({
           el: ev.target,
@@ -302,14 +302,14 @@ window.veos = (function(veos) {
 
   };
 
-  self.analytics = function (ev) {
-    try {
-      veos._gaq.push( ['_trackPageview', ev.target.id] );
-      console.log('Recorded Google Analytics data for page: ' + ev.target.id);
-    } catch(err) {
-      console.err('Unable to record Google Analytics data for page: ' + ev.target.id);
-    }
-  }
+  // self.analytics = function (ev) {
+  //   try {
+  //     veos._gaq.push( ['_trackPageview', ev.target.id] );
+  //     console.log('Recorded Google Analytics data for page: ' + ev.target.id);
+  //   } catch(err) {
+  //     console.err('Unable to record Google Analytics data for page: ' + ev.target.id);
+  //   }
+  // }
 
   // Piwik page analytics
   // self.setUpPiwik = function() {

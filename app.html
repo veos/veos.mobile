@@ -35,10 +35,11 @@
 
         <!-- Google Analytics -->
         <script type="text/javascript">
-          veos._gaq = veos._gaq || [];
-          veos._gaq.push(['_setAccount', 'UA-37322083-2']);
-          veos._gaq.push(['_setDomainName', 'watch.surveillancerights.ca']);
-          veos._gaq.push(['_trackPageview']);
+          var _gaq = _gaq || [];
+          // veos._gaq.push(['_setAccount', 'UA-37322083-2']);
+          // veos._gaq.push(['_setDomainName', 'watch.surveillancerights.ca']);
+          // veos._gaq.push(['_gat._anonymizeIp']);
+          // veos._gaq.push(['_trackPageview']);
 
           (function() {
             var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
@@ -59,14 +60,30 @@
         </script>
     </head>
     <body>
-        <!-- <script type="text/javascript">
-            jQuery('[data-role=page]').on('pageshow', function (event, ui) {
-              try {
-                _gaq.push( ['_trackPageview', event.target.id] );
-                console.log(event.target.id);
-              } catch(err) {
-              }
+        <script type="text/javascript">
+            // jQuery('[data-role=page]').on('pageshow', function (event, ui) {
+            //   try {
+            //     _gaq.push( ['_trackPageview', event.target.id] );
+            //     console.log(event.target.id);
+            //   } catch(err) {
+            //   }
+            // });
+            jQuery('[data-role=page]').live('pageshow', function (ev, ui) {
+                try {
+                    _gaq.push(['_setAccount', 'UA-37322083-2']);
+
+                    hash = location.hash;
+
+                    if (hash) {
+                        _gaq.push(['_trackPageview', hash.substr(1)]);
+                        console.log('Recorded Google Analytics data for page: ' + hash.substr(1));
+                    } else {
+                        _gaq.push(['_trackPageview']);
+                    }
+                } catch(err) {
+                    console.warn('Unable to record Google Analytics data for page: ' + ev.target.id);
+                }
             });
-        </script> -->
+        </script>
     </body>
 </html>
