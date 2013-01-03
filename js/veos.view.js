@@ -1366,44 +1366,45 @@
       
       _.each(installation.attributes, function(v, k) {
         // base case for filling in the fields
-        self.$el.find('.field[name="'+k+'"]').val(installation.get(k));
+        self.$el.find('.field[name="'+k+'"]').text(installation.get(k));
 
         // for nested stuff that isn't photos (latest report, tags, etc)
         if (k === "latest_report") {
           _.each(v, function(subv, subk) {
             if (subk === "has_sign") {
               if (installation.get('latest_report')[subk] === true) {
-                self.$el.find('.field[name="has_sign"]').val('yes');
+                self.$el.find('.field[name="has_sign"]').text('yes');
               } else {
-                self.$el.find('.field[name="has_sign"]').val('no');
+                self.$el.find('.field[name="has_sign"]').text('no');
               }
             } else {
-              self.$el.find('.field[name="'+subk+'"]').val(installation.get('latest_report')[subk]);  
+              self.$el.find('.field[name="'+subk+'"]').text(installation.get('latest_report')[subk]);  
             }
           });
         }
         else if (k === "tags") {
-          var purposesArray = [];
-          var propertiesArray = [];
-          var spacesArray = [];
+          var purposesString = '';
+          var propertiesString = '';
+          var spacesString = '';
           _.each(v, function(i) {
             if (i.tag_type === "sign_stated_purpose") {
-              purposesArray.push(i.tag);
+              purposesString += i.tag + ', ';
             } else if (i.tag_type === "sign_properties") {
-              propertiesArray.push(i.tag);
+              propertiesString += i.tag + ', ';
             } else if (i.tag_type === "surveilled_space") {
-              spacesArray.push(i.tag);
+              spacesString += i.tag + ', ';
             } else {
               console.log("unknown tag type");
             }
           });
-          self.$el.find('*[name="sign_stated_purpose"].field').val(purposesArray);
-          self.$el.find('*[name="sign_properties"].field').val(propertiesArray);
-          self.$el.find('*[name="surveilled_space"].field').val(spacesArray);
+          purposesString = purposesString.slice(0, -2);
+          propertiesString = propertiesString.slice(0, -2);
+          spacesString = spacesString.slice(0, -2);
+          self.$el.find('*[name="sign_stated_purpose"].field').text(purposesString);
+          self.$el.find('*[name="sign_properties"].field').text(propertiesString);
+          self.$el.find('*[name="surveilled_space"].field').text(spacesString);
         }
 
-
-        
       });
 
     }

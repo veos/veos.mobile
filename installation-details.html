@@ -16,18 +16,20 @@
                 <a class="compliance-banner" data-role="button" data-theme="a" data-icon="arrow-r" data-iconpos="right" href=""></a>
                 <br />
 
-                <fieldset data-role="controlgroup">
-                    <legend><b>Owner Name</b></legend>
-                    <input class="field" name="owner_name" value="" type="text" disabled="disabled" />
-                </fieldset>
-                <fieldset data-role="controlgroup">
-                    <legend><b>Owner Type</b></legend>
-                    <input class="field" name="owner_type" value="" type="text" disabled="disabled" />
-                </fieldset>
-                <fieldset data-role="controlgroup">
-                    <legend><b>Operator Name</b></legend>
-                    <input class="field" name="operator_name" value="" type="text" disabled="disabled" />
-                </fieldset>
+                <div>
+                    <b>Owner Name: </b>
+                    <span class="field" name="owner_name"></span>
+                </div>
+                <br />
+                <div>
+                    <b>Owner Type: </b>
+                    <span class="field" name="owner_type" />
+                </div>
+                <br />
+                <div>
+                    <b>Operator Name: </b>
+                    <span class="field" name="operator_name" />
+                </div>
 
                 <hr/>
                 
@@ -37,12 +39,10 @@
                     </h3>
                     <div class="map-thumbnail-container">
                     </div>
-
-                    <div data-role="fieldcontain">
-                        <fieldset data-role="controlgroup">
-                            <legend for="location-address"><b>Address or Place</b></legend>
-                            <input class="field" name="loc_description" value="" type="text" disabled="disabled" />
-                        </fieldset>
+                    <br />
+                    <div>
+                        <b>Address or Place: </b>
+                        <span class="field" name="loc_description" />
                     </div>
                 </div>
 
@@ -99,17 +99,13 @@
                         <fieldset class="dashed-box">
                             <legend>Cameras</legend>
                             <div>
-                                <fieldset data-role="controlgroup">
-                                    <legend for="camera-count"><b>Number of cameras</b></legend>
-                                    <input class="field" name="camera_count" disabled="disabled" />
-                                </fieldset>
-                                
-                                <hr/>
-
-                                <fieldset data-role="controlgroup">
-                                    <legend for="surveilled-space"><b>Cameras pointed at</b></legend>
-                                    <input class="field multi-field" name="surveilled_space" value="" type="text" disabled="disabled" />
-                                </fieldset>
+                                <b>Number of cameras: </b>
+                                <span class="field" name="camera_count" />
+                            </div>
+                            <br />
+                            <div>
+                                <b>Cameras pointed at: </b>
+                                <span class="field multi-field" name="surveilled_space" />
                             </div>
                         </fieldset>
                     </div>
@@ -117,10 +113,10 @@
 
                 <hr/>
 
-                <fieldset data-role="controlgroup">
-                    <legend><b>Sign observed</b></legend>
-                    <input class="field" name="has_sign" type="text" disabled="disabled" />
-                </fieldset>
+                <div>
+                    <b>Sign observed: </b>
+                    <span class="field" name="has_sign" />
+                </div>
 
                 <div data-role="collapsible-set" data-theme="" data-content-theme="">
                     <div data-role="collapsible" data-collapsed="false" id="installation-details-sign-details-container">
@@ -131,30 +127,22 @@
                         <fieldset class="dashed-box">
                             <legend>Sign</legend>
 
-                            <fieldset data-role="controlgroup">
-                                <legend><b>Visibility of sign</b></legend>
-                                <input class="field" name="sign_visibility" value="" type="text" disabled="disabled" />
-                            </fieldset>
-                            <hr/>                                
-
-                            <fieldset data-role="controlgroup">
-                                <legend><b>Stated purpose</b></legend>
-                                <input class="field" name="sign_stated_purpose" value="" type="text" disabled="disabled" />
-                            </fieldset>
-                            <hr/>                                
-
-                            <fieldset data-role="controlgroup">
-                                <legend><b>Stated properties</b></legend>
-                                <input class="field" name="sign_properties" value="" type="text" disabled="disabled" />
-                            </fieldset>
-                            <hr/>
-
-                            <fieldset data-role="controlgroup">
-                                <legend><b>Text of sign</b></legend>
-                                <!-- <input class="field" name="sign_text" type="text" disabled="disabled" /> -->
-                                <textarea class="field" name="sign_text" type="text" disabled="disabled"></textarea>
-                                <!-- why can't I make this a textarea?! -->
-                            </fieldset>
+                            <div data-role="controlgroup">
+                                <b>Visibility of sign: </b>
+                                <span class="field" name="sign_visibility" />
+                            </div>
+                            <div data-role="controlgroup">
+                                <b>Stated purpose: </b>
+                                <span class="field" name="sign_stated_purpose" />
+                            </div>
+                            <div data-role="controlgroup">
+                                <b>Stated properties: </b>
+                                <span class="field" name="sign_properties" />
+                            </div>
+                            <div data-role="controlgroup">
+                                <b>Text of sign: </b>
+                                <span class="field" name="sign_text" />
+                            </div>
                         </fieldset>
                     </div>
                 </div>
@@ -163,13 +151,8 @@
 
                 <div data-role="collapsible-set" data-theme="" data-content-theme="">
                     <div data-role="collapsible" data-collapsed="false" id="report-notes-container">
-                        <h3>
-                            Notes
-                        </h3>
-
-                        <fieldset data-role="controlgroup">
-                            <textarea class="field" name="notes" type="text" disabled="disabled"></textarea>
-                        </fieldset>
+                        <b>Notes: </b>
+                        <span class="field" name="notes" />
                     </div>
                 </div>
 
