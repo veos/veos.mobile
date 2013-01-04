@@ -197,12 +197,6 @@
     margin-left: 8%;
 }
 
-/* also used for installation-details */
-.camera-details-container {
-    /*text-align: center;*/
-    white-space: nowrap;
-}
-
 #report-sign-details-container {
     /*text-align: center;*/
     white-space: nowrap;    
@@ -321,46 +315,27 @@
     color: white !important;
 }
 
-#installation-details-photos-container .ui-collapsible-content {
+#installation-details-page .owner-name-container {
+    font-size: 30px;
+}
+
+#installation-details-page .owner-type-container {
+    font-weight: bold;
+}
+
+#installation-details-page .last-updated-container {
+    text-align: right;
+}
+
+#installation-details-page .photos-container .ui-collapsible-content {
     text-align: center;
     /*white-space: nowrap;*/
 }
 
-#installation-details-page .dashed-box {
-    border: 3px dashed #bbb;
-    border-radius: 10px 10px 10px 10px;
-    display: inline-block;
-    padding: 6px;
-    width: 90%;
-    vertical-align: top;
-}
-
-#installation-details-page .dashed-box legend {
-    color: #999;
-    font-size: 21px;
-    font-weight: bold;
-    padding-left: 9px;
-    padding-right: 9px;
-    margin-left: 8%;
-}
-
-#installation-details-sign-details-container {
+#installation-details-page .location-container {
     text-align: center;
-    white-space: nowrap;    
 }
 
-#installation-details-page .report-details-text-container {
-    margin-left: 1%;
-    margin-top: 1%;
-}
-
-#report-notes-container textarea {
-    height: 350px;
-}
-
-#installation-details-sign-details-container textarea {
-    height: 150px;
-}
 
 
 /**** PRIVACY COMPLIANCE ****/

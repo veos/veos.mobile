@@ -1377,12 +1377,20 @@
           _.each(v, function(subv, subk) {
             if (subk === "has_sign") {
               if (installation.get('latest_report')[subk] === true) {
-                self.$el.find('.field[name="has_sign"]').text('yes');
+                self.$el.find('.field[name="has_sign"]').text('observed');
               } else {
-                self.$el.find('.field[name="has_sign"]').text('no');
+                self.$el.find('.field[name="has_sign"]').text('not observed');
               }
+            } else if (subk === "created_at") {
+              // can we have the post create a Date object like in CK, would deuglify these slices
+              self.$el.find('.field[name="created_at"]').text('Last update: ' + subv.slice(11, -1) + ', ' + subv.slice(0, -10))
             } else {
-              self.$el.find('.field[name="'+subk+'"]').text(installation.get('latest_report')[subk]);  
+              // this is the case for all of the latest report stuff (ie most stuff)
+              if (subv) {
+                self.$el.find('.field[name="'+subk+'"]').text(installation.get('latest_report')[subk]);
+              } else {
+                self.$el.find('.field[name="'+subk+'"]').text("not reported");
+              }
             }
           });
         }
