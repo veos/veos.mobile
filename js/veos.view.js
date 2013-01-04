@@ -1277,7 +1277,7 @@
 
     createPointDetailsMap: function(installation) {
       // note: higher zoom level
-      var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=17&size=150x150&scale=2&sensor=true&center=" + installation.get('loc_lat') + "," + installation.get('loc_lng');
+      var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" + installation.get('loc_lat') + "," + installation.get('loc_lng');
       staticMapCriteria += "&markers=size:small%7C" + installation.get('loc_lat') + ',' + installation.get('loc_lng');
       
       var mapThumbnail = jQuery('<img class="map-thumbnail" />');

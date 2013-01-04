@@ -199,12 +199,12 @@
 
 /* also used for installation-details */
 .camera-details-container {
-    text-align: center;
+    /*text-align: center;*/
     white-space: nowrap;
 }
 
 #report-sign-details-container {
-    text-align: center;
+    /*text-align: center;*/
     white-space: nowrap;    
 }
 
