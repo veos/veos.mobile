@@ -136,9 +136,11 @@ window.veos = (function(veos) {
               self.currentReport.set('loc_lng_from_gps', initLoc.lng());
               self.currentReport.set('loc_lat_from_gps', initLoc.lat());
             }
-            //else {
-              // if we're coming straight from the splash page, we need to locate the user. I think this is the place to do it (bug 33)
-            //}
+
+            // Armin: Fixing bug where loc_description_from_google is now set in view
+            // I think this is due to missing change listener triggering render (did this like we do it above for the editing)
+            self.reportForm = new self.view.ReportForm({el: '#report-page', model: self.currentReport});
+            self.currentReport.on('change', self.reportForm.render, self.reportForm);
           }
 
           if (!self.reportForm) {
