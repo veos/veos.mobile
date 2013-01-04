@@ -76,26 +76,6 @@ window.veos = (function(veos) {
         var installationId = 0;
         var editReport = false;
         var ref = '';
-// <<<<<<< HEAD
-//         var freshStart;
-
-//         if (window.location.href.match("[\\?&]fresh=true")) {
-//           freshStart = true;
-//           console.log("This is a fresh start :)");
-//           // The goal is to change fresh to false so that we only do the model creation and
-//           // view binding if we enter for the first time (not after leaving a multipicker)
-//           // Right now this only works if fresh=true is at the end. Should be changed so
-//           // it can be anywhere in the URL
-//           var index = window.location.href.match("[\\&&]fresh=true").index;
-//           var url = window.location.href;
-          
-//           url = url.slice(0,86) + "&fresh=false";
-//           window.location.href = url;
-//           console.log(window.location.href);
-//         } else {
-//           freshStart = false;
-//         }
-// =======
         
         // Google Analytics
         // self.analytics(ev);
@@ -118,9 +98,6 @@ window.veos = (function(veos) {
         // edit report
         // if (self.currentInstallation) {
         if (editReport) {
-// <<<<<<< HEAD
-//           if (freshStart) {
-// =======
           if (self.amendingInst) {
             self.amendingInst = false;
             console.log('Fetching model for installation '+installationId+'...');
