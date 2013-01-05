@@ -304,53 +304,38 @@
       });
     },
 
-    //ChangedFields: function () {
-      //console.log("updating changed fields in ReportForm: "+_.keys(this.model.changed).join(", "));
-      // var self = this;updateCh
-      // _.each(this.model.attributes, function(v, k) {
-      //   if (k === "tags") {
-      //     var purposesArray = [];
-      //     var propertiesArray = [];
-      //     var spacesArray = [];
-      //     _.each(v, function(i) {
-      //       if (i.tag_type === "sign_stated_purpose") {
-      //         purposesArray.push(i.tag);
-      //       } else if (i.tag_type === "sign_properties") {
-      //         propertiesArray.push(i.tag);
-      //       } else if (i.tag_type === "surveilled_space") {
-      //         spacesArray.push(i.tag);
-      //       } else {
-      //         console.log("unknown tag type");
-      //       }
-      //     });
-      //     self.$el.find('*[name="sign_stated_purpose"].multi-field').val(purposesArray);
-      //     self.$el.find('*[name="sign_properties"].multi-field').val(propertiesArray);
-      //     self.$el.find('*[name="surveilled_space"].multi-field').val(spacesArray);
-      //   } else if (k === "has_sign") {
-      //     if (self.model.get(k)) {
-      //       jQuery('#sign-yes').attr("checked",true).checkboxradio("refresh"); 
-      //       console.log('true');
-      //     } else if (!self.model.get(k)) {
-      //       jQuery('#sign-no').attr("checked",true).checkboxradio("refresh"); 
-      //       console.log('false');
-      //     }
-      //   }
-      //    else {
-      //     self.$el.find('*[name="'+k+'"].field').val(self.model.get(k));
-      //   }
-   
-      // });
+    renderPhotos: function () {
+      var photoContainer = this.$el.find('#photos');
+      var report = this.model;
 
+      if (veos.currentPhoto) {
+        _.each(veos.currentPhoto, function (p) {
+          if (p.id != null) { // trying to avoid that empty picture is added
+            // create the Photo model for the current photo ID
+            var photo = new veos.model.Photo({id: p.id});
+            // associate a PhotoView with the Photo model
+            var photoView = new PhotoView({model: photo, el: photoContainer});
 
-      // jQuery('#owner-type').selectmenu('refresh');                          // why doesn't this work with classes? Would be much cleaner. Also refresh, really?
-      // jQuery('#sign-visibility').selectmenu('refresh');                
+            var photoFetchSuccess = function (model, response) {
+              console.log("Add the photo model to the report photos collection");
+              if (!report.photos) {
+                report.photos = [];
+              }
+              report.photos.push(model);
+            };
 
-      // jQuery('#surveilled-space').selectmenu('refresh', 'true');
-      // jQuery('#sign-stated-purpose').selectmenu('refresh', 'true');
-      // jQuery('#sign-properties').selectmenu('refresh', 'true');
+            // TODO: think about this since it delets all input on error and returns to map
+            var photoFetchError = function (model, response) {
+              console.error("Fetching photo model for Installation List failed with error: " +response);
+              veos.alert("Problem fetching photo model data. This might create problems later on");
+            };
 
-      // TODO: handle other non-trivial fields like , photo, etc.
-    //},
+            // fetch the model data from the backend (this should trigger PhotoView render and show the picture)
+            photo.fetch({success: photoFetchSuccess, error: photoFetchError});
+          }
+        });
+      }
+    },
 
     /**
       Triggers full update of all dynamic elements in the report page.
@@ -410,6 +395,7 @@
       jQuery('#sign-visibility').selectmenu('refresh');
 
       self.updateLocFields();
+      self.renderPhotos();
 
       // ok, this is obviously insane - but if anyone can find a better way to keep the multi-selects from growing off the screen (on the phone, please let me know)
       // and this doesn't actually work well with screen rotation (since it doesn't rerender)
@@ -776,7 +762,7 @@
       Triggers full update of all dynamic elements in the report page.
     **/
     render: function () {
-      console.log("rendering ReportForm!");
+      console.log("rendering ReportEditForm!");
       var self = this;
 
       if (veos.isAndroid()) {
@@ -866,6 +852,34 @@
 
           // fetch the model data from the backend (this should trigger PhotoView render and show the picture)
           photo.fetch({success: photoFetchSuccess, error: photoFetchError});
+        });
+      }
+
+      if (veos.currentPhoto) {
+        _.each(veos.currentPhoto, function (p) {
+          if (p.id != null) { // trying to avoid that empty picture is added
+            // create the Photo model for the current photo ID
+            var photo = new veos.model.Photo({id: p.id});
+            // associate a PhotoView with the Photo model
+            var photoView = new PhotoView({model: photo, el: photoContainer});
+
+            var photoFetchSuccess = function (model, response) {
+              console.log("Add the photo model to the report photos collection");
+              if (!report.photos) {
+                report.photos = [];
+              }
+              report.photos.push(model);
+            };
+
+            // TODO: think about this since it delets all input on error and returns to map
+            var photoFetchError = function (model, response) {
+              console.error("Fetching photo model for Installation List failed with error: " +response);
+              veos.alert("Problem fetching photo model data. This might create problems later on");
+            };
+
+            // fetch the model data from the backend (this should trigger PhotoView render and show the picture)
+            photo.fetch({success: photoFetchSuccess, error: photoFetchError});
+          }
         });
       }
     }
@@ -1383,7 +1397,7 @@
               }
             } else if (subk === "created_at") {
               // can we have the post create a Date object like in CK, would deuglify these slices
-              self.$el.find('.field[name="created_at"]').text('Last update: ' + subv.slice(11, -1) + ', ' + subv.slice(0, -10))
+              self.$el.find('.field[name="created_at"]').text('Last update: ' + subv.slice(11, -1) + ', ' + subv.slice(0, -10));
             } else {
               // this is the case for all of the latest report stuff (ie most stuff)
               if (subv) {
