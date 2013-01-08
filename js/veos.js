@@ -239,28 +239,11 @@ window.veos = (function(veos) {
         // Google Analytics
         // self.analytics(ev);
 
-        // var installationSuccess = function (model, response) {
-        //   self.currentInstallation = model; // used to set initial location for EditReport
-        //   self.currentReport = model.startAmending();
-                    
-        //   self.reportForm = new self.view.ReportEditForm({el: '#report-page', model: self.currentReport});
-        //   self.currentReport.on('change', self.reportForm.render, self.reportForm);
-
-        //   some other stuff, to deal with how the button is pressed (update model, submit... a bunch of stuff in veos.view.js)
-        // };
-
-        // var installationError = function (model, response) {
-        //   console.error("Error fetching installation model with message: "+response);
-        //   veos.alert("Error fetching installation details");
-        // };
-
-        // installation.fetch({success: installationSuccess, error: installationError});
-
-        var installation = new veos.model.Installation({id: installationId});
+        self.currentInstallation = new veos.model.Installation({id: installationId});
 
         var view = new veos.view.InstallationDetails({
           el: ev.target,
-          model: installation
+          model: self.currentInstallation
         });
         
         view.showLoader();  

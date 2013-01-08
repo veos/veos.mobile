@@ -71,30 +71,7 @@
                 <fieldset data-role="controlgroup">
                     <legend>Operator Name</legend>
                     <input class="field" name="operator_name" id="operator" placeholder="Camera operator name if identifiable..." value="" type="text" />
-                </fieldset>
-
-
-                <div data-role="collapsible-set" data-theme="" data-content-theme="" class="report">
-                    <div data-role="collapsible" data-collapsed="false" id="report-photos-container">
-                        <h3>
-                            Add a photo                 <!-- icon? -->
-                        </h3>
-                            <legend>Photos</legend>
-
-                            <div id="camera-buttons">
-                                <a id="add-camera-photo-button" data-role="button" href="#report-page" data-icon="plus" data-iconpos="left" class="acquire-photo android-only" data-acquire-from="camera" data-photo-of="camera">
-                                    Take Photo
-                                </a>
-                                <a id="select-camera-photo-button" data-role="button" data-icon="plus" data-iconpos="left" class="acquire-photo android-only" data-acquire-from="gallery" data-photo-of="camera">
-                                    Select Photo from Gallery
-                                </a>
-                                <input type="file" name="photo-from-hard-drive" id="photo-from-hard-drive" class="web-only" />
-                                <div id="photos" class="photo-list">
-                                    <!-- Images are added dynamically via camera or gallery selection -->
-                                </div>
-                            </div>
-                    </div>
-                </div>                
+                </fieldset>          
 
                 
                 <div data-role="collapsible" data-collapsed="false" id="report-location-container">
@@ -118,6 +95,30 @@
                         </fieldset>
                     </div>
                 </div>
+
+
+                <div data-role="collapsible-set" data-theme="" data-content-theme="" class="report">
+                    <div data-role="collapsible" data-collapsed="false" id="report-photos-container">
+                        <h3>
+                            Add a photo                 <!-- icon? -->
+                        </h3>
+                            <legend>Photos</legend>
+
+                            <div id="camera-buttons">
+                                <a id="add-camera-photo-button" data-role="button" href="#report-page" data-icon="plus" data-iconpos="left" class="acquire-photo android-only" data-acquire-from="camera" data-photo-of="camera">
+                                    Take Photo
+                                </a>
+                                <a id="select-camera-photo-button" data-role="button" data-icon="plus" data-iconpos="left" class="acquire-photo android-only" data-acquire-from="gallery" data-photo-of="camera">
+                                    Select Photo from Gallery
+                                </a>
+                                <input type="file" name="photo-from-hard-drive" id="photo-from-hard-drive" class="web-only" />
+                                <div id="photos" class="photo-list">
+                                    <!-- Images are added dynamically via camera or gallery selection -->
+                                </div>
+                            </div>
+                    </div>
+                </div>                      
+
 
                 <!-- photo-details overlay... content is hidden until photo is clicked - CURRENTLY DESCOPED -->
                 <div id="photo-details-content">

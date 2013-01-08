@@ -1271,11 +1271,46 @@
   // });
 
   self.InstallationDetails = Backbone.View.extend({
+    events: {
+      'click .flag-button': function (ev) {
+        var view = this;
+        console.log("opening flag dialogue");
+
+        view.flagReport();
+      }
+    },
+
     initialize: function () {
-      var self = this;
+      var view = this;
 
       // TODO: consider binding 'add' and 'remove' to pick up added/removed Insts too?
-      this.model.on('change sync', _.bind(this.render, self));
+      view.model.on('change sync', _.bind(view.render, view));
+    },
+
+    flagReport: function () {
+      var response = confirm('Do you want to flag this report as inappropriate?');
+      if (response) {
+        var reportId = veos.currentInstallation.get('latest_report').id
+        var flaggedReport = new veos.model.Report({id: reportId});
+
+        var reportSuccess = function (model, response) {
+          model.set('flagged', true);
+          // model.set('flagged_on', 'SOMETIME');
+          model.save();
+
+          console.log('Report ' + model.get('id') + ' flagged');
+          veos.alert("This report has been flagged as inappropriate");
+        };
+        var reportError = function (model, response) {
+          console.error("Error fetching report model with message: "+response);
+          veos.alert("Error fetching report details");
+        };
+
+        flaggedReport.fetch({success: reportSuccess, error: reportError});
+
+      } else {
+        console.log('Cancelled...');
+      }
     },
 
     showLoader: function () {
