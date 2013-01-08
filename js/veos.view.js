@@ -179,6 +179,7 @@
           var doneSubmit = function() {
             delete veos.currentReport;
             delete veos.reportForm;
+            delete veos.currentPhoto; // Armin: I do believe this is necessary to avoid picture showing up on other reports
             veos.alert("Report submitted successfully!");
             jQuery.mobile.changePage("overview-map.html");
           };
@@ -243,6 +244,7 @@
       this.clear();
       delete veos.reportForm;
       delete veos.currentReport;
+      delete veos.currentPhoto; // Armin: I do believe this is necessary to avoid picture showing up on other reports
       return true; // will now redirect to clicked element's href
     },
 
@@ -557,6 +559,7 @@
             delete veos.currentReport;
             delete veos.reportForm;
             delete veos.currentInstallation;        // unique to editReport's view
+            delete veos.currentPhoto; // Armin: I do believe this is necessary to avoid picture showing up on other reports
 
             veos.alert("Report submitted successfully!");
             jQuery.mobile.changePage("overview-map.html");
@@ -646,6 +649,7 @@
       delete veos.reportForm;
       delete veos.currentReport;
       delete veos.currentInstallation;        // unique to editReport's view
+      delete veos.currentPhoto; // Armin: I do believe this is necessary to avoid picture showing up on other reports
       return true; // will now redirect to clicked element's href
     },
 
