@@ -3,9 +3,12 @@
     <body>
         <div data-role="page" id="installation-details-page">
             <div data-theme="a" data-role="header">
+                <span class="flag-button-container">
+                    <a class="flag-button" data-role="button" data-theme="e" data-icon="alert" data-iconpos="notext" href="">
+                    </a>
+                </span>                
                 <span class="edit-button-container">
-                    <a class="edit-button" data-role="button" data-theme="e" data-icon="gear" data-iconpos="right" href="">
-                        Edit
+                    <a class="edit-button" data-role="button" data-theme="e" data-icon="edit" data-iconpos="notext" href="">
                     </a>
                 </span>
                 <h3>
@@ -14,7 +17,6 @@
             </div>
             <div data-role="content">
                 <a class="compliance-banner" data-role="button" data-theme="a" data-icon="arrow-r" data-iconpos="right" href=""></a>
-                <br />
 
                 <div class="owner-name-container">
                     <span class="field" name="owner_name" />
@@ -22,18 +24,17 @@
                 <div class="owner-type-container">
                     <span class="field" name="owner_type" />
                 </div>
-                <br />
                 <div>
                     <b>Security Operator: </b><span class="field" name="operator_name" />
                 </div>
                 <div class="last-updated-container">
-                    <span class="field" name="created_at" />
+                    <b>Last update: </b><span class="field" name="created_at" />
                 </div>
                 
                 <div data-role="collapsible-set" data-theme="" data-content-theme="" class="report">
                     <div data-role="collapsible" data-collapsed="false" class="photos-container">
                         <h3>
-                            Photos
+                            Photos - <span class="photo-count" />
                         </h3>
                         <div class="photo-thumbnail-container">
                         </div>
@@ -46,7 +47,6 @@
                     </h3>
                     <div class="map-thumbnail-container">
                     </div>
-                    <br />
                     <div>
                         <span class="field" name="loc_description" />
                     </div>
@@ -79,8 +79,8 @@
                     </div>
                 </div>
 
-                <div data-role="collapsible-set" data-theme="" data-content-theme="">
-                    <div data-role="collapsible" data-collapsed="false" class="camera-details-container">
+                <div class="camera-details-container" data-role="collapsible-set" data-theme="" data-content-theme="">
+                    <div data-role="collapsible" data-collapsed="true">
                         <h3>
                             Cameras - <span class="field" name="camera_count" />
                         </h3>
@@ -97,8 +97,8 @@
                     </div>
                 </div>
 
-                <div data-role="collapsible-set" data-theme="" data-content-theme="">
-                    <div data-role="collapsible" data-collapsed="false">
+                <div class="sign-details-container" data-role="collapsible-set" data-theme="" data-content-theme="">
+                    <div data-role="collapsible" data-collapsed="true">
                         <h3>
                             Signs - <span class="field" name="has_sign" />
                         </h3>
@@ -124,7 +124,7 @@
                 </div>
 
                 <div data-role="collapsible-set" data-theme="" data-content-theme="">
-                    <div data-role="collapsible" data-collapsed="false">
+                    <div data-role="collapsible" data-collapsed="true">
                         <h3>
                             Notes
                         </h3>

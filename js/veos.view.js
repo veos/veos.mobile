@@ -1356,7 +1356,7 @@
           complianceButton.find('.ui-btn-text').text('Fully compliant');
           complianceButton.find('.ui-btn-inner').addClass('compliant-color');
         } else {
-          console.log('this should never happen - no compliance level?');
+          console.log('this should never happen - no compliance level somehow?');
         }
       }
 
@@ -1368,19 +1368,23 @@
 
       // TODO: The showPictures function will only add pictures and not reflect pictures getting less
       // maybe we can reuse the PhotoView.render function??
+      // this condition is always true - Matt, do you want to fix? There are workarounds on our end (as below)
       if (installation.has('photos')) {
         self.showPictures(installation);
+
+        if (installation.get('photos').length === 0) {
+          this.$el.find('.photo-count').text("no photos");
+          jQuery('.photos-container').trigger('collapse');
+        } else {
+          this.$el.find('.photo-count').text(installation.get('photos').length);
+        }        
       }
       
       var photoThumbnail = jQuery('<img class="photo-thumbnail" />');
       var photoContainer = this.$el.find('.photo-thumbnail-container');
 
       var ownerName;
-      if (installation.has('owner_name')) {
-        self.$el.find('.field[name="owner_name"]').val(installation.get('owner_name'));
-      } else {
-        self.$el.find('.field[name="owner_name"]').val('Unknown Owner');
-      }
+
       
       _.each(installation.attributes, function(v, k) {
         // base case for filling in the fields
@@ -1397,7 +1401,7 @@
               }
             } else if (subk === "created_at") {
               // can we have the post create a Date object like in CK, would deuglify these slices
-              self.$el.find('.field[name="created_at"]').text('Last update: ' + subv.slice(11, -1) + ', ' + subv.slice(0, -10));
+              self.$el.find('.field[name="created_at"]').text(subv.slice(11, -1) + ', ' + subv.slice(0, -10));
             } else {
               // this is the case for all of the latest report stuff (ie most stuff)
               if (subv) {
@@ -1423,12 +1427,31 @@
               console.log("unknown tag type");
             }
           });
-          purposesString = purposesString.slice(0, -2);
-          propertiesString = propertiesString.slice(0, -2);
-          spacesString = spacesString.slice(0, -2);
-          self.$el.find('*[name="sign_stated_purpose"].field').text(purposesString);
-          self.$el.find('*[name="sign_properties"].field').text(propertiesString);
-          self.$el.find('*[name="surveilled_space"].field').text(spacesString);
+
+          if (purposesString.length === 0) {
+            self.$el.find('*[name="sign_stated_purpose"].field').text("not reported");
+          } else {
+            self.$el.find('*[name="sign_stated_purpose"].field').text(purposesString.slice(0, -2));
+          }
+          if (propertiesString.length === 0) {
+            self.$el.find('*[name="sign_properties"].field').text("not reported");
+          } else {
+            self.$el.find('*[name="sign_properties"].field').text(propertiesString.slice(0, -2));
+          }
+          if (spacesString.length === 0) {
+            self.$el.find('*[name="surveilled_space"].field').text("not reported");
+          } else {
+            self.$el.find('*[name="surveilled_space"].field').text(spacesString.slice(0, -2));
+          }
+        }
+
+        // TODO: sloppy (overwriting, removing previous elements) - redo me
+        if (installation.has('owner_name')) {
+          self.$el.find('.field[name="owner_name"]').text(installation.get('owner_name'));
+        } else {
+          self.$el.find('.field[name="owner_name"]').text('Unknown Owner');
+          // removes previously added blank owner type
+          self.$el.find('.field[name="owner_type"]').text('');
         }
 
       });

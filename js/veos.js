@@ -110,7 +110,7 @@ window.veos = (function(veos) {
               self.reportForm = new self.view.ReportEditForm({el: '#report-page', model: self.currentReport});
               self.currentReport.on('change', self.reportForm.render, self.reportForm);
 
-              jQuery('#report-header-text').text('Editing the Installation');
+              jQuery('#report-header-text').text('Edit the Installation');
 
               // self.reportForm is used a globally accessibly variable - don't change the its name
               //self.reportForm.render();
@@ -158,9 +158,6 @@ window.veos = (function(veos) {
           
           self.reportForm.render();          
         }
-
-        // this needs to go in here to make the refined map work, I believe. But it may also be causing the wierd viewport issues
-        //report.init();
       })
 
   
@@ -241,6 +238,23 @@ window.veos = (function(veos) {
 
         // Google Analytics
         // self.analytics(ev);
+
+        // var installationSuccess = function (model, response) {
+        //   self.currentInstallation = model; // used to set initial location for EditReport
+        //   self.currentReport = model.startAmending();
+                    
+        //   self.reportForm = new self.view.ReportEditForm({el: '#report-page', model: self.currentReport});
+        //   self.currentReport.on('change', self.reportForm.render, self.reportForm);
+
+        //   some other stuff, to deal with how the button is pressed (update model, submit... a bunch of stuff in veos.view.js)
+        // };
+
+        // var installationError = function (model, response) {
+        //   console.error("Error fetching installation model with message: "+response);
+        //   veos.alert("Error fetching installation details");
+        // };
+
+        // installation.fetch({success: installationSuccess, error: installationError});
 
         var installation = new veos.model.Installation({id: installationId});
 

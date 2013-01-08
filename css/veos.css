@@ -300,31 +300,37 @@
 
 .edit-button-container {
     float: right;
-    padding: 5px 5px 0px 0px;                   /* using px = bad, but since jQuery Mobile is already full of them... */
+    padding: 6px 12px 0px 0px;                   /* using px = bad, but since jQuery Mobile is already full of them... */
+}
+
+.flag-button-container {
+    float: right;
+    padding: 6px 12px 0px 0px;                   /* using px = bad, but since jQuery Mobile is already full of them... */
 }
 
 .compliance-banner {
     display: block;
     /*height: 3em;*/
     width: 102%;
-    /*padding: 1%;    */
+    margin-top: -0.5%;                            /* test me on different devices */
     margin-left: -1%;
-    margin-bottom: 1%;
     text-align: center;
     text-decoration: none;
     color: white !important;
 }
 
 #installation-details-page .owner-name-container {
-    font-size: 30px;
+    font-size: 28px;
+    font-weight: bold;
 }
 
 #installation-details-page .owner-type-container {
     font-weight: bold;
+    margin-bottom: 0.6%;
 }
 
 #installation-details-page .last-updated-container {
-    text-align: right;
+    /*margin-top: 1.5%;*/
 }
 
 #installation-details-page .photos-container .ui-collapsible-content {
@@ -334,6 +340,15 @@
 
 #installation-details-page .location-container {
     text-align: center;
+}
+
+#installation-details-page .map-thumbnail-container {
+    margin-bottom: 0.5%;
+}
+
+#installation-details-page .camera-details-container .ui-collapsible-content,
+#installation-details-page .sign-details-container .ui-collapsible-content {
+    padding: 0px 0px;
 }
 
 
