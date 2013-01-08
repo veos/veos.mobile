@@ -1295,7 +1295,7 @@
 
         var reportSuccess = function (model, response) {
           model.set('flagged', true);
-          // model.set('flagged_on', 'SOMETIME');
+          model.set('flagged_on', new Date());
           model.save();
 
           console.log('Report ' + model.get('id') + ' flagged');
