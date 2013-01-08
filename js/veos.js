@@ -95,6 +95,14 @@ window.veos = (function(veos) {
           }
         }
 
+        // if the location has been changed by the user (ie loca_lat_from_gps exists), we want the accordion to be open to show the change
+        // also - gross
+        if (self.currentReport) {
+          if (self.currentReport.has('loc_lat_from_gps')) {
+            jQuery('#report-location-container').trigger('expand');
+          }
+        }
+
         // edit report
         // if (self.currentInstallation) {
         if (editReport) {

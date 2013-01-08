@@ -1,20 +1,5 @@
 /***** ALL *****/
 
-
-.ui-button .ui-icon.edit-icon {
-    background-image: url(../images/edit-icon.png);
-    width: your-icon-width;
-    height: your-icon-height; 
-}
-
-.ui-button.ui-state-hover .ui-icon.edit-icon {
-    background-image: url(../images/edit-icon.png);
-    width: your-icon-width;
-    height: your-icon-height; 
-}
-
-
-
 .ui-content {
     min-height: 100%;
 }
@@ -139,7 +124,7 @@
 /***** REPORT *****/
 
 #report-page .ui-checkbox {
-    width: 35%;
+    width: 100%;
 }
 
 #report-page .ui-checkbox label {
@@ -193,7 +178,7 @@
     /*white-space: nowrap;*/
 }
 
-#report-page .dashed-box {
+/*#report-page .dashed-box {
     border: 3px dashed #bbb;
     border-radius: 10px 10px 10px 10px;
     display: inline-block;
@@ -209,7 +194,7 @@
     padding-left: 9px;
     padding-right: 9px;
     margin-left: 8%;
-}
+}*/
 
 #report-sign-details-container {
     /*text-align: center;*/
