@@ -59,6 +59,18 @@
     /*font-size: 150%;*/
 }
 
+.installation-count-container {
+    width: 100%;
+    padding: 0px 0px 5px 15px;
+    background-color: black;
+    font-size: 12px;
+}
+
+.installation-count-text {
+    color: white;
+    text-shadow: 0 0px 0;
+}
+
 .map-button-container {
     position: absolute;
     bottom: 14%;

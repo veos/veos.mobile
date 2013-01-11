@@ -1080,6 +1080,9 @@
     },
 
     render: function () {
+      // adding installation count to page
+      jQuery('.installation-count').text(this.collection.length);
+
       var list = this.$el.find('.installations-list');
       list.empty();
 
@@ -1175,7 +1178,7 @@
       delete this.loader;
     },
 
-    render: function () {
+    render: function () {            
       var list = this.$el.find('.installations-list');
       list.empty();
 
