@@ -23,7 +23,7 @@
       // we're in a regular browser
       jQuery('.web-only').show();
       jQuery('.android-only').hide();
-    }    
+    }
 
     var center;
     var zoom;
@@ -155,6 +155,10 @@
   **/
   self.Map.prototype.addInstallationMarkers = function (installations) {
     console.log("Adding "+installations.length+" installation markers to map...");
+
+    var installationCountMsg = humane.create({ timeout: 3000 })
+    installationCountMsg.log("Total # of installations reported: " + installations.length);
+
 
     var map = this;
     veos.markersArray = [];
