@@ -15,6 +15,16 @@
   self.Map = function (mapDiv, initLoc) {
     console.log("initializing map in " + mapDiv);
 
+    if (veos.isAndroid()) {
+      // we're in the Android app
+      jQuery('.web-only').hide();
+      jQuery('.android-only').show();
+    } else {
+      // we're in a regular browser
+      jQuery('.web-only').show();
+      jQuery('.android-only').hide();
+    }    
+
     var center;
     var zoom;
     if (!initLoc) {
