@@ -515,7 +515,7 @@
     },
 
     thumbUrl: function () {
-      if (isAndroid()) {
+      if (veos.isAndroid()) {
         return model.baseURL + "/" + this.get('thumb_url');
       } else {
         return model.baseURL + "/" + this.get('big_thumb_url');
