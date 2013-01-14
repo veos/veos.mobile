@@ -777,7 +777,7 @@
         // we're in a regular browser
         this.$el.find('.web-only').show();
         this.$el.find('.android-only').hide();
-      }
+      }      
 
       // replaces changedFields() - we can't rely this.model.changed because we need to render after returning from refiningMap
       _.each(this.model.attributes, function(v, k) {
@@ -1080,6 +1080,16 @@
     },
 
     render: function () {
+      if (veos.isAndroid()) {
+        // we're in the Android app
+        this.$el.find('.web-only').hide();
+        this.$el.find('.android-only').show();
+      } else {
+        // we're in a regular browser
+        this.$el.find('.web-only').show();
+        this.$el.find('.android-only').hide();
+      }
+
       // adding installation count to page
       jQuery('.installation-count').text(this.collection.length);
 
@@ -1178,7 +1188,17 @@
       delete this.loader;
     },
 
-    render: function () {            
+    render: function () {
+      if (veos.isAndroid()) {
+        // we're in the Android app
+        this.$el.find('.web-only').hide();
+        this.$el.find('.android-only').show();
+      } else {
+        // we're in a regular browser
+        this.$el.find('.web-only').show();
+        this.$el.find('.android-only').hide();
+      }
+
       var list = this.$el.find('.installations-list');
       list.empty();
 
@@ -1249,29 +1269,8 @@
     }
   });
 
-  /**
-    Extending InstallationList for report-selection.html TODO - not working
-  **/
-  // self.InstallationSelectionList = self.InstallationList.extend({
-  //   'click a.arrowbutton': function () {
-  //     // go to editable version of installation-list.html
-  //   }
-  // });
 
-  // self.InstallationViewList = self.InstallationList.extend({
-  //   'click a.arrowbutton': function () {
-  //     // go to installation-list.html
-  //   }
-  // });
 
-  // self.InstallationSelectionListView = self.InstallationList.extend({
-  //   initialize: function () {
-  //     this.events['click .ui-btn'] = function(ev) {
-  //       alert("clicked some-other thing");
-  //     };
-  //     this.delegateEvents();
-  //   }
-  // });
 
   self.InstallationDetails = Backbone.View.extend({
     events: {
@@ -1370,6 +1369,16 @@
     render: function () {
       var self = this;
       var installation = this.model;
+
+      if (veos.isAndroid()) {
+        // we're in the Android app
+        this.$el.find('.web-only').hide();
+        this.$el.find('.android-only').show();
+      } else {
+        // we're in a regular browser
+        this.$el.find('.web-only').show();
+        this.$el.find('.android-only').hide();
+      }      
 
       // create the URL to load report.html in edit mode with prefilled data
       // the installationId is retrieved in veos.js .delegate and used to load a installation model
@@ -1531,6 +1540,16 @@
       if (this.loader) {
         this.hideLoader();
       }
+
+      if (veos.isAndroid()) {
+        // we're in the Android app
+        this.$el.find('.web-only').hide();
+        this.$el.find('.android-only').show();
+      } else {
+        // we're in a regular browser
+        this.$el.find('.web-only').show();
+        this.$el.find('.android-only').hide();
+      }      
 
       var backButton = jQuery('#privacy-compliance-page .back-button');
       backButton.attr('href', 'installation-details.html?id='+installation.get('id'));
