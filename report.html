@@ -2,10 +2,9 @@
 <html>
     <body>
         <div data-role="page" id="report-page">
-            <div data-theme="a" data-role="header">
-                <a class="overflow-button web-only" data-role="button" data-theme="e" data-icon="info" data-iconpos="notext"
-                    href="http://surveillancerights.ca/overflow.html">
-                </a>
+            <div class="header-with-text" data-theme="a" data-role="header">
+                <a class="overflow-button web-only" data-inline="true" data-role="button" data-theme="e" data-icon="info" data-iconpos="notext"
+                href="http://surveillancerights.ca/overflow.html" target="_blank"></a>
                 <h3 id="report-header-text">
                     File a New Report
                 </h3>
@@ -155,10 +154,10 @@
                 <div data-role="collapsible-set" data-theme="" data-content-theme="">
                     <div data-role="collapsible" data-collapsed="true" class="camera-details-container">
                         <h3>
-                            Edit camera information
+                            Add camera details
                         </h3>
                         <div>                  
-                            <div data-role="fieldcontain">
+                            <div class="no-field-separator" data-role="fieldcontain">
                                 <fieldset data-role="controlgroup">
                                     <label for="camera-count">How many cameras do you see?</label>
                                     <input class="field" name="camera_count" id="camera-count" placeholder="#" type="number">
@@ -191,7 +190,7 @@
                 <div data-role="collapsible-set" data-theme="" data-content-theme="">
                     <div data-role="collapsible" data-collapsed="true" id="report-sign-details-container">
                         <h3>
-                            Edit sign details
+                            Add sign details
                         </h3>
                         
                         <label class="dropdown-label" for="sign-visibility">Visibility of sign</label>
@@ -251,7 +250,7 @@
                             <option value="Recording">Recording</option> -->
                         </select>
 
-                        <div data-role="fieldcontain">
+                        <div class="no-field-separator" data-role="fieldcontain">
                             <fieldset data-role="controlgroup">
                                 <label for="sign-text">Text of sign</label>
                                 <!-- <input class="field" name="sign_text" id="sign-text" placeholder="Text of sign if it exists..." value="" type="text"> -->

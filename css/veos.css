@@ -1,3 +1,15 @@
+/* overwriting jquery mobile elements that randomly appear when on the mobile browser */
+.ui-field-contain {
+    padding: 0 !important;
+}
+.ui-hide-label.ui-br, .no-field-separator {
+    border-bottom-width: 0;
+}
+.ui-field-contain.ui-hide-label, .no-field-separator {
+    margin: 1em 0;
+    padding: 0;
+}
+
 /***** ALL *****/
 
 .ui-content {
@@ -29,7 +41,6 @@
 /* overwriting jq mobile's header handling so that titles are left justified */
 .ui-header > .ui-title {
     text-align: left;
-    margin-left: 6%;
 }
 
 .header-with-buttons,
@@ -56,25 +67,12 @@
     display: block !important;
 
     margin: 5px 8px;
-
-    /*font-size: 150%;*/
-}
-
-.installation-count-container {
-    padding: 0px 0px 5px 15px;
-    background-color: black;
-    font-size: 12px;
-}
-
-.installation-count-text {
-    color: white;
-    text-shadow: 0 0px 0;
 }
 
 .map-button-container {
     position: absolute;
-    bottom: 14%;
-    right: 3%;
+    bottom: 7%;
+    right: 5%;
     z-index: 1;
     width: 115px;
 }
@@ -245,6 +243,17 @@
 
 
 /***** INSTALLATION LIST PAGE *****/
+
+.installation-count-container {
+    padding: 0px 0px 5px 15px;
+    background-color: black;
+    font-size: 12px;
+}
+
+.installation-count-text {
+    color: white;
+    text-shadow: 0 0px 0;
+}
 
 .compliance {
     position: absolute; top:0px; bottom:0px; left:0px;
