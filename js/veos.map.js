@@ -17,12 +17,12 @@
 
     if (veos.isAndroid()) {
       // we're in the Android app
-      jQuery('.web-only').hide();
-      jQuery('.android-only').show();
+      jQuery('.web-only').addClass('hidden');
+      jQuery('.android-only').removeClass('hidden');
     } else {
       // we're in a regular browser
-      jQuery('.web-only').show();
-      jQuery('.android-only').hide();
+      jQuery('.web-only').removeClass('hidden');
+      jQuery('.android-only').addClass('hidden');
     }
 
     var center;

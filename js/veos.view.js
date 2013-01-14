@@ -744,13 +744,13 @@
 
       if (veos.isAndroid()) {
         // we're in the Android app
-        this.$el.find('.web-only').hide();
-        this.$el.find('.android-only').show();
+        this.$el.find('.web-only').addClass('hidden');
+        this.$el.find('.android-only').removeClass('hidden');
       } else {
         // we're in a regular browser
-        this.$el.find('.web-only').show();
-        this.$el.find('.android-only').hide();
-      }      
+        this.$el.find('.web-only').removeClass('hidden');
+        this.$el.find('.android-only').addClass('hidden');
+      }    
 
       // replaces changedFields() - we can't rely this.model.changed because we need to render after returning from refiningMap
       _.each(this.model.attributes, function(v, k) {
@@ -1069,12 +1069,12 @@
     render: function () {
       if (veos.isAndroid()) {
         // we're in the Android app
-        this.$el.find('.web-only').hide();
-        this.$el.find('.android-only').show();
+        this.$el.find('.web-only').addClass('hidden');
+        this.$el.find('.android-only').removeClass('hidden');
       } else {
         // we're in a regular browser
-        this.$el.find('.web-only').show();
-        this.$el.find('.android-only').hide();
+        this.$el.find('.web-only').removeClass('hidden');
+        this.$el.find('.android-only').addClass('hidden');
       }
 
       // adding installation count to page
@@ -1178,12 +1178,12 @@
     render: function () {
       if (veos.isAndroid()) {
         // we're in the Android app
-        this.$el.find('.web-only').hide();
-        this.$el.find('.android-only').show();
+        this.$el.find('.web-only').addClass('hidden');
+        this.$el.find('.android-only').removeClass('hidden');
       } else {
         // we're in a regular browser
-        this.$el.find('.web-only').show();
-        this.$el.find('.android-only').hide();
+        this.$el.find('.web-only').removeClass('hidden');
+        this.$el.find('.android-only').addClass('hidden');
       }
 
       var list = this.$el.find('.installations-list');
@@ -1359,13 +1359,13 @@
 
       if (veos.isAndroid()) {
         // we're in the Android app
-        this.$el.find('.web-only').hide();
-        this.$el.find('.android-only').show();
+        this.$el.find('.web-only').addClass('hidden');
+        this.$el.find('.android-only').removeClass('hidden');
       } else {
         // we're in a regular browser
-        this.$el.find('.web-only').show();
-        this.$el.find('.android-only').hide();
-      }      
+        this.$el.find('.web-only').removeClass('hidden');
+        this.$el.find('.android-only').addClass('hidden');
+      }   
 
       // create the URL to load report.html in edit mode with prefilled data
       // the installationId is retrieved in veos.js .delegate and used to load a installation model
@@ -1530,13 +1530,13 @@
 
       if (veos.isAndroid()) {
         // we're in the Android app
-        this.$el.find('.web-only').hide();
-        this.$el.find('.android-only').show();
+        this.$el.find('.web-only').addClass('hidden');
+        this.$el.find('.android-only').removeClass('hidden');
       } else {
         // we're in a regular browser
-        this.$el.find('.web-only').show();
-        this.$el.find('.android-only').hide();
-      }      
+        this.$el.find('.web-only').removeClass('hidden');
+        this.$el.find('.android-only').addClass('hidden');
+      }   
 
       var backButton = jQuery('#privacy-compliance-page .back-button');
       backButton.attr('href', 'installation-details.html?id='+installation.get('id'));
