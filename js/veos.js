@@ -237,7 +237,7 @@ window.veos = (function(veos) {
           success: function () {
             view.hideLoader();
             // if there are no nearby installations, switch immediately to new report
-            if (nearbyInstallations.length === 0) {
+            if (nearbyInstallations.length > 0) {
               window.location.href = "app.html#/report.html";
             }
           }
