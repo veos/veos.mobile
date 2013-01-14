@@ -34,6 +34,8 @@ window.veos = (function(veos) {
   self.init = function () {
     console.log("INITIALIZING VEOS!");
 
+    self.currentPhotos = []; // Armin: empty array to hold photo objects during report add/change
+
     if (window.location.pathname === "/") {
       console.log("Redirecting to /app.html");
       window.location.href = "/app.html";
