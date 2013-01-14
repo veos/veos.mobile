@@ -221,8 +221,9 @@ window.veos = (function(veos) {
 
     /** report-selection.html (report-selection-page) **/
       .delegate("#report-selection-page", "pageshow", function(ev) {
-        // fetch instalations ordered by closest to furtherest 
-        var nearbyInstallations = new veos.model.NearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude, 0.15);           // TODO I'm pretty sure this is not the right way to access these
+        var MAX_DISTANCE_TO_INST = 0.15;
+        // fetch instalations ordered by closest to furthest
+        var nearbyInstallations = new veos.model.NearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude, MAX_DISTANCE_TO_INST);           // TODO I'm pretty sure this is not the right way to access these
 
         // Google Analytics
         // self.analytics(ev);
@@ -236,9 +237,11 @@ window.veos = (function(veos) {
         nearbyInstallations.fetch({
           success: function () {
             view.hideLoader();
-            // if there are no nearby installations, switch immediately to new report
+            // could go in the view, but is non-dynamic, and better to do it as early as possible
             if (nearbyInstallations.length > 0) {
-              window.location.href = "app.html#/report.html";
+              jQuery('.report-selection-dynamic-text').text("The following installations are within " + MAX_DISTANCE_TO_INST*1000 + "m of your current location. If you see an installation listed here that you wish to revise, select it. Otherwise, choose New Installation.");              
+            } else {
+              jQuery('.report-selection-dynamic-text').text("There are no installations within " + MAX_DISTANCE_TO_INST*1000 + "m of your current location. Please choose New Installation."); 
             }
           }
         });
