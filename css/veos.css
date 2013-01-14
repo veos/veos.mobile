@@ -69,22 +69,6 @@
     margin: 5px 8px;
 }
 
-.map-button-container {
-    position: absolute;
-    bottom: 7%;
-    right: 5%;
-    z-index: 1;
-    width: 115px;
-}
-
-.overview-button {
-    width: 112px;
-}
-
-.map-thumbnail {
-    max-width: 100%;
-}
-
 .loading {
     text-align: center;
     margin: auto;
@@ -97,6 +81,22 @@
     margin-left: 8.5px;
 }
 
+.map-button-container {
+    position: absolute;
+    bottom: 6.5%;
+    right: 5%;
+    z-index: 1;
+    width: 115px;
+}
+
+.overview-button {
+    width: 112px;
+    margin-bottom: 10px;
+}
+
+.map-thumbnail {
+    max-width: 100%;
+}
 
 /***** OVERVIEW MAP *****/
 
@@ -214,10 +214,10 @@
     margin-left: 8%;
 }*/
 
-#report-sign-details-container {
-    /*text-align: center;*/
+/*#report-sign-details-container {
+    text-align: center;
     white-space: nowrap;    
-}
+}*/
 
 @media only screen and (max-device-width: 800px) {
     #report-sign-details-container {
