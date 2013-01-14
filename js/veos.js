@@ -234,7 +234,13 @@ window.veos = (function(veos) {
         
         view.showLoader();
         nearbyInstallations.fetch({
-          success: function () {view.hideLoader();}
+          success: function () {
+            view.hideLoader();
+            // if there are no nearby installations, switch immediately to new report
+            if (nearbyInstallations.length === 0) {
+              window.location.href = "app.html#/report.html";
+            }
+          }
         });
       })
 
@@ -255,7 +261,7 @@ window.veos = (function(veos) {
         });
         
         view.showLoader();  
-        view.model.fetch();             // I don't think this is right - the whole 'view doesn't call this stuff on itself' (should be moved to the init in view?)
+        view.model.fetch();
       })
 
     /** photo-details.html (photo-details-page) **/
