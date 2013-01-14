@@ -346,6 +346,10 @@
       console.log("rendering ReportForm!");
       var self = this;
 
+      var purposesArray = [];
+      var propertiesArray = [];
+      var spacesArray = [];      
+
       if (veos.isAndroid()) {
         // we're in the Android app
         this.$el.find('.web-only').hide();
@@ -359,9 +363,6 @@
       // replaces changedFields() - we can't rely this.model.changed because we need to render after returning from refiningMap
       _.each(this.model.attributes, function(v, k) {
         if (k === "tags") {
-          var purposesArray = [];
-          var propertiesArray = [];
-          var spacesArray = [];
           _.each(v, function(i) {
             if (i.tag_type === "sign_stated_purpose") {
               purposesArray.push(i.tag);
@@ -373,12 +374,18 @@
               console.log("unknown tag type");
             }
           });
-          self.$el.find('*[name="sign_stated_purpose"].multi-field').val(purposesArray);
-          self.$el.find('*[name="sign_properties"].multi-field').val(propertiesArray);
-          self.$el.find('*[name="surveilled_space"].multi-field').val(spacesArray);
-          jQuery('#surveilled-space').selectmenu('refresh', 'true');
-          jQuery('#sign-stated-purpose').selectmenu('refresh', 'true');
-          jQuery('#sign-properties').selectmenu('refresh', 'true');          
+          if (spacesArray.length > 0) {
+            self.$el.find('*[name="surveilled_space"].multi-field').val(spacesArray);
+            jQuery('#surveilled-space').selectmenu('refresh', 'true');
+          }
+          if (propertiesArray.length > 0) {
+            self.$el.find('*[name="sign_properties"].multi-field').val(propertiesArray);
+            jQuery('#sign-properties').selectmenu('refresh', 'true');
+          }
+          if (purposesArray.length > 0) {
+            self.$el.find('*[name="sign_stated_purpose"].multi-field').val(purposesArray);
+            jQuery('#sign-stated-purpose').selectmenu('refresh', 'true');
+          }
         } else if (k === "has_sign") {
           if (self.model.get(k)) {
             jQuery('#sign-yes').attr("checked",true).checkboxradio("refresh"); 
@@ -395,6 +402,18 @@
 
       jQuery('#owner-type').selectmenu('refresh');                          // why doesn't this work with classes? Would be much cleaner. Also refresh, really?
       jQuery('#sign-visibility').selectmenu('refresh');
+
+      // updating the text on the accordion headers
+      if (veos.currentReport.get('camera_count') || (spacesArray.length > 0)) {
+        jQuery('.camera-add-edit-text').text('Edit');
+      } else {
+        jQuery('.camera-add-edit-text').text('Add');
+      }
+      if (veos.currentReport.get('sign_visibility') || veos.currentReport.get('sign_text') || (propertiesArray.length > 0) || (purposesArray.length > 0)) {
+        jQuery('.sign-add-edit-text').text('Edit');
+      } else {
+        jQuery('.sign-add-edit-text').text('Add');
+      }
 
       self.updateLocFields();
       self.renderPhotos();
@@ -712,62 +731,16 @@
       });
     },
 
-    // updateChangedFields: function () {
-    //   console.log("updating changed fields in ReportForm: "+_.keys(this.model.changed).join(", "));
-    //   var self = this;
-    //   _.each(this.model.changed, function(v, k) {                 // this whole thing needs to be checked over. These refreshes seem wrong. Also, the following 15 lines are 'verbose'... I can only assume Matt will rewrite this in 3 lines
-    //     if (k === "tags") {
-    //       var purposesArray = [];
-    //       var propertiesArray = [];
-    //       var spacesArray = [];
-    //       _.each(v, function(i) {
-    //         if (i.tag_type === "sign_stated_purpose") {
-    //           purposesArray.push(i.tag);
-    //         } else if (i.tag_type === "sign_properties") {
-    //           propertiesArray.push(i.tag);
-    //         } else if (i.tag_type === "surveilled_space") {
-    //           spacesArray.push(i.tag);
-    //         } else {
-    //           console.log("unknown tag type");
-    //         }
-    //       });
-    //       self.$el.find('*[name="sign_stated_purpose"].multi-field').val(purposesArray);
-    //       self.$el.find('*[name="sign_properties"].multi-field').val(propertiesArray);
-    //       self.$el.find('*[name="surveilled_space"].multi-field').val(spacesArray);
-    //       // jQuery('#surveilled-space').selectmenu('refresh', 'true');
-    //       // jQuery('#sign-stated-purpose').selectmenu('refresh', 'true');
-    //       // jQuery('#sign-properties').selectmenu('refresh', 'true'); 
-    //     } else if (k === "has_sign") {
-    //       if (self.model.get(k)) {
-    //         jQuery('#sign-yes').attr("checked",true).checkboxradio("refresh"); 
-    //         console.log('true');
-    //       } else if (!self.model.get(k)) {
-    //         jQuery('#sign-no').attr("checked",true).checkboxradio("refresh"); 
-    //         console.log('false');
-    //       }
-    //     }
-    //      else {
-    //       self.$el.find('*[name="'+k+'"].field').val(self.model.get(k));
-    //     }
-   
-    //   });
-
-
-    //   jQuery('#owner-type').selectmenu('refresh');                          // why doesn't this work with classes? Would be much cleaner. Also refresh, really?
-    //   jQuery('#sign-visibility').selectmenu('refresh');                
-
-    //   jQuery('#surveilled-space').selectmenu('refresh', 'true');
-    //   jQuery('#sign-stated-purpose').selectmenu('refresh', 'true');
-    //   jQuery('#sign-properties').selectmenu('refresh', 'true');
-
-    // },
-
     /**
       Triggers full update of all dynamic elements in the report page.
     **/
     render: function () {
       console.log("rendering ReportEditForm!");
       var self = this;
+
+      var purposesArray = [];
+      var propertiesArray = [];
+      var spacesArray = [];      
 
       if (veos.isAndroid()) {
         // we're in the Android app
@@ -782,9 +755,6 @@
       // replaces changedFields() - we can't rely this.model.changed because we need to render after returning from refiningMap
       _.each(this.model.attributes, function(v, k) {
         if (k === "tags") {
-          var purposesArray = [];
-          var propertiesArray = [];
-          var spacesArray = [];
           _.each(v, function(i) {
             if (i.tag_type === "sign_stated_purpose") {
               purposesArray.push(i.tag);
@@ -796,12 +766,18 @@
               console.log("unknown tag type");
             }
           });
-          self.$el.find('*[name="sign_stated_purpose"].multi-field').val(purposesArray);
-          self.$el.find('*[name="sign_properties"].multi-field').val(propertiesArray);
-          self.$el.find('*[name="surveilled_space"].multi-field').val(spacesArray);
-          jQuery('#surveilled-space').selectmenu('refresh', 'true');
-          jQuery('#sign-stated-purpose').selectmenu('refresh', 'true');
-          jQuery('#sign-properties').selectmenu('refresh', 'true');          
+          if (spacesArray.length > 0) {
+            self.$el.find('*[name="surveilled_space"].multi-field').val(spacesArray);
+            jQuery('#surveilled-space').selectmenu('refresh', 'true');
+          }
+          if (propertiesArray.length > 0) {
+            self.$el.find('*[name="sign_properties"].multi-field').val(propertiesArray);
+            jQuery('#sign-properties').selectmenu('refresh', 'true');
+          }
+          if (purposesArray.length > 0) {
+            self.$el.find('*[name="sign_stated_purpose"].multi-field').val(purposesArray);
+            jQuery('#sign-stated-purpose').selectmenu('refresh', 'true');
+          }         
         } else if (k === "has_sign") {
           if (self.model.get(k)) {
             jQuery('#sign-yes').attr("checked",true).checkboxradio("refresh"); 
@@ -819,6 +795,17 @@
       jQuery('#owner-type').selectmenu('refresh');                          // why doesn't this work with classes? Would be much cleaner. Also refresh, really?
       jQuery('#sign-visibility').selectmenu('refresh');
 
+      // updating the text on the accordion headers
+      if (veos.currentReport.get('camera_count') || (spacesArray.length > 0)) {
+        jQuery('.camera-add-edit-text').text('Edit');
+      } else {
+        jQuery('.camera-add-edit-text').text('Add');
+      }
+      if (veos.currentReport.get('sign_visibility') || veos.currentReport.get('sign_text') || (propertiesArray.length > 0) || (purposesArray.length > 0)) {
+        jQuery('.sign-add-edit-text').text('Edit');
+      } else {
+        jQuery('.sign-add-edit-text').text('Add');
+      }
 
       self.updateLocFields();
       self.renderPhotos();
