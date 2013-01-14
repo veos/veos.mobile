@@ -38,9 +38,11 @@
     margin-left: 2em;
 }
 
-/* overwriting jq mobile's header handling so that titles are left justified */
+/* overwriting jq mobile's header handling so that titles are left justified and don't interfere with the i button */
 .ui-header > .ui-title {
     text-align: left;
+    margin-right: 0px;
+    margin-left: 44px;
 }
 
 .header-with-buttons,
@@ -83,7 +85,7 @@
 
 .map-button-container {
     position: absolute;
-    bottom: 6.5%;
+    bottom: 5%;
     right: 5%;
     z-index: 1;
     width: 115px;
