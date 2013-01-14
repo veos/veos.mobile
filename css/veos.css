@@ -83,9 +83,16 @@
     margin-left: 8.5px;
 }
 
+.hidden {
+    display: none !important;
+}
+
+
+/***** OVERVIEW MAP *****/
+
 .map-button-container {
     position: absolute;
-    bottom: 5%;
+    bottom: 4%;
     right: 5%;
     z-index: 1;
     width: 115px;
@@ -99,8 +106,6 @@
 .map-thumbnail {
     max-width: 100%;
 }
-
-/***** OVERVIEW MAP *****/
 
 #overview-map-page #overview-map-canvas {
     position: absolute;

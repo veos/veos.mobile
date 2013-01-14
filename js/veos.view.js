@@ -352,12 +352,12 @@
 
       if (veos.isAndroid()) {
         // we're in the Android app
-        this.$el.find('.web-only').hide();
-        this.$el.find('.android-only').show();
+        this.$el.find('.web-only').addClass('hidden');
+        this.$el.find('.android-only').removeClass('hidden');
       } else {
         // we're in a regular browser
-        this.$el.find('.web-only').show();
-        this.$el.find('.android-only').hide();
+        this.$el.find('.web-only').removeClass('hidden');
+        this.$el.find('.android-only').addClass('hidden');
       }
 
       // replaces changedFields() - we can't rely this.model.changed because we need to render after returning from refiningMap
