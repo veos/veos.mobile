@@ -77,6 +77,7 @@
         new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
 
         veos.currentPhoto.captureFromCamera();
+        veos.currentPhotos.push(voes.currentPhoto); // add currentPhoto to array to not lose photos during location change
       }, 
 
       'click #select-camera-photo-button': function (ev) {
@@ -85,6 +86,7 @@
         new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
         
         veos.currentPhoto.captureFromGallery();
+        veos.currentPhotos.push(veos.currentPhoto); // add currentPhoto to array to not lose photos during location change
       },
 
 
@@ -96,6 +98,7 @@
 
         veos.currentPhoto.on('image_capture', function (ev, photo) {
           veos.currentPhoto.upload();
+          veos.currentPhotos.push(veos.currentPhoto); // add currentPhoto to array to not lose photos during location change
         });
 
         veos.currentPhoto.captureFromFile(fileInput[0].files.item(0));
@@ -180,6 +183,7 @@
             delete veos.currentReport;
             delete veos.reportForm;
             delete veos.currentPhoto; // Armin: I do believe this is necessary to avoid picture showing up on other reports
+            veos.currentPhotos = []; // Armin: Clear the currentPhotos array to avoid duplicate errors
             veos.alert("Report submitted successfully!");
             jQuery.mobile.changePage("overview-map.html");
           };
@@ -245,6 +249,7 @@
       delete veos.reportForm;
       delete veos.currentReport;
       delete veos.currentPhoto; // Armin: I do believe this is necessary to avoid picture showing up on other reports
+      veos.currentPhotos = []; // Armin: Clear the currentPhotos array to avoid duplicate errors
       return true; // will now redirect to clicked element's href
     },
 
@@ -310,8 +315,8 @@
       var photoContainer = this.$el.find('#photos');
       var report = this.model;
 
-      if (veos.currentPhoto) {
-        _.each(veos.currentPhoto, function (p) {
+      // if (veos.currentPhoto) {
+        _.each(veos.currentPhotos, function (p) {
           if (p.id != null) { // trying to avoid that empty picture is added
             // create the Photo model for the current photo ID
             var photo = new veos.model.Photo({id: p.id});
@@ -336,7 +341,7 @@
             photo.fetch({success: photoFetchSuccess, error: photoFetchError});
           }
         });
-      }
+      // }
     },
 
     /**
@@ -511,6 +516,7 @@
         new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
  
         veos.currentPhoto.captureFromCamera();
+        veos.currentPhotos.push(veos.currentPhoto); // add currentPhoto to array to not lose photos during location change
       },
 
       'click #select-camera-photo-button': function (ev) {
@@ -519,6 +525,7 @@
         new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
         
         veos.currentPhoto.captureFromGallery();
+        veos.currentPhotos.push(veos.currentPhoto); // add currentPhoto to array to not lose photos during location change
       },
 
       'change #photo-from-hard-drive': function (ev) {
@@ -529,6 +536,7 @@
 
         veos.currentPhoto.on('image_capture', function (ev, photo) {
           veos.currentPhoto.upload();
+          veos.currentPhotos.push(veos.currentPhoto); // add currentPhoto to array to not lose photos during location change
         });
 
         veos.currentPhoto.captureFromFile(fileInput[0].files.item(0));
@@ -588,6 +596,7 @@
             delete veos.reportForm;
             delete veos.currentInstallation;        // unique to editReport's view
             delete veos.currentPhoto; // Armin: I do believe this is necessary to avoid picture showing up on other reports
+            veos.currentPhotos = []; // Armin: Clear the currentPhotos array to avoid duplicate errors
 
             veos.alert("Report submitted successfully!");
             jQuery.mobile.changePage("overview-map.html");
@@ -678,6 +687,8 @@
       delete veos.currentReport;
       delete veos.currentInstallation;        // unique to editReport's view
       delete veos.currentPhoto; // Armin: I do believe this is necessary to avoid picture showing up on other reports
+      veos.currentPhotos = []; // Armin: Clear the currentPhotos array to avoid duplicate errors
+
       return true; // will now redirect to clicked element's href
     },
 
@@ -862,8 +873,8 @@
         });
       }
 
-      if (veos.currentPhoto) {
-        _.each(veos.currentPhoto, function (p) {
+      //if (veos.currentPhoto) {
+        _.each(veos.currentPhotos, function (p) {
           if (p.id != null) { // trying to avoid that empty picture is added
             // create the Photo model for the current photo ID
             var photo = new veos.model.Photo({id: p.id});
@@ -888,7 +899,7 @@
             photo.fetch({success: photoFetchSuccess, error: photoFetchError});
           }
         });
-      }
+      //}
     }
 
   });
