@@ -394,16 +394,21 @@
         } else if (k === "has_sign") {
           if (self.model.get(k)) {
             jQuery('#sign-yes').attr("checked",true).checkboxradio("refresh"); 
-            console.log('true');
           } else if (!self.model.get(k)) {
             jQuery('#sign-no').attr("checked",true).checkboxradio("refresh"); 
-            console.log('false');
           }
         }
          else {
           self.$el.find('*[name="'+k+'"].field').val(self.model.get(k));
         }
       });
+
+      // brutal. Tell me why we're bother with backbone when all jQuery does is fight it? 
+      if (self.model.get('owner_identifiable')) {
+        jQuery('#unidentified-owner-checkbox').attr("checked",false).checkboxradio("refresh");      // who the hell comes up with this syntax?!? Good lord
+      } else {
+        jQuery('#unidentified-owner-checkbox').attr("checked",true).checkboxradio("refresh");
+      }
 
       jQuery('#owner-type').selectmenu('refresh');                          // why doesn't this work with classes? Would be much cleaner. Also refresh, really?
       jQuery('#sign-visibility').selectmenu('refresh');
@@ -574,6 +579,10 @@
         // backend changed and does MD5 hashing on contributor_id now so it need to be a string and not null
         self.model.set('contributor_id', '');
       }
+
+      // if we're editing, that means the new version should not be flagged, right?
+      self.model.set('flagged', null);
+      self.model.set('flagged_on', null);   
 
       self.model.save(null, {
         complete: function () {
@@ -802,6 +811,13 @@
           self.$el.find('*[name="'+k+'"].field').val(self.model.get(k));
         }
       });
+
+      // brutal. Tell me why we're bother with backbone when all jQuery does is fight it? 
+      if (self.model.get('owner_identifiable')) {
+        jQuery('#unidentified-owner-checkbox').attr("checked",false).checkboxradio("refresh");      // who the hell comes up with this syntax?!? Good lord
+      } else {
+        jQuery('#unidentified-owner-checkbox').attr("checked",true).checkboxradio("refresh");
+      }
 
       jQuery('#owner-type').selectmenu('refresh');                          // why doesn't this work with classes? Would be much cleaner. Also refresh, really?
       jQuery('#sign-visibility').selectmenu('refresh');
