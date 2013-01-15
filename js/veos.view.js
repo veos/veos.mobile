@@ -77,7 +77,7 @@
         new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
 
         veos.currentPhoto.captureFromCamera();
-        veos.currentPhotos.push(voes.currentPhoto); // add currentPhoto to array to not lose photos during location change
+        veos.currentPhotos.push(veos.currentPhoto); // add currentPhoto to array to not lose photos during location change
       }, 
 
       'click #select-camera-photo-button': function (ev) {
