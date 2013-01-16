@@ -50,19 +50,7 @@
                         <option value="Airport">Airport</option>
                         <option value="Port">Port</option>
                         <option value="Stadium / Arena">Stadium / Arena</option>
-
-<!--                         <option value="Banking">Banking</option>
-                        <option value="Education">Education</option>
-                        <option value="Government - federal">Government - federal</option>
-                        <option value="Government - provincial">Government - provincial</option>
-                        <option value="Government - municipal">Government - municipal</option>
-                        <option value="Police">Police</option>
-                        <option value="Property manager">Property manager</option>                            
-                        <option value="Public transit">Public transit</option>
-                        <option value="Residential">Residential</option>
-                        <option value="Retail / Restaurant / Bar">Retail / Restaurant / Bar</option>
-                        <option value="Traffic">Traffic</option>
-                        <option value="Other">Other</option> -->
+                        <option value="Other">Other</option>
                     </select>
                 </fieldset>
 
@@ -169,18 +157,11 @@
                                 <option>Cameras pointed at</option>
                                 <option value="Interior of Building / Vehicle">Interior of Building / Vehicle</option>
                                 <option value="Exterior of Building/Vehicle">Exterior of Building / Vehicle</option>
+                                <option value="Mall Common Area">Mall Common Area</option>
                                 <option value="Outdoor Space Accessible to Public">Outdoor Space Accessible to Public</option>
                                 <option value="Sidewalk">Sidewalk</option>
                                 <option value="Road">Road</option>
-
-<!--                                     <option value="Mall common area">Mall common area</option>
-                                <option value="Park">Park</option>
-                                <option value="Public space">Public space</option>
-                                <option value="Public plaza">Public plaza</option>
-                                <option value="Publicly accessible private space">Publicly accessible private space</option>
-                                <option value="Semi-public">Semi-public</option>
-                                <option value="Sidewalk">Sidewalk</option>
-                                <option value="Other type of space">Other type of space</option> -->
+                                <option value="Other">Other</option>
                             </select>
                         </div>
                     </div>
@@ -196,11 +177,10 @@
                         <label class="dropdown-label" for="sign-visibility">Visibility of sign</label>
                         <select class="field" name="sign_visibility" id="sign-visibility" data-mini="true" data-native-menu="false">
                             <option>Visibility of sign</option>
+                            <option value="Not Easily Visible">Not Easily Visible</option>
                             <option value="Easily Visible">Easily Visible</option>
                             <option value="Easily Readable">Easily Readable</option>
                             <option value="Easily Readable Before Entering Surveilled Area">Easily Readable Before Entering Surveilled Area</option>
-<!--                                 <option value="Visible">Visible</option>
-                            <option value="Obscure">Obscure</option> -->
                         </select>
 
                         <label class="dropdown-label" for="sign-stated-purpose">Stated purpose</label>
@@ -208,19 +188,13 @@
                             <option>Stated purpose</option>
                             <option value="None">None</option>
                             <option value="Public Safety">Public Safety</option>
-                            <option value="Personal Safety">Personal Safety</option>
-                            <option value="Traffic Safety">Traffic Safety</option>
-                            <option value="Crime Prevention">Crime Prevention</option>
-                            <option value="Crime Investigation">Crime Investigation</option>
-                            <option value="Crime Prosecution">Crime Prosecution</option>
+                            <option value="Crime Prevention / Prosecution">Crime Prevention / Prosecution</option>
                             <option value="Shoplifting/theft">Shoplifting / Theft</option>
                             <option value="Vandalism">Vandalism</option>
                             <option value="Loitering">Loitering</option>
                             <option value="Terrorism">Terrorism</option>
                             <option value="Analysis of Consumer Behaviour">Analysis of Consumer Behaviour</option>
-                            <!-- <option value="None">None</option>
-                            <option value="Crime prevention/prosecution">Crime prevention/prosecution</option>
-                            <option value="Public safety">Public safety</option> -->
+                            <option value="Other">Other</option>
                         </select>
 
                         <label class="dropdown-label" for="sign-properties">Stated properties</label>
@@ -230,30 +204,20 @@
                             <option value="Images Recorded / Archived">Images Recorded / Archived</option>
                             <option value="Duration of Image Retention">Duration of Image Retention</option>
                             <option value="Images Monitored Live">Images Monitored Live</option>
-                            <option value="Timely Contact Information">Timely Contact Information</option>
-                            <option value="URL for Organization’s Privacy Officer or Policy">URL for Organization’s Privacy Officer or Policy</option>
-                            <option value="Contact for Access to Imagery">Contact for Access to Imagery</option>
+                            <option value="Timely Contact Info (eg. phone #)">Timely Contact Info (eg. phone #)</option>
+                            <option value="Contact for Privacy Officer/Policy">Contact for Privacy Officer / Policy</option>
                             <option value="Video or Still Photography">Video or Still Photography</option>
-                            <option value="Cameras Fixed or Pan-Tilt-Zoom">Cameras Fixed or Pan-Tilt-Zoom</option>
-                            <option value="Audio Monitoring/Recording">Audio Monitoring/Recording</option>
-                            <option value="Basis for Disclosure to Law Enforcement">Basis for Disclosure to Law Enforcement</option>
-                            <option value="Use of Automated Facial Recognition">Use of Automated Facial Recognition</option>
-                            <option value="Security Measures Used">Security Measures Used</option>
-                            <option value="Governing Legislation">Governing Legislation</option>
-<!--                                 <option value="None">None</option>
-                            <option value="# days image will be retained"># days image will be retained</option>
-                            <option value="Available to police">Available to police</option>
-                            <option value="Face blurring">Face blurring</option>
-                            <option value="Face recognition">Face recognition</option>
-                            <option value="Image encryption">Image encryption</option>
-                            <option value="Live monitoring">Live monitoring</option>
-                            <option value="Recording">Recording</option> -->
+                            <option value="Audio Monitoring/Recording">Audio Monitoring / Recording</option>
+                            <option value="Law Enforcement Disclosure">Law Enforcement Disclosure</option>
+                            <option value="Automated Facial Recognition">Automated Facial Recognition</option>
+                            <option value="Security Measures Used">Anonymization Measures</option>
+                            <option value="Other">Other</option>
                         </select>
 
                         <div class="no-field-separator" data-role="fieldcontain">
                             <fieldset data-role="controlgroup">
                                 <label for="sign-text">Text of sign</label>
-                                <!-- <input class="field" name="sign_text" id="sign-text" placeholder="Text of sign if it exists..." value="" type="text"> -->
+
                                 <textarea class="field" name="sign_text" id="sign-text" placeholder="Text of sign if it exists..." value=""></textarea>
                             </fieldset>
                         </div>
