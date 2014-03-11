@@ -7,8 +7,8 @@ BUNDLES = {
   'deps.postinit' => [
     'jquery.mobile-1.3.2.min',
     'jquery.mobile.autoComplete-1.4.3',
-    'underscore-1.3.3.min',
-    'backbone-0.9.2.min'
+    'underscore-1.6.0.min',
+    'backbone-0.9.10.min'
   ]
 }
 
