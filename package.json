@@ -4,8 +4,8 @@
   "description": "Mobile website for VEOS",
   "author": "Matt Zukowski, Colin McCann, Armin Krauss",
   "dependencies": {
-    "http-proxy": ">= 0.7.6",
-    "node-static": ">= 0.5.9"
+    "http-proxy": "~1.0.2",
+    "node-static": "~0.7.3"
   },
   "engine": "node 0.8.2"
 }
