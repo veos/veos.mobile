@@ -2,13 +2,13 @@
 BUNDLES = {
   'deps.preinit' => [
     'cordova-1.5.0',
-    'jquery-1.6.4.min'
+    'jquery-1.9.1.min'
   ],
   'deps.postinit' => [
-    'jquery.mobile-1.0.1.min',
+    'jquery.mobile-1.3.2.min',
     'jquery.mobile.autoComplete-1.4.3',
-    'underscore-1.3.1.min',
-    'backbone-0.9.2.min'
+    'underscore-1.6.0.min',
+    'backbone-1.1.2.min'
   ]
 }
 

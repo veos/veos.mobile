@@ -14,7 +14,7 @@
   // need full URL for photo uploads to work with reverse proxying
   model.baseURL = location.protocol + "//" + location.host + "/backend";
 
-  // model.baseURL = "http://backend.new.surveillancerights.ca"
+  // model.baseURL = "http://backend.dev.surveillancerights.ca";
 
   jQuery.support.cors = true; // enable cross-domain AJAX requests
 

@@ -67,7 +67,7 @@ window.veos = (function(veos) {
         installations.on('reset', function(collection) {
           veos.map.overviewMap.addInstallationMarkers(collection);
         });
-        installations.fetch();
+        installations.fetch({reset:true});
 
         // start following user
         veos.map.overviewMap.startFollowing();
@@ -214,7 +214,8 @@ window.veos = (function(veos) {
         
         view.showLoader();
         installations.fetch({
-          success: function () {view.hideLoader();}
+          success: function () {view.hideLoader();},
+          reset:true
         });
       })              
 

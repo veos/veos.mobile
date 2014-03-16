@@ -7,5 +7,5 @@
     "http-proxy": "~1.0.2",
     "node-static": "~0.7.3"
   },
-  "engine": "node 0.8.2"
+  "engine": "node 0.10.21"
 }

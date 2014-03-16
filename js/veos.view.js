@@ -917,8 +917,11 @@
 
 
   var PhotoView = Backbone.View.extend({
-    initialize: function () {
+    // solving missing options problem after update of Backbone past 1.0
+    // http://stackoverflow.com/questions/19325323/backbone-1-1-0-views-reading-options
+    initialize: function (options) {
       var view = this;
+      view.options = options || {};
 
       this.model.on('image_upload image_upload_finish change sync', this.render, this);
 
@@ -1352,7 +1355,7 @@
       var mapThumbnail = jQuery('<img class="map-thumbnail" />');
       mapThumbnail.attr('src', staticMapCriteria);    
       var thumbnailContainer = this.$el.find('.map-thumbnail-container');
-      thumbnailContainer.append(mapThumbnail);
+      thumbnailContainer.html(mapThumbnail);
     },
 
     showPictures: function(installation) {
