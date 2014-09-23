@@ -59,12 +59,12 @@
           this.$el.find('#owner').removeAttr('disabled');
           this.model.set('owner_identifiable', true);
         }
-      },          
+      },
       'change #sign-yes': function (ev) {
         console.log('sign-yes button clicked');
         jQuery('#report-sign-details-container').trigger('expand');
         this.model.set('has_sign', true);
-      },  
+      },
       'change #sign-no': function (ev) {
         console.log('sign-no button clicked');
         jQuery('#report-sign-details-container').trigger('collapse');
@@ -78,13 +78,13 @@
 
         veos.currentPhoto.captureFromCamera();
         veos.currentPhotos.push(veos.currentPhoto); // add currentPhoto to array to not lose photos during location change
-      }, 
+      },
 
       'click #select-camera-photo-button': function (ev) {
         //var from = jQuery(ev.target).data('acquire-from');
         veos.currentPhoto = new veos.model.Photo();
         new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
-        
+
         veos.currentPhoto.captureFromGallery();
         veos.currentPhotos.push(veos.currentPhoto); // add currentPhoto to array to not lose photos during location change
       },
@@ -133,8 +133,8 @@
           icon: 'arrow-r', // option to specify icon
           target: this.$el.find('#owner-name-suggestions'), // the listview to receive results
           source: veos.model.baseURL + '/installations/autocomplete_owner_name.json', // URL return JSON data
-          callback: function (ev) { 
-            report.set('owner_name', jQuery(ev.currentTarget).text()); 
+          callback: function (ev) {
+            report.set('owner_name', jQuery(ev.currentTarget).text());
             ownerNameField.autocomplete('clear');
           }, // optional callback function fires upon result selection
           //link: 'target.html?term=', // link to be attached to each result
@@ -172,11 +172,11 @@
           jQuery.mobile.hidePageLoadingMsg();
         },
         success: function () {
-          var report = self.model;    
+          var report = self.model;
           var successCounter = 0;     // needed to know when we went through all the attached pictures
-          
+
           console.log("Report saved successfully with id "+report.id);
-          
+
           // This function is called later on in the success once all is done
           // deletes objects and bounces us back to overview map
           var doneSubmit = function() {
@@ -187,7 +187,7 @@
             veos.alert("Report submitted successfully!");
             jQuery.mobile.changePage("overview-map.html");
           };
-          
+
           var images = jQuery('.photo-list-item');    // get all images that were taken
           var photoCount = images.length;             // count how many pictures are attached
           console.log("Total count of photos attached: " +photoCount);
@@ -198,7 +198,7 @@
             doneSubmit();
             return;
           }
-          
+
           // go through all pictures and attach them to the report
           jQuery('.photo-list-item').each(function (idx) {
             // retrieving photo model data stored in DOM as JSON
@@ -239,7 +239,7 @@
           console.log('Error submitting: ' + response);
           // check for error codes from Matt
           // highligh different required fields based on error codes
-        }        
+        }
       });
     },
 
@@ -353,7 +353,7 @@
 
       var purposesArray = [];
       var propertiesArray = [];
-      var spacesArray = [];      
+      var spacesArray = [];
 
       if (veos.isAndroid()) {
         // we're in the Android app
@@ -393,9 +393,9 @@
           }
         } else if (k === "has_sign") {
           if (self.model.get(k)) {
-            jQuery('#sign-yes').attr("checked",true).checkboxradio("refresh"); 
+            jQuery('#sign-yes').attr("checked",true).checkboxradio("refresh");
           } else if (!self.model.get(k)) {
-            jQuery('#sign-no').attr("checked",true).checkboxradio("refresh"); 
+            jQuery('#sign-no').attr("checked",true).checkboxradio("refresh");
           }
         }
          else {
@@ -403,7 +403,7 @@
         }
       });
 
-      // brutal. Tell me why we're bother with backbone when all jQuery does is fight it? 
+      // brutal. Tell me why we're bother with backbone when all jQuery does is fight it?
       if (self.model.get('owner_identifiable')) {
         jQuery('#unidentified-owner-checkbox').attr("checked",false).checkboxradio("refresh");      // who the hell comes up with this syntax?!? Good lord
       } else {
@@ -471,7 +471,7 @@
         var f = jQuery(ev.target);
 
         this.model.setTags(f.val(), f.attr('name'));
-        console.log("Setting "+f.attr("name")+" to "+f.val());        
+        console.log("Setting "+f.attr("name")+" to "+f.val());
       },
 
       // specific to owner_name
@@ -499,12 +499,12 @@
           this.$el.find('#owner').removeAttr('disabled');
           this.model.set('owner_identifiable', true);
         }
-      },          
+      },
       'change #sign-yes': function (ev) {
         console.log('sign-yes button clicked');
         jQuery('#report-sign-details-container').trigger('expand');
         this.model.set('has_sign', true);
-      },  
+      },
       'change #sign-no': function (ev) {
         console.log('sign-no button clicked');
         jQuery('#report-sign-details-container').trigger('collapse');
@@ -514,7 +514,7 @@
         //var from = jQuery(ev.target).data('acquire-from');
         veos.currentPhoto = new veos.model.Photo();
         new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
- 
+
         veos.currentPhoto.captureFromCamera();
         veos.currentPhotos.push(veos.currentPhoto); // add currentPhoto to array to not lose photos during location change
       },
@@ -523,7 +523,7 @@
         //var from = jQuery(ev.target).data('acquire-from');
         veos.currentPhoto = new veos.model.Photo();
         new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
-        
+
         veos.currentPhoto.captureFromGallery();
         veos.currentPhotos.push(veos.currentPhoto); // add currentPhoto to array to not lose photos during location change
       },
@@ -582,7 +582,7 @@
 
       // if we're editing, that means the new version should not be flagged, right?
       self.model.set('flagged', null);
-      self.model.set('flagged_on', null);   
+      self.model.set('flagged_on', null);
 
       self.model.save(null, {
         complete: function () {
@@ -590,7 +590,7 @@
         },
         success: function () {
           console.log("Report saved successfully with id "+self.model.id);
-          
+
           var doneSubmit = function() {
             delete veos.currentReport;
             delete veos.reportForm;
@@ -615,7 +615,7 @@
             doneSubmit();
             return;
           }
-          
+
           jQuery('.photo-list-item').each(function (idx) {
             // retrieving photo model data stored in DOM as JSON
             var photoModelJson = jQuery(this).attr('data-model');
@@ -628,9 +628,9 @@
               var existingPhotoId = p.id;
               var domPhotoId = photoModel.photo.id;
               return existingPhotoId === domPhotoId;
-            }); 
+            });
 
-           
+
             // if photo already exists do not add the photo to the report again
             if (existingPhoto) {
               console.log('Photo with ID: '+photoModel.photo.id+' already exits');
@@ -760,7 +760,7 @@
 
       var purposesArray = [];
       var propertiesArray = [];
-      var spacesArray = [];      
+      var spacesArray = [];
 
       if (veos.isAndroid()) {
         // we're in the Android app
@@ -770,7 +770,7 @@
         // we're in a regular browser
         this.$el.find('.web-only').removeClass('hidden');
         this.$el.find('.android-only').addClass('hidden');
-      }    
+      }
 
       // replaces changedFields() - we can't rely this.model.changed because we need to render after returning from refiningMap
       _.each(this.model.attributes, function(v, k) {
@@ -797,13 +797,13 @@
           if (purposesArray.length > 0) {
             self.$el.find('*[name="sign_stated_purpose"].multi-field').val(purposesArray);
             jQuery('#sign-stated-purpose').selectmenu('refresh', 'true');
-          }         
+          }
         } else if (k === "has_sign") {
           if (self.model.get(k)) {
-            jQuery('#sign-yes').attr("checked",true).checkboxradio("refresh"); 
+            jQuery('#sign-yes').attr("checked",true).checkboxradio("refresh");
             console.log('true');
           } else if (!self.model.get(k)) {
-            jQuery('#sign-no').attr("checked",true).checkboxradio("refresh"); 
+            jQuery('#sign-no').attr("checked",true).checkboxradio("refresh");
             console.log('false');
           }
         }
@@ -812,7 +812,7 @@
         }
       });
 
-      // brutal. Tell me why we're bother with backbone when all jQuery does is fight it? 
+      // brutal. Tell me why we're bother with backbone when all jQuery does is fight it?
       if (self.model.get('owner_identifiable')) {
         jQuery('#unidentified-owner-checkbox').attr("checked",false).checkboxradio("refresh");      // who the hell comes up with this syntax?!? Good lord
       } else {
@@ -839,7 +839,7 @@
 
       // see ReportEdit for explanation (uggggg)
       var multiWidth = jQuery(window).width() * 4/5;
-      jQuery('.ui-select').width(multiWidth);      
+      jQuery('.ui-select').width(multiWidth);
     },
 
     renderPhotos: function () {
@@ -948,7 +948,7 @@
         img = jQuery("<img class='photo-list-item' id='photo-"+this.model.id+"'/>");
         //img.attr('data-model', this.model);
         img.attr('data-model', JSON.stringify(this.model.toJSON()));
-        
+
         var href = location.href;
         var photoDetails = jQuery('<a />');
 
@@ -993,7 +993,7 @@
     events: {
       'click #submit-photo-details': function (ev) {
         alert("submitting clicked");
-        
+
       }
       // ,
 
@@ -1066,7 +1066,7 @@
   **/
   self.InstallationList = Backbone.View.extend({
     MAX_DISTANCE_FROM_CURRENT_LOCATION: 10, // km
-    
+
     events: {
       'click .ui-li': function (ev) {
         console.log("clicked ui-li a");
@@ -1084,7 +1084,7 @@
       }
 
       // TODO: consider binding 'add' and 'remove' to pick up added/removed Installations too?
-      this.collection.on('reset', _.bind(this.render, self));   
+      this.collection.on('reset', _.bind(this.render, self));
     },
 
     showLoader: function () {
@@ -1121,12 +1121,12 @@
         } else {
           buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/><span class='loc_description'>" + installation.getLocDescription() + "</span>";
         }
-        
+
         var complianceLevel;
         if (installation.get('compliance_level')) {
-          if (installation.get('compliance_level') === 'no_sign') {
+          if (installation.get('compliance_level') === 'non_compliant') {
             complianceLevel = "<span class='compliance no-sign-color'></span>";
-          } else if (installation.get('compliance_level') === 'missing_info') {
+          } else if (installation.get('compliance_level') === 'low_compliant') {
             complianceLevel = "<span class='compliance missing-info-color'></span>";
           } else if (installation.get('compliance_level') === 'min_compliant') {
             complianceLevel = "<span class='compliance min-compliant-color'></span>";
@@ -1136,16 +1136,16 @@
             complianceLevel = "<span class='compliance-unknown'></span>";
           }
         }
-        
+
         var thumb = "";
-        
+
         // the installations.json now contains photo URL so this got easier and much faster
         if (installation.has('photos') && installation.get('photos').length > 0) {
           var photosOfInstallation = installation.get('photos');
           var photo = _.first(photosOfInstallation);
           var photoID = photo.id;
           var thumbUrl = veos.model.baseURL + photo.thumb_url;
-            
+
           //console.log('Retrieve photo thumb URL: '+thumbUrl+' for photo with ID: '+photoID);
           thumb = "<img class='list-picture photo-"+photoID+"' src='"+thumbUrl+"' />";
         }
@@ -1169,7 +1169,7 @@
   **/
   self.InstallationListReport = Backbone.View.extend({
     //MAX_DISTANCE_FROM_CURRENT_LOCATION: 10, // km
-    
+
     events: {
       'click .ui-li': function (ev) {
         console.log("clicked ui-li a");
@@ -1193,7 +1193,7 @@
       }
 
       // TODO: consider binding 'add' and 'remove' to pick up added/removed Installations too?
-      this.collection.on('reset', _.bind(this.render, self));   
+      this.collection.on('reset', _.bind(this.render, self));
     },
 
     showLoader: function () {
@@ -1226,13 +1226,13 @@
           buttonText = "<span class='owner_name'>" + installation.get('owner_name') + "</span><br/><span class='loc_description'>" + installation.getLocDescription() + "</span>";
         } else {
           buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/><span class='loc_description'>" + installation.getLocDescription() + "</span>";
-        }        
+        }
 
         var complianceLevel;
         if (installation.get('compliance_level')) {
-          if (installation.get('compliance_level') === 'no_sign') {
+          if (installation.get('compliance_level') === 'non_compliant') {
             complianceLevel = "<span class='compliance no-sign-color'></span>";
-          } else if (installation.get('compliance_level') === 'missing_info') {
+          } else if (installation.get('compliance_level') === 'low_compliant') {
             complianceLevel = "<span class='compliance missing-info-color'></span>";
           } else if (installation.get('compliance_level') === 'min_compliant') {
             complianceLevel = "<span class='compliance min-compliant-color'></span>";
@@ -1241,15 +1241,15 @@
           } else {
             complianceLevel = "<span class='compliance-unknown'></span>";
           }
-        }        
-        
+        }
+
         var thumb = "";
 
         // if photos are attached to the installation retrieve the thumb URL of the first photo via Photo model
         if (installation.has('photos') && installation.get('photos').length > 0) {
           var photoID = installation.get('photos')[0].id;
           thumb = "<img class='list-picture photo-"+photoID+"' />";
-          
+
           console.log('Trying to retrieve photo thumb URL for photo with ID: '+photoID);
 
           var thumbPhoto = new veos.model.Photo({id: photoID});
@@ -1351,9 +1351,9 @@
       // note: higher zoom level
       var staticMapCriteria = "http://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" + installation.get('loc_lat') + "," + installation.get('loc_lng');
       staticMapCriteria += "&markers=size:small%7C" + installation.get('loc_lat') + ',' + installation.get('loc_lng');
-      
+
       var mapThumbnail = jQuery('<img class="map-thumbnail" />');
-      mapThumbnail.attr('src', staticMapCriteria);    
+      mapThumbnail.attr('src', staticMapCriteria);
       var thumbnailContainer = this.$el.find('.map-thumbnail-container');
       thumbnailContainer.html(mapThumbnail);
     },
@@ -1395,7 +1395,7 @@
         // we're in a regular browser
         this.$el.find('.web-only').removeClass('hidden');
         this.$el.find('.android-only').addClass('hidden');
-      }   
+      }
 
       // create the URL to load report.html in edit mode with prefilled data
       // the installationId is retrieved in veos.js .delegate and used to load a installation model
@@ -1410,11 +1410,11 @@
       complianceButton.attr('href', 'privacy-compliance.html?installationId='+installation.get('id'));
 
       if (installation.get('compliance_level')) {
-        if (installation.get('compliance_level') === 'no_sign') {
+        if (installation.get('compliance_level') === 'non_compliant') {
           complianceButton.find('.ui-btn-text').text('Not compliant: no sign');
           complianceButton.find('.ui-btn-inner').addClass('no-sign-color');
           complianceButton.find('.ui-btn-inner').addClass('white');
-        } else if (installation.get('compliance_level') === 'missing_info') {
+        } else if (installation.get('compliance_level') === 'low_compliant') {
           complianceButton.find('.ui-btn-text').text('Not compliant');
           complianceButton.find('.ui-btn-inner').addClass('missing-info-color');
         } else if (installation.get('compliance_level') === 'min_compliant') {
@@ -1445,15 +1445,15 @@
           jQuery('.photos-container').trigger('collapse');
         } else {
           this.$el.find('.photo-count').text(installation.get('photos').length);
-        }        
+        }
       }
-      
+
       var photoThumbnail = jQuery('<img class="photo-thumbnail" />');
       var photoContainer = this.$el.find('.photo-thumbnail-container');
 
       var ownerName;
 
-      
+
       _.each(installation.attributes, function(v, k) {
         // base case for filling in the fields
         self.$el.find('.field[name="'+k+'"]').text(installation.get(k));
@@ -1566,7 +1566,7 @@
         // we're in a regular browser
         this.$el.find('.web-only').removeClass('hidden');
         this.$el.find('.android-only').addClass('hidden');
-      }   
+      }
 
       var backButton = jQuery('#privacy-compliance-page .back-button');
       backButton.attr('href', 'installation-details.html?id='+installation.get('id'));
@@ -1575,12 +1575,12 @@
 
       var complianceButton = jQuery('#privacy-compliance-page .compliance-banner');
       if (installation.get('compliance_level')) {
-        if (installation.get('compliance_level') === 'no_sign') {
+        if (installation.get('compliance_level') === 'non_compliant') {
           complianceButton.find('.ui-btn-text').text('Not compliant: no sign');
           complianceButton.find('.ui-btn-inner').addClass('no-sign-color');
           complianceButton.find('.ui-btn-inner').addClass('white');
           jQuery('#no-sign-text').show();
-        } else if (installation.get('compliance_level') === 'missing_info') {
+        } else if (installation.get('compliance_level') === 'low_compliant') {
           complianceButton.find('.ui-btn-text').text('Not compliant');
           complianceButton.find('.ui-btn-inner').addClass('missing-info-color');
           jQuery('#missing-info-text').show();
@@ -1603,8 +1603,8 @@
       } else {
         self.$el.find('.field[name="owner_name"]').text('Unknown Owner');
         jQuery('#privacy-compliance-page .owner-name').addClass('unknown');
-      }  
-      
+      }
+
       self.$el.find('.field[name="owner_type"]').text(installation.get('owner_type'));
       self.$el.find('.field[name="address"]').text(installation.get('loc_description'));
 

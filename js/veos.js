@@ -62,12 +62,19 @@ window.veos = (function(veos) {
         // Google Analytics
         // self.analytics(ev);
 
-        // add all installation markers
+        // // add all installation markers
         var installations = new veos.model.Installations();
         installations.on('reset', function(collection) {
           veos.map.overviewMap.addInstallationMarkers(collection);
         });
         installations.fetch({reset:true});
+
+        // add nearby installations?
+        // var installations = new veos.model.NearbyInstallations();
+        // installations.on('reset', function(collection) {
+        //   veos.map.overviewMap.addInstallationMarkers(collection);
+        // });
+        // installations.fetch({reset:true});
 
         // start following user
         veos.map.overviewMap.startFollowing();
@@ -78,7 +85,7 @@ window.veos = (function(veos) {
         var installationId = 0;
         var editReport = false;
         var ref = '';
-        
+
         // Google Analytics
         // self.analytics(ev);
 
@@ -116,9 +123,9 @@ window.veos = (function(veos) {
             var installationSuccess = function (model, response) {
               self.currentInstallation = model; // used to set initial location for EditReport
               self.currentReport = model.startAmending();
-              
+
               self.reportForm = new self.view.ReportEditForm({el: '#report-page', model: self.currentReport});
-              self.currentReport.on('change', self.reportForm.render, self.reportForm);           
+              self.currentReport.on('change', self.reportForm.render, self.reportForm);
 
               jQuery('#report-header-text').text('Edit the Installation');
             };
@@ -161,13 +168,13 @@ window.veos = (function(veos) {
             console.log("Pointing ReportForm to "+ev.target);
             self.reportForm.setElement(ev.target);
             self.reportForm.$el.data('initialized', true);
-          }       
-          
-          self.reportForm.render();          
+          }
+
+          self.reportForm.render();
         }
       })
 
-  
+
     /** refine-location.html (refine-location-page) **/
       .delegate("#refine-location-page", "pageshow", function(ev) {
         if (!veos.reportForm) {
@@ -211,13 +218,13 @@ window.veos = (function(veos) {
           el: ev.target,
           collection: installations
         });
-        
+
         view.showLoader();
         installations.fetch({
           success: function () {view.hideLoader();},
           reset:true
         });
-      })              
+      })
 
     /** report-selection.html (report-selection-page) **/
       .delegate("#report-selection-page", "pageshow", function(ev) {
@@ -232,16 +239,16 @@ window.veos = (function(veos) {
           el: ev.target,
           collection: nearbyInstallations
         });
-        
+
         view.showLoader();
         nearbyInstallations.fetch({
           success: function () {
             view.hideLoader();
             // could go in the view, but is non-dynamic, and better to do it as early as possible
             if (nearbyInstallations.length > 0) {
-              jQuery('.report-selection-dynamic-text').text("The following installations are within " + MAX_DISTANCE_TO_INST*1000 + "m of your current location. If you see an installation listed here that you wish to revise, select it. Otherwise, choose New Installation.");              
+              jQuery('.report-selection-dynamic-text').text("The following installations are within " + MAX_DISTANCE_TO_INST*1000 + "m of your current location. If you see an installation listed here that you wish to revise, select it. Otherwise, choose New Installation.");
             } else {
-              jQuery('.report-selection-dynamic-text').text("There are no installations within " + MAX_DISTANCE_TO_INST*1000 + "m of your current location. Please choose New Installation."); 
+              jQuery('.report-selection-dynamic-text').text("There are no installations within " + MAX_DISTANCE_TO_INST*1000 + "m of your current location. Please choose New Installation.");
             }
           }
         });
@@ -262,8 +269,8 @@ window.veos = (function(veos) {
           el: ev.target,
           model: self.currentInstallation
         });
-        
-        view.showLoader();  
+
+        view.showLoader();
         view.model.fetch();
       })
 
@@ -293,8 +300,8 @@ window.veos = (function(veos) {
           el: photoContainer,
           model: photo
         });
-        
-        // view.showLoader();  
+
+        // view.showLoader();
         view.model.fetch();
       })
 
@@ -310,8 +317,8 @@ window.veos = (function(veos) {
           el: ev.target,
           model: installation
         });
-        
-        view.showLoader();  
+
+        view.showLoader();
         view.model.fetch();
       });
 

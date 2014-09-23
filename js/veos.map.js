@@ -43,7 +43,7 @@
       zoomControl: true, // changed this back to true - pinch zoom not working on some phones (note ZoomControl must be set to +/- or will not show up on Android 3.0 and later)
       zoomControlOptions: {
           style: google.maps.ZoomControlStyle.SMALL
-      }    
+      }
     };
 
     jQuery(mapDiv).empty(); // empty out the div in case it was previously used to init another map...
@@ -61,10 +61,10 @@
   };
 
   self.Map.prototype = {
-    
+
   };
 
- 
+
   /**
     Shows the current location marker and continuously updates its
     position based on incoming GPS data.
@@ -76,7 +76,7 @@
       navigator.geolocation.clearWatch(this.posWatcher);
     }
 
-    
+
     console.log("Started following user...");
 
     map.posWatcher = navigator.geolocation.watchPosition(function (geoloc) {
@@ -125,14 +125,14 @@
       // this would reframe the map to the accuracy circle
       //self.gmap.fitBounds(self.currentLocRadius.getBounds());
 
-      
+
       map.currentLocMarker.setPosition(glatlng);
       map.currentLocRadius.setCenter(glatlng);
       map.currentLocRadius.setRadius(accuracy);
     });
   };
 
-  /** 
+  /**
     Stops updating the current location marker.
   **/
   self.Map.prototype.stopFollowing = function () {
@@ -140,7 +140,7 @@
     navigator.geolocation.clearWatch(this.posWatcher);
   };
 
-  /** 
+  /**
     Removes the current location marker from the map.
   **/
   self.Map.prototype.clearCurrentLocation = function () {
@@ -164,7 +164,7 @@
     veos.markersArray = [];
 
     map.infowindow = new google.maps.InfoWindow({
-      // do you seriously need a plugin for styling infowindows?!?! Puke  
+      // do you seriously need a plugin for styling infowindows?!?! Puke
       // http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/docs/examples.html
       // http://code.google.com/p/google-maps-utility-library-v3/wiki/Libraries
     });
@@ -179,13 +179,13 @@
       if (i.get('compliance_level') === 'compliant') {
         compliancePinOn = '/images/pin-green-on.png';
         compliancePinOff = '/images/pin-green-off.png';
-      } else if (i.get('compliance_level') === 'missing_info') {
-        compliancePinOn = '/images/pin-yellow-on.png';
-        compliancePinOff = '/images/pin-yellow-off.png';
       } else if (i.get('compliance_level') === 'min_compliant') {
         compliancePinOn = '/images/pin-yellow-green-on.png';
         compliancePinOff = '/images/pin-yellow-green-off.png';
-      } else if (i.get('compliance_level') === 'no_sign') {
+      } else if (i.get('compliance_level') === 'low_compliant') {
+        compliancePinOn = '/images/pin-yellow-on.png';
+        compliancePinOff = '/images/pin-yellow-off.png';
+      } else if (i.get('compliance_level') === 'non_compliant') {
         compliancePinOn = '/images/pin-red-on.png';
         compliancePinOff = '/images/pin-red-off.png';
       } else {
@@ -213,7 +213,7 @@
       if (i.has('photos') && i.get('photos').length > 0) {
         var photoID = i.get('photos')[0].id;
         thumb = "<img class='photo photo-"+photoID+"' />";
-      }  
+      }
 
       mapPopupContent = "<a class='styled-link-text' href=installation-details.html?id="+i.id+">"+thumb+buttonText+"</a>";
 
@@ -229,7 +229,7 @@
       google.maps.event.addListener(map.infowindow, 'closeclick', function() {
         _.each(veos.markersArray, function(m) {
           m.setIcon(m.iconSelected);
-        });        
+        });
       });
 
       marker.setMap(map.gmap);
@@ -254,7 +254,7 @@
   var injectThumbnail = function(installation) {
     if (installation.has('photos') && installation.get('photos').length > 0) {
       var photoID = installation.get('photos')[0].id;
-            
+
       console.log('Trying to retrieve photo thumb URL for photo with ID: '+photoID);
 
       var thumbPhoto = new veos.model.Photo({id: photoID});
@@ -281,16 +281,16 @@
     });
 
     // set the clicked marker as selected (necessary because the _.each will only catch markers with known owner_names)
-    marker.setIcon(marker.iconSelected);    
+    marker.setIcon(marker.iconSelected);
 
     var ownerInstallations = new veos.model.Installations();
-    
+
     var ownerSuccess = function (model, response) {
       ownerInstallations.each(function(i) {
         console.log('related installation ids: ' + i.get('id'));
 
         // this is very inefficient, but working (will ping once for *each* match... lots of duplicate higlights)
-        // can we use pluck or filter or find here? Or even better, can we count on the fact that all ownerInstallations have the same name?        
+        // can we use pluck or filter or find here? Or even better, can we count on the fact that all ownerInstallations have the same name?
         _.each(veos.markersArray, function(m) {
           // if the owner_names match
           if (m.title === i.get('owner_name')) {
@@ -357,9 +357,9 @@
   self.generateStaticMapURL = function(geoloc) {
     var glatlng = veos.map.convertGeolocToGmapLatLng(geoloc);
 
-    var url = "https://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" + 
+    var url = "https://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" +
       glatlng.lat() + "," + glatlng.lng();
-    
+
     // add the current location as red pin to the map
     url += "&markers=color:blue%7C" + glatlng.lat() + "," + glatlng.lng();
 
@@ -372,7 +372,7 @@
     console.log("Looking up address for ", geoloc);
     var geocoder = new google.maps.Geocoder();
     var glatlng = veos.map.convertGeolocToGmapLatLng(geoloc);
-    
+
     geocoder.geocode({'latLng': glatlng}, function(results, status) {
       if (status === google.maps.GeocoderStatus.OK) {
         if (results[0]) {
@@ -389,13 +389,13 @@
   self.lookupLocForAddress = function(address, successCallback) {
     console.log("Looking up loc for address ", address);
     var geocoder = new google.maps.Geocoder();
-    
+
     geocoder.geocode({'address': address}, function(results, status) {
       if (status === google.maps.GeocoderStatus.OK) {
         var lat = results[0].geometry.location.lat();
         var lng = results[0].geometry.location.lng();
 
-        console.log("Reverse geocoding for address: " + address + " returned this latitute: " + lat + " and longitude: " + lng);        
+        console.log("Reverse geocoding for address: " + address + " returned this latitute: " + lat + " and longitude: " + lng);
         successCallback(lat, lng);
       } else {
         console.error("Geocoder failed due to: " + status);
