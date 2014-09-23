@@ -63,18 +63,21 @@ window.veos = (function(veos) {
         // self.analytics(ev);
 
         // // add all installation markers
-        var installations = new veos.model.Installations();
-        installations.on('reset', function(collection) {
-          veos.map.overviewMap.addInstallationMarkers(collection);
-        });
-        installations.fetch({reset:true});
-
-        // add nearby installations?
-        // var installations = new veos.model.NearbyInstallations();
+        // var installations = new veos.model.Installations();
         // installations.on('reset', function(collection) {
         //   veos.map.overviewMap.addInstallationMarkers(collection);
         // });
         // installations.fetch({reset:true});
+        jQuery(self).one('haveloc', function (ev, geoloc) {
+          veos.installations = new veos.model.NearbyInstallations(geoloc.coords.latitude, geoloc.coords.longitude, 2);
+          veos.installations.on('reset', function(collection) {
+            veos.map.overviewMap.addInstallationMarkers(collection);
+          });
+          veos.installations.fetch({reset:true});
+        });
+
+        // add nearby installations?
+
 
         // start following user
         veos.map.overviewMap.startFollowing();

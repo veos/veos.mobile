@@ -4,7 +4,7 @@
 (function(veos) {
   var model = {};
 
-  // model.baseURL = window.location.protocol + "://" + window.location.host + 
+  // model.baseURL = window.location.protocol + "://" + window.location.host +
   //   (window.location.port ? ':' + window.location.port : '');
   //model.baseURL = "http://backend.veos.ca";
   //model.baseURL = "http://veos.surveillancerights.ca";
@@ -45,7 +45,7 @@
     },
     toJSON: function() {
       var attrs = _.clone( this.attributes ); // WARNING: shallow clone only!
-      
+
       wrapNested(this.nested, attrs);
 
       var wrap = {};
@@ -63,7 +63,7 @@
     },
     defaultErrorHandler: function (model, response, opts) {
       console.error("Error on "+this.singular+" model: " + JSON.stringify(model) + " --- " + JSON.stringify(response));
-      
+
       var msg;
 
       // FIXME: a 422 response over cross domain will for some reason return status 0... catching it like this here
@@ -138,7 +138,7 @@
     //   // owner_name or owner_identifiable must be filled
     //   if (!(attrs.owner_name)) {
     //     if (jQuery('#unidentified-owner-checkbox').is(':checked')) {
-    //       console.log('passing validation...');          
+    //       console.log('passing validation...');
     //     } else {
     //       alert('Owner name must be filled in or marked as unidentifiable');
     //     }
@@ -152,7 +152,7 @@
     //   }
 
     //   // _.all(jQuery("input.required").val(), funciton (v) { return v != "" })
-    // },  
+    // },
 
     attachPhoto: function (photo, successCallback) {
       var report = this;
@@ -167,7 +167,7 @@
         report.updatePhotosAttribute();
 
         photo.on('change sync', report.updatePhotosAttribute, report);
-        
+
         console.log("Photo "+photo.id+" attached to report "+ report.id);
 
         if (successCallback) {
@@ -319,9 +319,17 @@
         this.nearLng = nearLng;
         this.maxDist = maxDist;
       },
+      updateLocation: function (nearLat, nearLng, maxDist) {
+        this.nearLat = nearLat;
+        this.nearLng = nearLng;
+        if (maxDist) this.maxDist = maxDist;
+      },
+      updateMaxDistance: function(maxDist) {
+        this.maxDist = maxDist;
+      },
       model: model.Installation,
       url: function () {
-        return model.baseURL + '/installations/near.json?lat=' + this.nearLat + '&lng=' + this.nearLng + '&max_dist=' + this.maxDist;
+        return model.baseURL + '/installations/near.json?lat=' + this.nearLat + '&lng=' + this.nearLng + '&max_dist=' + this.maxDist + '&per_page=500';
       }
   });
 
@@ -381,7 +389,7 @@
 
       window.androidUploadSuccess = function (id) {
         console.log("Image uploaded successfully.");
-      
+
         photo.id = id;
         photo.fetch({
           success: function () {
@@ -394,15 +402,15 @@
       window.androidCaptureSuccess = function () {
         photo.captureSuccess();
       };
-      
-      // need to pass callback funciton name as string so that 
+
+      // need to pass callback funciton name as string so that
       // it can be executed on the Android side
 
       if (from == "camera")
         Android.getPhotoFromCamera(this.url(), 'window.androidCaptureSuccess');
       else if (from == "gallery")
         Android.getPhotoFromGallery(this.url(), 'window.androidCaptureSuccess');
-      
+
     },
 
     upload: function () {
@@ -431,7 +439,7 @@
 
       var success = function (data) {
         console.log("Image uploaded successfully; "+data.image_file_size+" bytes uploaded.");
-        
+
         photo.set('id', data.id);
 
         console.log("Assigned id to photo: "+data.id);

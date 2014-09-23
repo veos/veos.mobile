@@ -32,7 +32,7 @@
       zoom = 4;
     } else {
       center = veos.map.convertGeolocToGmapLatLng(initLoc);
-      zoom = 13;
+      zoom = 16;
     }
 
     var mapOptions = {
@@ -58,6 +58,20 @@
     });
 
     this.gmap = gmap;
+
+    google.maps.event.addListener(gmap, 'dragend', function() {
+      console.log('dragend triggered');
+      var center = gmap.getCenter();
+      veos.installations.updateLocation(center.lat(), center.lng());
+      veos.installations.fetch({reset:true});
+    });
+
+    google.maps.event.addListener(gmap, 'zoom_changed', function() {
+      console.log('zoom_changed triggered');
+      var zoom = gmap.getZoom();
+      veos.installations.updateMaxDistance(80000/(Math.pow(2, zoom)));      // BASED ON http://stackoverflow.com/questions/8717279/what-is-zoom-level-15-equivalent-to
+      veos.installations.fetch({reset:true});
+    });
   };
 
   self.Map.prototype = {
@@ -115,7 +129,7 @@
           strokeWeight: 1
         });
 
-        map.gmap.setZoom(13);             // sets zoom back to default level (relevant if user does not gps and !initLoc in line 21)
+        map.gmap.setZoom(16);             // sets zoom back to default level (relevant if user does not gps and !initLoc in line 21)
 
         map.currentLocMarker.setMap(map.gmap);
 
@@ -157,11 +171,13 @@
     console.log("Adding "+installations.length+" installation markers to map...");
 
     var installationCountMsg = humane.create({ timeout: 3000 })
-    installationCountMsg.log("Total # of installations reported: " + installations.length);
+    //installationCountMsg.log("Total # of installations reported: " + installations.length);
 
 
     var map = this;
-    veos.markersArray = [];
+    if (veos.markersArray === undefined) {
+      veos.markersArray = [];
+    }
 
     map.infowindow = new google.maps.InfoWindow({
       // do you seriously need a plugin for styling infowindows?!?! Puke
@@ -170,70 +186,73 @@
     });
 
     installations.each(function(i) {
-      var latLng = new google.maps.LatLng(i.get('loc_lat'), i.get('loc_lng'));
-      var buttonText = "";
+      if (!_.findWhere(veos.markersArray, {"id": i.id})) {
+        var latLng = new google.maps.LatLng(i.get('loc_lat'), i.get('loc_lng'));
+        var buttonText = "";
 
-      var compliancePinOn;
-      var compliancePinOff;
-      var compliancePin;
-      if (i.get('compliance_level') === 'compliant') {
-        compliancePinOn = '/images/pin-green-on.png';
-        compliancePinOff = '/images/pin-green-off.png';
-      } else if (i.get('compliance_level') === 'min_compliant') {
-        compliancePinOn = '/images/pin-yellow-green-on.png';
-        compliancePinOff = '/images/pin-yellow-green-off.png';
-      } else if (i.get('compliance_level') === 'low_compliant') {
-        compliancePinOn = '/images/pin-yellow-on.png';
-        compliancePinOff = '/images/pin-yellow-off.png';
-      } else if (i.get('compliance_level') === 'non_compliant') {
-        compliancePinOn = '/images/pin-red-on.png';
-        compliancePinOff = '/images/pin-red-off.png';
-      } else {
-        compliancePin = 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
-      }
+        var compliancePinOn;
+        var compliancePinOff;
+        var compliancePin;
+        if (i.get('compliance_level') === 'compliant') {
+          compliancePinOn = '/images/pin-green-on.png';
+          compliancePinOff = '/images/pin-green-off.png';
+        } else if (i.get('compliance_level') === 'min_compliant') {
+          compliancePinOn = '/images/pin-yellow-green-on.png';
+          compliancePinOff = '/images/pin-yellow-green-off.png';
+        } else if (i.get('compliance_level') === 'low_compliant') {
+          compliancePinOn = '/images/pin-yellow-on.png';
+          compliancePinOff = '/images/pin-yellow-off.png';
+        } else if (i.get('compliance_level') === 'non_compliant') {
+          compliancePinOn = '/images/pin-red-on.png';
+          compliancePinOff = '/images/pin-red-off.png';
+        } else {
+          compliancePin = 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
+        }
 
-      var marker = new google.maps.Marker({
-        position: latLng,
-        icon: compliancePinOn,
-        iconUnselected: compliancePinOff,
-        iconSelected: compliancePinOn,
-        title: i.get('owner_name') || "Unknown Owner"
-      });
-
-      // duplicating html from InstallationList (veos.view.js) for popup content
-      var mapPopupContent;
-
-      if (i.get('owner_name')) {
-        buttonText = "<span class='owner_name'>" + i.get('owner_name') + "</span><br/><span class='trunc-address'>" + i.getTruncatedLocDescription() + "</span>";
-      } else {
-        buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/><span class='trunc-address'>" + i.getTruncatedLocDescription() + "</span>";
-      }
-
-      var thumb = "";
-      if (i.has('photos') && i.get('photos').length > 0) {
-        var photoID = i.get('photos')[0].id;
-        thumb = "<img class='photo photo-"+photoID+"' />";
-      }
-
-      mapPopupContent = "<a class='styled-link-text' href=installation-details.html?id="+i.id+">"+thumb+buttonText+"</a>";
-
-      // binding a popup click event to the marker
-      google.maps.event.addListener(marker, 'click', function() {
-        injectThumbnail(i);
-        map.infowindow.setContent(mapPopupContent);
-        map.infowindow.open(map.gmap, marker);
-        highlightOwnerPins(marker, i.get('owner_name'));
-      });
-
-      // binding a click event that triggers when the infowindow is closed
-      google.maps.event.addListener(map.infowindow, 'closeclick', function() {
-        _.each(veos.markersArray, function(m) {
-          m.setIcon(m.iconSelected);
+        var marker = new google.maps.Marker({
+          id: i.id,
+          position: latLng,
+          icon: compliancePinOn,
+          iconUnselected: compliancePinOff,
+          iconSelected: compliancePinOn,
+          title: i.get('owner_name') || "Unknown Owner"
         });
-      });
 
-      marker.setMap(map.gmap);
-      veos.markersArray.push(marker);
+        // duplicating html from InstallationList (veos.view.js) for popup content
+        var mapPopupContent;
+
+        if (i.get('owner_name')) {
+          buttonText = "<span class='owner_name'>" + i.get('owner_name') + "</span><br/><span class='trunc-address'>" + i.getTruncatedLocDescription() + "</span>";
+        } else {
+          buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/><span class='trunc-address'>" + i.getTruncatedLocDescription() + "</span>";
+        }
+
+        var thumb = "";
+        if (i.has('photos') && i.get('photos').length > 0) {
+          var photoID = i.get('photos')[0].id;
+          thumb = "<img class='photo photo-"+photoID+"' />";
+        }
+
+        mapPopupContent = "<a class='styled-link-text' href=installation-details.html?id="+i.id+">"+thumb+buttonText+"</a>";
+
+        // binding a popup click event to the marker
+        google.maps.event.addListener(marker, 'click', function() {
+          injectThumbnail(i);
+          map.infowindow.setContent(mapPopupContent);
+          map.infowindow.open(map.gmap, marker);
+          highlightOwnerPins(marker, i.get('owner_name'));
+        });
+
+        // binding a click event that triggers when the infowindow is closed
+        google.maps.event.addListener(map.infowindow, 'closeclick', function() {
+          _.each(veos.markersArray, function(m) {
+            m.setIcon(m.iconSelected);
+          });
+        });
+
+        marker.setMap(map.gmap);
+        veos.markersArray.push(marker);
+      }
     });
   };
 
