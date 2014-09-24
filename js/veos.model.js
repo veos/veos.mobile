@@ -310,7 +310,7 @@
 
   model.Installations = Backbone.Collection.extend({
       model: model.Installation,
-      url: model.baseURL + '/installations.json'
+      url: model.baseURL + '/installations.json?per_page=500'
   });
 
   model.NearbyInstallations = Backbone.Collection.extend({
