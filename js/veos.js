@@ -62,22 +62,24 @@ window.veos = (function(veos) {
         // Google Analytics
         // self.analytics(ev);
 
-        // // add all installation markers
-        // var installations = new veos.model.Installations();
-        // installations.on('reset', function(collection) {
-        //   veos.map.overviewMap.addInstallationMarkers(collection);
-        // });
-        // installations.fetch({reset:true});
-        jQuery(self).one('haveloc', function (ev, geoloc) {
-          veos.installations = new veos.model.NearbyInstallations(geoloc.coords.latitude, geoloc.coords.longitude, 2);
+        // TODO - FIX THIS HARDCODED NONSENSE. BACKEND CHANGES REALLY MESSED US UP
+
+        // if we have a geographic location for the user...
+        if (typeof geoloc !== "undefined") {
+          jQuery(self).one('haveloc', function (ev, geoloc) {
+            veos.installations = new veos.model.NearbyInstallations(geoloc.coords.latitude, geoloc.coords.longitude, 2);
+            veos.installations.on('reset', function(collection) {
+              veos.map.overviewMap.addInstallationMarkers(collection);
+            });
+            veos.installations.fetch({reset:true});
+          });
+        } else {
+          veos.installations = new veos.model.NearbyInstallations(43.6621614579938, -79.39527873417967, 2);
           veos.installations.on('reset', function(collection) {
             veos.map.overviewMap.addInstallationMarkers(collection);
           });
           veos.installations.fetch({reset:true});
-        });
-
-        // add nearby installations?
-
+        }
 
         // start following user
         veos.map.overviewMap.startFollowing();
@@ -213,6 +215,7 @@ window.veos = (function(veos) {
     /** installations-list.html (installations-list-page) **/
       .delegate("#installations-list-page", "pageshow", function(ev) {
         var installations = new veos.model.Installations();
+
 
         // Google Analytics
         // self.analytics(ev);

@@ -114,7 +114,7 @@
 }
 
 #overview-map-page .map-button-container {
-    font-size: 60%;    
+    font-size: 60%;
 }
 
 #overview-map-page .map-popup {
@@ -143,7 +143,11 @@
 #overview-map-page .styled-link-text {
     text-decoration: none;
     color: black;
-;}
+}
+
+#overview-map-page .map-button-container .ui-btn-text {
+    font-size: 13px;
+}
 
 
 /***** REPORT *****/
@@ -223,7 +227,7 @@
 
 /*#report-sign-details-container {
     text-align: center;
-    white-space: nowrap;    
+    white-space: nowrap;
 }*/
 
 @media only screen and (max-device-width: 800px) {
