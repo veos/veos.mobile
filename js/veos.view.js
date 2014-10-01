@@ -1145,6 +1145,13 @@
       this.collection.on('reset', _.bind(this.render, self));
 
       this.collection.on('add', _.bind(this.addOne, self));
+
+      jQuery(window).scroll(function() {
+         //debugger;
+         if(jQuery(window).scrollTop() + jQuery(window).height() === jQuery(document).height()) {
+             self.loadMoreInstallations();
+         }
+      });
     },
 
     showLoader: function () {
