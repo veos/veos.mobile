@@ -1,0 +1,19 @@
+{
+  "name": "veos.mobile",
+  "version": "0.0.0",
+  "homepage": "https://github.com/veos/veos.mobile",
+  "authors": [
+    "Armin Krauss <armin.krauss@utoronto.ca>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "backbone.paginator": "~2.0.2"
+  }
+}
