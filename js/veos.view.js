@@ -1146,9 +1146,12 @@
 
       this.collection.on('add', _.bind(this.addOne, self));
 
+
+      // Not sure if this ia a hack since it works nicely. Uses only plain jQuery to
+      // trigger the function loading more data
+      // From here: http://stackoverflow.com/questions/3898130/how-to-check-if-a-user-has-scrolled-to-the-bottom
       jQuery(window).scroll(function() {
-         //debugger;
-         if(jQuery(window).scrollTop() + jQuery(window).height() === jQuery(document).height()) {
+         if (jQuery(window).scrollTop() + jQuery(window).height() === jQuery(document).height()) {
              self.loadMoreInstallations();
          }
       });
