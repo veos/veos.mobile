@@ -308,9 +308,9 @@
 
   });
 
-  model.Installations = Backbone.Collection.extend({
+  model.Installations = Backbone.PageableCollection.extend({
       model: model.Installation,
-      url: model.baseURL + '/installations.json?per_page=500'
+      url: model.baseURL + '/installations.json'
   });
 
   model.NearbyInstallations = Backbone.Collection.extend({

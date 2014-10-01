@@ -1061,6 +1061,63 @@
 
 
   /**
+   *  Show on row in Installation List
+   */
+  self.InstallationListRow = Backbone.View.extend({
+    initialize: function () {
+
+    },
+
+    render: function () {
+      var installation = this.model;
+
+      var buttonText = '';
+      var ownerName;
+      if (installation.get('owner_name')) {
+        buttonText = "<span class='owner_name'>" + installation.get('owner_name') + "</span><br/><span class='loc_description'>" + installation.getLocDescription() + "</span>";
+      } else {
+        buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/><span class='loc_description'>" + installation.getLocDescription() + "</span>";
+      }
+
+      var complianceLevel;
+      if (installation.get('compliance_level')) {
+        if (installation.get('compliance_level') === 'non_compliant') {
+          complianceLevel = "<span class='compliance no-sign-color'></span>";
+        } else if (installation.get('compliance_level') === 'low_compliant') {
+          complianceLevel = "<span class='compliance missing-info-color'></span>";
+        } else if (installation.get('compliance_level') === 'min_compliant') {
+          complianceLevel = "<span class='compliance min-compliant-color'></span>";
+        } else if (installation.get('compliance_level') === 'compliant') {
+          complianceLevel = "<span class='compliance compliant-color'></span>";
+        } else {
+          complianceLevel = "<span class='compliance-unknown'></span>";
+        }
+      }
+
+      var thumb = "";
+
+      // the installations.json now contains photo URL so this got easier and much faster
+      if (installation.has('photos') && installation.get('photos').length > 0) {
+        var photosOfInstallation = installation.get('photos');
+        var photo = _.first(photosOfInstallation);
+        var photoID = photo.id;
+        var thumbUrl = veos.model.baseURL + photo.thumb_url;
+
+        //console.log('Retrieve photo thumb URL: '+thumbUrl+' for photo with ID: '+photoID);
+        thumb = "<img class='list-picture photo-"+photoID+"' src='"+thumbUrl+"' />";
+      }
+
+      var item = jQuery("<a class='relative' href='installation-details.html?id="+installation.get('id')+"'>"+complianceLevel+thumb+buttonText+"</a>");
+      // item.data('installation', installation);        // add the installation object so that we can retrieve it in the click event
+      // item.attr('data-installationId', installation.get('id'));
+      var li = jQuery("<li />");
+      li.append(item);
+
+      return li;
+    }
+  });
+
+  /**
     InstallationList
     Shows a list of Installations.
   **/
@@ -1073,7 +1130,8 @@
         // veos.currentInstallation = jQuery(ev.target).data('installation');      // next used in the report-edit delegate
         // var id = jQuery(ev.target).attr('data-installationId');
         // alert(id);
-      }
+      },
+      'click .load-more-installations': 'loadMoreInstallations'
     },
 
     initialize: function () {
@@ -1085,6 +1143,8 @@
 
       // TODO: consider binding 'add' and 'remove' to pick up added/removed Installations too?
       this.collection.on('reset', _.bind(this.render, self));
+
+      this.collection.on('add', _.bind(this.addOne, self));
     },
 
     showLoader: function () {
@@ -1096,7 +1156,23 @@
       delete this.loader;
     },
 
+    addOne: function(inst) {
+      var instRow = new veos.view.InstallationListRow({model: inst});
+      // this.$el.append(instRow.render().el);
+      var list = this.$el.find('.installations-list');
+      list.append(instRow.render());
+      list.listview('refresh');
+    },
+
+    loadMoreInstallations: function() {
+      var view = this;
+
+      view.collection.getNextPage();
+    },
+
     render: function () {
+      var view = this;
+
       if (veos.isAndroid()) {
         // we're in the Android app
         this.$el.find('.web-only').addClass('hidden');
@@ -1114,50 +1190,52 @@
       list.empty();
 
       this.collection.each(function (installation) {
-        var buttonText = '';
-        var ownerName;
-        if (installation.get('owner_name')) {
-          buttonText = "<span class='owner_name'>" + installation.get('owner_name') + "</span><br/><span class='loc_description'>" + installation.getLocDescription() + "</span>";
-        } else {
-          buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/><span class='loc_description'>" + installation.getLocDescription() + "</span>";
-        }
 
-        var complianceLevel;
-        if (installation.get('compliance_level')) {
-          if (installation.get('compliance_level') === 'non_compliant') {
-            complianceLevel = "<span class='compliance no-sign-color'></span>";
-          } else if (installation.get('compliance_level') === 'low_compliant') {
-            complianceLevel = "<span class='compliance missing-info-color'></span>";
-          } else if (installation.get('compliance_level') === 'min_compliant') {
-            complianceLevel = "<span class='compliance min-compliant-color'></span>";
-          } else if (installation.get('compliance_level') === 'compliant') {
-            complianceLevel = "<span class='compliance compliant-color'></span>";
-          } else {
-            complianceLevel = "<span class='compliance-unknown'></span>";
-          }
-        }
+        view.addOne(installation);
+        // var buttonText = '';
+        // var ownerName;
+        // if (installation.get('owner_name')) {
+        //   buttonText = "<span class='owner_name'>" + installation.get('owner_name') + "</span><br/><span class='loc_description'>" + installation.getLocDescription() + "</span>";
+        // } else {
+        //   buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/><span class='loc_description'>" + installation.getLocDescription() + "</span>";
+        // }
 
-        var thumb = "";
+        // var complianceLevel;
+        // if (installation.get('compliance_level')) {
+        //   if (installation.get('compliance_level') === 'non_compliant') {
+        //     complianceLevel = "<span class='compliance no-sign-color'></span>";
+        //   } else if (installation.get('compliance_level') === 'low_compliant') {
+        //     complianceLevel = "<span class='compliance missing-info-color'></span>";
+        //   } else if (installation.get('compliance_level') === 'min_compliant') {
+        //     complianceLevel = "<span class='compliance min-compliant-color'></span>";
+        //   } else if (installation.get('compliance_level') === 'compliant') {
+        //     complianceLevel = "<span class='compliance compliant-color'></span>";
+        //   } else {
+        //     complianceLevel = "<span class='compliance-unknown'></span>";
+        //   }
+        // }
 
-        // the installations.json now contains photo URL so this got easier and much faster
-        if (installation.has('photos') && installation.get('photos').length > 0) {
-          var photosOfInstallation = installation.get('photos');
-          var photo = _.first(photosOfInstallation);
-          var photoID = photo.id;
-          var thumbUrl = veos.model.baseURL + photo.thumb_url;
+        // var thumb = "";
 
-          //console.log('Retrieve photo thumb URL: '+thumbUrl+' for photo with ID: '+photoID);
-          thumb = "<img class='list-picture photo-"+photoID+"' src='"+thumbUrl+"' />";
-        }
+        // // the installations.json now contains photo URL so this got easier and much faster
+        // if (installation.has('photos') && installation.get('photos').length > 0) {
+        //   var photosOfInstallation = installation.get('photos');
+        //   var photo = _.first(photosOfInstallation);
+        //   var photoID = photo.id;
+        //   var thumbUrl = veos.model.baseURL + photo.thumb_url;
 
-        var item = jQuery("<a class='relative' href='installation-details.html?id="+installation.get('id')+"'>"+complianceLevel+thumb+buttonText+"</a>");
-        // item.data('installation', installation);        // add the installation object so that we can retrieve it in the click event
-        // item.attr('data-installationId', installation.get('id'));
-        var li = jQuery("<li />");
-        li.append(item);
+        //   //console.log('Retrieve photo thumb URL: '+thumbUrl+' for photo with ID: '+photoID);
+        //   thumb = "<img class='list-picture photo-"+photoID+"' src='"+thumbUrl+"' />";
+        // }
 
-        list.append(li);
-        list.listview('refresh');
+        // var item = jQuery("<a class='relative' href='installation-details.html?id="+installation.get('id')+"'>"+complianceLevel+thumb+buttonText+"</a>");
+        // // item.data('installation', installation);        // add the installation object so that we can retrieve it in the click event
+        // // item.attr('data-installationId', installation.get('id'));
+        // var li = jQuery("<li />");
+        // li.append(item);
+
+        // list.append(li);
+        // list.listview('refresh');
       });
     }
   });

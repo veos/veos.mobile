@@ -8,7 +8,8 @@ BUNDLES = {
     'jquery.mobile-1.3.2.min',
     'jquery.mobile.autoComplete-1.4.3',
     'underscore-1.6.0.min',
-    'backbone-1.1.2.min'
+    'backbone-1.1.2.min',
+    '../../bower_components/backbone.paginator/lib/backbone.paginator.min'
   ]
 }
 
