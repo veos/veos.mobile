@@ -313,6 +313,20 @@
       url: model.baseURL + '/installations.json'
   });
 
+  model.PagedNearbyInstallations = Backbone.PageableCollection.extend({
+      initialize: function (nearLat, nearLng) {
+        this.nearLat = nearLat;
+        this.nearLng = nearLng;
+        // Since we want people to be able to scroll to any installation
+        // no matter how fare away we set maxDist to half of the circumference of the earth
+        this.maxDist = 20000;
+      },
+      model: model.Installation,
+      url: function () {
+        return model.baseURL + '/installations/near.json?lat=' + this.nearLat + '&lng=' + this.nearLng + '&max_dist=' + this.maxDist;
+      }
+  });
+
   model.NearbyInstallations = Backbone.Collection.extend({
       initialize: function (nearLat, nearLng, maxDist) {
         this.nearLat = nearLat;
