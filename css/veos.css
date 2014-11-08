@@ -95,11 +95,12 @@
     bottom: 4%;
     right: 5%;
     z-index: 1;
-    width: 115px;
+    width: 135px;
 }
 
 .overview-button {
-    width: 112px;
+    width: 100%;
+    min-width: 130px;
     margin-bottom: 10px;
 }
 
