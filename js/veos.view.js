@@ -1138,7 +1138,7 @@
       var self = this;
 
       if (!this.collection) {
-        this.collection = new veos.model.Installations();
+        this.collection = new veos.model.PagedNearbyInstallations();
       }
 
       // TODO: consider binding 'add' and 'remove' to pick up added/removed Installations too?
@@ -1155,6 +1155,12 @@
              self.loadMoreInstallations();
          }
       });
+
+      // jQuery(self.$el).scroll(function() {
+      //    if (jQuery(window).scrollTop() + jQuery(window).height() === jQuery(document).height()) {
+      //        self.loadMoreInstallations();
+      //    }
+      // });
     },
 
     showLoader: function () {

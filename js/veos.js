@@ -214,11 +214,10 @@ window.veos = (function(veos) {
 
     /** installations-list.html (installations-list-page) **/
       .delegate("#installations-list-page", "pageshow", function(ev) {
-        var installations = new veos.model.Installations();
+        // var installations = new veos.model.Installations();
 
-
-        // Google Analytics
-        // self.analytics(ev);
+        // fetch instalations ordered by closest to furthest without Max distance
+        var installations = new veos.model.PagedNearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude);           // TODO I'm pretty sure this is not the right way to access these
 
         var view = new veos.view.InstallationList({
           el: ev.target,
