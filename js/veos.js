@@ -28,6 +28,10 @@ window.veos = (function(veos) {
     }
   };
 
+  self.goToOverviewMap = function () {
+    jQuery.mobile.changePage("#overview-map-page");
+  };
+
   /**
     Initializes the whole app. This needs to be called at the bottom of every VEOS page.
   **/
@@ -54,9 +58,9 @@ window.veos = (function(veos) {
 
     /** overview-map.html (overview-map-page) **/
       .delegate("#overview-map-page", "pageshow", function(ev) {
-        //if (!veos.map.overviewMap) {
+        if (!veos.map.overviewMap) {
           veos.map.overviewMap = new veos.map.Map('#overview-map-canvas');
-        //}
+        }
         //var map = new veos.map.Map('#overview-map-canvas');
 
         // Google Analytics
@@ -184,7 +188,7 @@ window.veos = (function(veos) {
       .delegate("#refine-location-page", "pageshow", function(ev) {
         if (!veos.reportForm) {
           console.error("Cannot refine location because there is no report currently in progress.");
-          jQuery.mobile.changePage("report.html");
+          jQuery.mobile.changePage("#report-page");
           return;
         }
 
@@ -291,7 +295,7 @@ window.veos = (function(veos) {
         var installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
         // and set it in the href of the back button
         var backButton = jQuery('.photo-details-page-back-button');
-        backButton.attr('href', 'installation-details.html?id='+installationId);
+        backButton.attr('href', '#installation-details?id='+installationId);
 
         // retrieve photoId from URL
         var photoId = window.location.href.match("[\\?&]photoId=(\\d+)")[1];

@@ -18,7 +18,7 @@
 
         <script type="text/javascript">
             $.noConflict();
-            jQuery(document).bind("mobileinit", function(){
+            jQuery(document).bind(" ", function(){
               jQuery.mobile.defaultPageTransition = 'none'; // disable transitions
               jQuery.mobile.defaultDialogTransition = 'none';
               jQuery.mobile.pushStateEnabled = false; // disable history rewriting
@@ -56,7 +56,7 @@
             jQuery(document).ready(function () {
                 // veos.setUpPiwik();
                 if (location.hash == "") {
-                    jQuery.mobile.changePage("overview-map.html");
+                    veos.goToOverviewMap();
                 }
             });
         </script>
@@ -87,5 +87,622 @@
                 }
             });
         </script>
+
+
+        <!-- OVERVIEW MAP -->
+
+        <div data-role="page" id="overview-map-page">
+            <div id="overview-map-canvas" class="map"></div>
+            <div class="map-button-container"> 
+                <a href="#report-selection-page" class="add-report-button overview-button" data-role="button" data-theme="b" data-inline="true" data-icon="plus">Add Report</a>
+                <a href="#installations-list-page" class="view-list-button overview-button" data-role="button" data-theme="b" data-inline="true" data-icon="grid">View List</a>
+                <a class="overflow-button overview-button web-only hidden" data-role="button" data-theme="b" data-inline="true" data-icon="info" href="http://surveillancerights.ca/overflow.html" target="_blank">About App</a>
+            </div>
+        </div>
+
+
+        <!-- INSTALLATIONS LIST -->
+
+        <div data-role="page" id="installations-list-page">
+            <!--<div data-theme="a" data-role="header">
+                <h5>List of Installations</h5>
+            </div>-->
+            <div class="header-with-buttons ui-bar ui-bar-a">
+                <div class="overflow-button-container web-only hidden">
+                    <a class="overflow-button web-only" data-role="button" data-theme="e" data-icon="info" data-iconpos="notext"
+                        href="http://surveillancerights.ca/overflow.html" target="_blank">
+                    </a>
+                </div>
+                <a class="map-view-button" data-role="button" data-inline="true" data-theme="f" data-icon="home" data-iconpos="left" href="#overview-map-page">
+                    Back to Map
+                </a>
+                <a class="add-report-button" data-role="button" data-inline="true" data-theme="b" data-icon="plus" data-iconpos="left" href="#report-selection-page">
+                    Add Report
+                </a>
+            </div>
+            <div class="installation-count-container">
+                <span class="installation-count-text">Total # of installations reported: <span class="installation-count" /></span>
+            </div>
+
+            <div data-role="content">
+                <ul data-role="listview" class="installations-list">
+                    <!-- this is filled by the veos.view.InstallationList.render() -->
+                </ul>
+            </div>
+            <div data-theme="a" data-role="footer" class="footer-with-buttons">
+                <a class="map-view-button" data-role="button" data-inline="true" data-theme="f" data-icon="home" data-iconpos="left" href="#overview-map-page">
+                    Back to Map
+                </a>
+                <a class="add-report-button" data-role="button" data-inline="true" data-theme="b" data-icon="plus" data-iconpos="left" href="#report-selection-page">
+                    Add Report
+                </a>
+
+                <!-- <a class="load-more-installations" data-role="button" data-inline="true" data-theme="b" data-icon="plus" data-iconpos="left">
+                    Load more
+                </a> -->
+            </div>
+        </div>
+
+
+
+        <!-- INSTALLATION DETAILS -->
+
+        <div data-role="page" id="installation-details-page">
+            <div data-theme="a" data-role="header">
+                <span class="flag-button-container">
+                    <a class="flag-button" data-role="button" data-theme="e" data-icon="alert" data-iconpos="left" href="">Flag
+                    </a>
+                </span>
+                <span class="edit-button-container">
+                    <a class="edit-button" data-role="button" data-theme="e" data-icon="gear" data-iconpos="left" href="">Edit
+                    </a>
+                </span>
+                <a class="overflow-button web-only hidden" data-role="button" data-theme="e" data-icon="info" data-iconpos="notext"
+                    href="http://surveillancerights.ca/overflow.html" target="_blank">
+                </a>
+                <h3>Details</h3>
+            </div>
+            <div data-role="content">
+                <a class="compliance-banner" data-role="button" data-theme="a" data-icon="arrow-r" data-iconpos="right" href=""></a>
+
+                <div class="owner-name-container">
+                    <span class="field" name="owner_name" />
+                </div>
+                <div class="owner-type-container">
+                    <span class="field" name="owner_type" />
+                </div>
+                <div>
+                    <b>Security operator: </b><span class="field" name="operator_name" />
+                </div>
+                <div class="last-updated-container">
+                    <b>Last update: </b><span class="field" name="created_at" />
+                </div>
+
+                <div data-role="collapsible" data-collapsed="false" class="location-container">
+                    <h3>
+                        Location
+                    </h3>
+                    <div class="map-thumbnail-container">
+                    </div>
+                    <div>
+                        <span class="field" name="loc_description" />
+                    </div>
+                </div>
+
+                <div data-role="collapsible-set" data-theme="" data-content-theme="" class="report">
+                    <div data-role="collapsible" data-collapsed="false" class="photos-container">
+                        <h3>
+                            Photos - <span class="photo-count" />
+                        </h3>
+                        <div class="photo-thumbnail-container">
+                        </div>
+                    </div>
+                </div>                
+
+                <!-- photo-details overlay... content is hidden until photo is clicked -->
+                <div id="photo-details-content">
+                    <h3>
+                        Photo details
+                    </h3>
+                    <div data-role="fieldcontain" id="photo-details-tag-buttons">
+                        <fieldset data-role="controlgroup" data-type="horizontal">
+                            <legend><b>What is this picture about?</b></legend>
+                            <input name="is_camera" class="is-camera field" id="is-camera" value="camera" type="checkbox">
+                            <label for="is-camera"><b>Camera</b></label>
+                            <input name="is_sign" class="is-sign field" id="is-sign" value="sign" type="checkbox">
+                            <label for="is-sign"><b>Sign</b></label>
+                            <input name="is_other" class="is-other field" id="is-other" value="other" type="checkbox">
+                            <label for="is-other"><b>Other</b></label>
+                        </fieldset>
+                    </div>
+
+                    <div data-role="fieldcontain">
+                        <fieldset data-role="controlgroup">
+                            <legend><b>Note</b></legend>
+                            <textarea class="field" name="photo-notes" id="photo-note" placeholder="Any other observations..."></textarea>
+                        </fieldset>
+                    </div>
+                </div>
+
+                <div class="camera-details-container" data-role="collapsible-set" data-theme="" data-content-theme="">
+                    <div data-role="collapsible" data-collapsed="true">
+                        <h3>
+                            Cameras - <span class="field" name="camera_count" />
+                        </h3>
+                        <ul>
+                            <li>
+                                <b>Number of cameras: </b>
+                                <span class="field" name="camera_count" />
+                            </li>
+                            <li>
+                                <b>Cameras pointed at: </b>
+                                <span class="field multi-field" name="surveilled_space" />
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="sign-details-container" data-role="collapsible-set" data-theme="" data-content-theme="">
+                    <div data-role="collapsible" data-collapsed="true">
+                        <h3>
+                            Signs - <span class="field" name="has_sign" />
+                        </h3>
+
+                        <ul>
+                            <li>
+                                <b>Sign <span class="field" name="has_sign" /></b>
+                            </li>
+                            <li>
+                                <b>Visibility:</b> <span class="field" name="sign_visibility" />
+                            </li>
+                            <li>
+                                <b>Stated purpose:</b> <span class="field" name="sign_stated_purpose" />
+                            </li>
+                            <li>
+                                <b>Stated properties:</b> <span class="field" name="sign_properties" />
+                            </li>
+                            <li>
+                                <b>Text of sign:</b> <span class="field" name="sign_text" />
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div data-role="collapsible-set" data-theme="" data-content-theme="">
+                    <div data-role="collapsible" data-collapsed="true">
+                        <h3>
+                            Notes
+                        </h3>
+                        <span class="field" name="notes" />
+                    </div>
+                </div>
+
+            </div>
+
+            <div data-theme="a" data-role="footer" class="footer-with-buttons">
+                <a data-role="button" data-theme="f" data-icon="back" data-iconpos="left" href="#installations-list-page">
+                    Back
+                </a>
+            </div>
+        </div>
+
+
+        <!-- REPORT -->
+
+        <div data-role="page" id="report-page">
+            <div class="header-with-text" data-theme="a" data-role="header">
+                <a class="overflow-button web-only hidden" data-inline="true" data-role="button" data-theme="e" data-icon="info" data-iconpos="notext"
+                href="http://surveillancerights.ca/overflow.html" target="_blank"></a>
+                <h3 id="report-header-text">
+                    File a New Report
+                </h3>
+            </div>
+            <div data-role="content">
+                <ul id="error-message-container" style="display: none">
+                    <li class="error-message-header" style="list-style: none; font-weight: bold; margin-left: 1ex; margin-bottom: 1ex">
+                        Your report could not be submitted because:
+                    </li>
+                </ul>
+
+                <fieldset data-role="controlgroup">
+                    <legend><b>Owner name:</b> who does this surveillance appear to belong to?</legend>
+                    <input class="field" name="owner_name" id="owner" placeholder="Owner name if identifiable..." value="" type="text" />
+                    <ul id="owner-name-suggestions" data-role="listview" data-inset="true"></ul>
+                    <input type="checkbox" name="owner_identifiable" id="unidentified-owner-checkbox" class="custom" value="true"/>
+                    <label for="unidentified-owner-checkbox" data-theme="e">Cannot identify owner</label>
+                </fieldset>
+
+                <fieldset data-role="controlgroup">
+                    <label for="owner-type"><b>Owner type</b></label>
+                    <select id="owner-type" class="field" name="owner_type">
+                        <option value>Owner type</option>
+                        <option value="Retail/Shop">Retail/Shop</option>
+                        <option value="Shopping Mall">Shopping Mall</option>
+                        <option value="Restaurant/Bar">Restaurant/Bar</option>
+                        <option value="Office">Office</option>
+                        <option value="School/University">School/University</option>
+                        <option value="Hospital/Clinic">Hospital/Clinic</option>
+                        <option value="Apartment/Condo Building">Apartment/Condo Building</option>
+                        <option value="Hotel">Hotel</option>
+                        <option value="Public Transit">Public Transit</option>
+                        <option value="Taxi">Taxi</option>
+                        <option value="Government - Federal">Government - Federal</option>
+                        <option value="Government - Provincial">Government - Provincial</option>
+                        <option value="Government - Municipal">Government - Municipal</option>
+                        <option value="Police">Police</option>
+                        <option value="Traffic/Red Light Camera">Traffic/Red Light Camera</option>
+                        <option value="Parking Garage">Parking Garage</option>
+                        <option value="Private Residence">Private Residence</option>
+                        <option value="Park/Beach">Park/Beach</option>
+                        <option value="Military">Military</option>
+                        <option value="Airport">Airport</option>
+                        <option value="Port">Port</option>
+                        <option value="Stadium/Arena">Stadium/Arena</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </fieldset>
+
+
+                <fieldset data-role="controlgroup" data-type="horizontal">
+                    <legend><b>Sign:</b> Do you see a sign that notifies you about the use of surveillance?</legend>
+                    <input name="has_sign" class="has-sign field" id="sign-yes" value="yes" type="radio">
+                    <label for="sign-yes"><b>Yes</b></label>
+                    <input name="has_sign" class="has-sign field" id="sign-no" value="no" type="radio">
+                    <label for="sign-no"><b>No</b></label>
+                </fieldset>
+
+
+                <fieldset data-role="controlgroup">
+                    <legend><b>Security operator</b></legend>
+                    <input class="field" name="operator_name" id="operator" placeholder="Camera operator name if identifiable..." value="" type="text" />
+                </fieldset>
+
+
+                <div data-role="collapsible" data-collapsed="true" id="report-location-container">
+                    <h3>
+                        Edit the location
+                    </h3>
+
+                    <p>
+                        Click the map to refine location or type a more accurate address or place name below
+                    </p>
+                    <div data-role="fieldcontain">
+                        <fieldset data-role="controlgroup">
+                            <!-- <label for="location-address">Address or Place</label> -->
+                            <input class="field" name="loc_description_from_user" id="location-address"  value="" type="text" />
+                            <input class="field" name="loc_description_from_google" value="" type="hidden" />
+                        </fieldset>
+                    </div>
+                    <div class="map-thumbnail-container">
+                        <a href="#refine-location-page"><img id="static-report-map" class="map-thumbnail" alt="Locating..." src="images/loading-64.gif" /></a>
+                        <div class="waiting">Locating...</div>
+                    </div>
+                </div>
+
+
+                <div data-role="collapsible-set" data-theme="" data-content-theme="" class="report">
+                    <div data-role="collapsible" data-collapsed="true" id="report-photos-container">
+                        <h3>
+                            Add a photo                 <!-- icon? -->
+                        </h3>
+                            <div id="camera-buttons">
+                                <a id="add-camera-photo-button" data-role="button" href="#report-page" data-icon="plus" data-iconpos="left" class="acquire-photo android-only" data-acquire-from="camera" data-photo-of="camera">
+                                    Take Photo
+                                </a>
+                                <a id="select-camera-photo-button" data-role="button" data-icon="plus" data-iconpos="left" class="acquire-photo android-only" data-acquire-from="gallery" data-photo-of="camera">
+                                    Select Photo from Gallery
+                                </a>
+                                <input type="file" name="photo-from-hard-drive" id="photo-from-hard-drive" class="web-only" />
+                                <div id="photos" class="photo-list">
+                                    <!-- Images are added dynamically via camera or gallery selection -->
+                                </div>
+                            </div>
+                    </div>
+                </div>
+
+
+                <!-- photo-details overlay... content is hidden until photo is clicked - CURRENTLY DESCOPED -->
+<!--                 <div id="photo-details-content">
+                    <h3>
+                        Photo
+                    </h3>
+                    <div data-role="fieldcontain" id="photo-details-tag-buttons">
+                        <fieldset data-role="controlgroup" data-type="horizontal">
+                            <legend><b>What is this picture about?</b></legend>
+                            <input name="is_camera" class="is-camera field" id="is-camera" value="camera" type="checkbox">
+                            <label for="is-camera"><b>Camera</b></label>
+                            <input name="is_sign" class="is-sign field" id="is-sign" value="sign" type="checkbox">
+                            <label for="is-sign"><b>Sign</b></label>
+                            <input name="is_other" class="is-other field" id="is-other" value="other" type="checkbox">
+                            <label for="is-other"><b>Other</b></label>
+                        </fieldset>
+                    </div>
+
+                    <div data-role="fieldcontain">
+                        <fieldset data-role="controlgroup">
+                            <legend><b>Note</b></legend>
+                            <textarea class="field" name="photo-notes" id="photo-note" placeholder="Any other observations..."></textarea>
+                        </fieldset>
+                    </div>
+                </div>       -->
+
+
+                <div data-role="collapsible-set" data-theme="" data-content-theme="">
+                    <div data-role="collapsible" data-collapsed="true" class="camera-details-container">
+                        <h3>
+                            <span class="camera-add-edit-text"></span> camera details
+                        </h3>
+                        <div>
+                            <div class="no-field-separator" data-role="fieldcontain">
+                                <fieldset data-role="controlgroup">
+                                    <label for="camera-count">How many cameras do you see?</label>
+                                    <input class="field" name="camera_count" id="camera-count" placeholder="#" type="number">
+                                </fieldset>
+                            </div>
+
+                            <label class="dropdown-label" for="suveilled-space">Cameras pointed at</label>
+                            <select class="multi-field" name="surveilled_space" id="surveilled-space" data-mini="true" multiple="multiple" data-native-menu="false">
+                                <option>Cameras pointed at</option>
+                                <option value="Interior of Building">Interior of Building</option>
+                                <option value="Exterior of Building">Exterior of Building</option>
+                                <option value="Mall Common Area">Mall Common Area</option>
+                                <option value="Outdoor Space">Outdoor Space</option>
+                                <option value="Sidewalk">Sidewalk</option>
+                                <option value="Road">Road</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div data-role="collapsible-set" data-theme="" data-content-theme="">
+                    <div data-role="collapsible" data-collapsed="true" class="sign-details-container">
+                        <h3>
+                            <span class="sign-add-edit-text"></span> sign details
+                        </h3>
+
+                        <label class="dropdown-label" for="sign-visibility">Visibility of sign</label>
+                        <select class="field" name="sign_visibility" id="sign-visibility" data-mini="true" data-native-menu="false">
+                            <option>Visibility of sign</option>
+                            <option value="Not Easily Visible">Not Easily Visible</option>
+                            <option value="Easily Visible">Easily Visible</option>
+                            <option value="Easily Readable">Easily Readable</option>
+                            <option value="Readable From Outside Area">Readable From Outside Area</option>
+                        </select>
+
+                        <label class="dropdown-label" for="sign-stated-purpose">Stated purpose</label>
+                        <select class="multi-field" name="sign_stated_purpose" id="sign-stated-purpose" data-mini="true" multiple="multiple" data-native-menu="false">
+                            <option>Stated purpose</option>
+                            <option value="None">None</option>
+                            <option value="Public/Personal Safety">Public/Personal Safety</option>
+                            <option value="Crime Prevention/Prosecution">Crime Prevention/Prosecution</option>
+                            <option value="Shoplifting/theft">Shoplifting/Theft</option>
+                            <option value="Vandalism/Loitering">Vandalism/Loitering</option>
+                            <!-- <option value="Terrorism">Terrorism</option> -->
+                            <option value="Consumer Analysis">Consumer Analysis</option>
+                            <option value="Other">Other</option>
+                        </select>
+
+                        <label class="dropdown-label" for="sign-properties">Stated properties</label>
+                        <select class="multi-field" name="sign_properties" id="sign-properties" data-mini="true" multiple="multiple" data-native-menu="false">
+                            <option>Stated properties</option>
+                            <option value="None">None</option>
+                            <option value="Images Recorded/Archived">Images Recorded/Archived</option>
+                            <option value="Image Retention Period">Image Retention Period</option>
+                            <option value="Images Monitored Live">Images Monitored Live</option>
+                            <option value="Contact/Privacy Policy Info">Contact/Privacy Policy Info</option>
+                            <option value="Governing Legislation">Governing Legislation</option>
+                            <option value="Privacy Commissioner Contact Info">Privacy Commissioner Contact Info</option>
+<!--                             <option value="Video or Still Photography">Video or Still Photography</option>
+                            <option value="Audio Monitoring/Recording">Audio Monitoring/Recording</option>
+                            <option value="Law Enforcement Disclosure">Law Enforcement Disclosure</option> -->
+                            <option value="Other">Other</option>
+                        </select>
+
+                        <div class="no-field-separator" data-role="fieldcontain">
+                            <fieldset data-role="controlgroup">
+                                <label for="sign-text">Text of sign</label>
+
+                                <textarea class="field" name="sign_text" id="sign-text" placeholder="Text of sign if it exists..." value=""></textarea>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div data-role="collapsible-set" data-theme="" data-content-theme="">
+                    <div data-role="collapsible" data-collapsed="true" id="report-notes-container">
+                        <h3>
+                            Add a note
+                        </h3>
+
+                        <fieldset data-role="controlgroup">
+                            <textarea class="field" name="notes" id="report-note" placeholder="Any other observations..."></textarea>
+                        </fieldset>
+                    </div>
+                </div>
+
+            </div>
+
+            <div data-theme="a" data-role="footer" class="footer-with-buttons">
+                <a id="cancel-report" data-role="button" data-theme="f" data-icon="delete" data-iconpos="left" href="#overview-map-page">
+                    Cancel
+                </a>
+
+                <input id="submit-report" type="submit" data-theme="b" data-icon="check" data-iconpos="left" value="Submit" />
+            </div>
+        </div>
+
+
+        <!-- REPORT SELECTION -->
+
+        <div data-role="page" id="report-selection-page">
+            <!--<div data-theme="a" data-role="header">
+                <h3>File a Report</h3>
+            </div>-->
+            <div class="header-with-buttons ui-bar ui-bar-a">
+                <a class="map-view-button" data-role="button" data-inline="true" data-theme="f" data-icon="home" data-iconpos="left" href="#overview-map-page">
+                    Back to Map
+                </a>
+                <a class="add-report-button" data-role="button" data-inline="true" data-theme="b" data-icon="plus" data-iconpos="left" href="#report-page">
+                    New Installation
+                </a>
+            </div>
+            <div data-role="content">
+                <h3 class="report-selection-dynamic-text">
+                    <!-- filled by veos.js report-selection delegate -->
+                </h3>
+                <br/>
+                <ul data-role="listview" class="installations-list">
+                    <!-- this is filled by the veos.view.InstallationsList.render() -->
+                </ul>
+            </div>
+            <div data-theme="a" data-role="footer" class="footer-with-buttons">
+                <a class="map-view-button" data-role="button" data-inline="true" data-theme="f" data-icon="home" data-iconpos="left" href="#overview-map-page">
+                    Back to Map
+                </a>
+                <a class="add-report-button" data-role="button" data-inline="true" data-theme="b" data-icon="plus" data-iconpos="left" href="#report-page">
+                    New Installation
+                </a>
+            </div>
+        </div>
+
+
+        <!-- PHOTO DETAILS -->
+
+        <div data-role="page" id="photo-details-page">
+<!--             <div data-theme="a" data-role="header">
+                <h3>Details of photo with ID: <span class="photo-id"></span></h3>
+            </div> -->
+            <div data-role="content">
+                <!-- <div data-role="fieldcontain" id="photo-details-tag-buttons">
+                    <fieldset data-role="controlgroup" data-type="horizontal">
+                        <legend><b>What is this picture about?</b></legend>
+                        <input name="is_camera" class="is-camera field" id="is-camera" value="camera" type="checkbox">
+                        <label for="is-camera"><b>Camera</b></label>
+                        <input name="is_sign" class="is-sign field" id="is-sign" value="sign" type="checkbox">
+                        <label for="is-sign"><b>Sign</b></label>
+                        <input name="is_other" class="is-other field" id="is-other" value="other" type="checkbox">
+                        <label for="is-other"><b>Other</b></label>
+                    </fieldset>
+                </div>
+
+                <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                        <legend><b>Note</b></legend>
+                        <textarea class="field" name="photo-notes" id="photo-note" placeholder="Any other observations..."></textarea>
+                    </fieldset>
+                </div> -->
+                <div class="photo-container">
+                    <!-- Photos are rendered into this container -->
+                </div>
+                <!-- <div>
+                    <h3 class="field" name="owner_name"></h3>
+                </div>
+                <div><b>Owner type: </b><span class="field" name="owner_type"></span></div>
+                <div><b>Location description: </b><span class="field" name="loc_description"></span></div>
+                <div><b>Compliance: </b><span class="field" name="compliance_level"></span></div>
+                <div><b>Location description: </b><span class="field" name="loc_description"></span></div> -->
+            </div>
+            
+            <div data-theme="a" data-role="footer" class="footer-with-buttons">
+                <a class="photo-details-page-back-button" data-role="button" data-theme="f" data-icon="back" data-iconpos="left" href="">
+                    Back
+                </a>
+
+                <!-- <input id="submit-photo-details" type="submit" data-theme="b" data-icon="check" data-iconpos="left" value="Submit" /> -->
+            </div>
+        </div>
+
+
+
+        <!-- PRIVACY COMPLIANCE -->
+
+        <div data-role="page" id="privacy-compliance-page">
+            <div data-theme="a" data-role="header">
+                <a class="overflow-button web-only hidden" data-role="button" data-theme="e" data-icon="info" data-iconpos="notext"
+                    href="http://surveillancerights.ca/overflow.html" target="_blank">
+                </a>
+                <h3>
+                    Privacy Compliance
+                </h3>
+            </div>
+            <div data-role="content">
+                <a class="compliance-banner" data-role="button" data-theme="a" disabled="disabled"></a>
+                <br />
+
+                <!-- owner info -->
+                <div>
+                    <a class="field owner-name owner-info" name="owner_name"></a><br />
+                    <a class="field owner-info" name="owner_type"></a><br />
+                    <a class="field owner-info" name="address"></a><br />
+                </div>
+
+                <br />
+                
+                <!-- variable boilerplates -->
+                <div id="no-sign-text" class="compliance-text" disabled="disabled">
+                    <div><b>A notification sign has not been reported for this installation.</b></div>
+
+                    <div>In Canada, video surveillance operated by public bodies or for commercial purposes must be accompanied by <b>clearly visible signs</b> that provide passersby with basic information about their operation.</div>
+
+                    <br />
+                    <div>If you believe the reported details for this installation are incorrect or incomplete, please edit the installation or contact us at SurveillanceRights@gmail.com.</div>
+                    <br />
+                    <div class="android-only hidden"<b>We offer a $100 reward for the first person to bring a <a href="http://surveillancerights.ca/resources_compliance_details_app.html" target="_blank">minimally compliant private sector installation</a> to our attention.</b></div>
+                    <div class="web-only hidden"><b>We offer a $100 reward for the first person to bring a <a href="http://surveillancerights.ca/resources_compliance_details_web.html" target="_blank">minimally compliant private sector installation</a> to our attention.</b></div>
+                </div>
+
+                <div id="missing-info-text" class="compliance-text" disabled="disabled">
+                    <div>A surveillance notification sign has been reported, but it <b>is missing important information such as:</b></div>
+                    <ul>
+                        <li>Who is operating the camera</li>
+                        <li>Who you can contact if you have questions</li>
+                        <li>The purpose(s) of the surveillance</li>
+                        <li>Whether recording is taking place, and how long any recordings are kept</li>
+                    </ul>
+                    <div>If you believe the reported details for this installation are incorrect or incomplete, please edit the installation or contact us at SurveillanceRights@gmail.com.</div>
+                    <br />
+                    <div class="android-only hidden"<b>We offer a $100 reward for the first person to bring a <a href="http://surveillancerights.ca/resources_compliance_details_app.html" target="_blank">minimally compliant private sector installation</a> to our attention.</b></div>
+                    <div class="web-only hidden"><b>We offer a $100 reward for the first person to bring a <a href="http://surveillancerights.ca/resources_compliance_details_web.html" target="_blank">minimally compliant private sector installation</a> to our attention.</b></div>
+                </div>
+
+                <div id="min-compliant-text" class="compliance-text" disabled="disabled">
+                    <div class="android-only hidden"<b>According to the reported information, this installation meets the <a href="http://surveillancerights.ca/resources_compliance_details_app.html" target="_blank">basic criteria for compliance with Canadian privacy regulation.</a></b></div>
+                    <div class="web-only hidden"><b>According to the reported information, this installation meets the <a href="http://surveillancerights.ca/resources_compliance_details_web.html" target="_blank">basic criteria for compliance with Canadian privacy regulation.</a></b></div>
+
+                    <span>It is <b>accompanied by a sign</b> which:</span>
+                    <ul>
+                        <li><b>Is visible and readable</b> to people <i>before</i> they enter the surveilled space</li>
+                        <li>Includes <b>basic information</b> about:</li>
+                        <ul>
+                            <li>Who owns / operates it</li>
+                            <li>The purpose(s) of the surveillance</li>
+                            <li>Contact details for a timely response from the responsible privacy official (e.g. a title and a phone number)</li>
+                        </ul>
+                    </ul>
+
+                    <div>If you believe the reported details for this installation are incorrect or incomplete, please edit the installation or contact us at SurveillanceRights@gmail.com.</div>
+                </div>                
+                
+                <div id="compliant-text" class="compliance-text" disabled="disabled">
+                    <div class="android-only hidden"<b>According to the reported information, this installation is <a href="http://surveillancerights.ca/resources_compliance_details_app.html" target="_blank">compliant with Canadian privacy regulation.</a></b></div>
+                    <div class="web-only hidden"><b>According to the reported information, this installation is <a href="http://surveillancerights.ca/resources_compliance_details_web.html" target="_blank">compliant with Canadian privacy regulation.</a></b></div>
+
+                    <div>If you believe the reported details for this installation are incorrect or incomplete, please edit the installation or contact us at SurveillanceRights@gmail.com.</div>                        
+                </div>                
+
+
+            </div>
+
+            <div data-theme="a" data-role="footer" class="footer-with-buttons">
+                <a class='back-button' data-role="button" data-theme="f" data-icon="back" data-iconpos="left" href="">
+                    Back
+                </a>
+            </div>
+
+        </div>
+
     </body>
 </html>

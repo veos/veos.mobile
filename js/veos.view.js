@@ -185,7 +185,7 @@
             delete veos.currentPhoto; // Armin: I do believe this is necessary to avoid picture showing up on other reports
             veos.currentPhotos = []; // Armin: Clear the currentPhotos array to avoid duplicate errors
             veos.alert("Report submitted successfully!");
-            jQuery.mobile.changePage("overview-map.html");
+            veos.goToOverviewMap();
           };
 
           var images = jQuery('.photo-list-item');    // get all images that were taken
@@ -229,7 +229,7 @@
               veos.alert("Error fetching Photo data during Report submission!");
               delete veos.currentReport;
               delete veos.reportForm;
-              jQuery.mobile.changePage("overview-map.html");
+              jQuery.mobile.changePage("#overview-map-page");
             }
 
             photo.fetch({success: photoFetchSuccess, error: photoFetchError});
@@ -599,7 +599,7 @@
             veos.currentPhotos = []; // Armin: Clear the currentPhotos array to avoid duplicate errors
 
             veos.alert("Report submitted successfully!");
-            jQuery.mobile.changePage("overview-map.html");
+            jQuery.mobile.changePage("#overview-map-page");
           };
 
           var report = self.model;
@@ -665,7 +665,7 @@
                 veos.alert("Error fetching Photo data during Report submission!");
                 delete veos.currentReport;
                 delete veos.reportForm;
-                jQuery.mobile.changePage("overview-map.html");
+                veos.goToOverviewMap();
               };
 
               photo.fetch({success: photoFetchSuccess, error: photoFetchError});
@@ -1107,7 +1107,9 @@
         thumb = "<img class='list-picture photo-"+photoID+"' src='"+thumbUrl+"' />";
       }
 
-      var item = jQuery("<a class='relative' href='installation-details.html?id="+installation.get('id')+"'>"+complianceLevel+thumb+buttonText+"</a>");
+      var item = jQuery("<a class='relative' href='#installation-details-page'>"+complianceLevel+thumb+buttonText+"</a>")
+      item.click(function () { veos.goToInstallationDetails(installation.get('id')); });
+
       // item.data('installation', installation);        // add the installation object so that we can retrieve it in the click event
       // item.attr('data-installationId', installation.get('id'));
       var li = jQuery("<li />");
