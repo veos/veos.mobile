@@ -404,10 +404,12 @@
       window.androidUploadSuccess = function (id) {
         console.log("Image uploaded successfully.");
 
-        photo.id = id;
+        photo.set('id', id);
+        console.log("Photo model in Photo.capture.androidUploadSuccess:"+ JSON.stringify(photo.toJSON(), null, 2));
         photo.fetch({
           success: function () {
             console.log("Assigned id to photo: "+photo.id);
+            console.log("Photo model in Photo.capture.androidUploadSuccess.fetch:"+ JSON.stringify(photo.toJSON(), null, 2));
             photo.trigger('image_upload_finish');
           }
         });
@@ -420,11 +422,13 @@
       // need to pass callback funciton name as string so that
       // it can be executed on the Android side
 
-      if (from == "camera")
+      if (from == "camera") {
+        console.log("Telling Android to get the photo from Camera. Will send to URL: "+this.url());
         Android.getPhotoFromCamera(this.url(), 'window.androidCaptureSuccess');
-      else if (from == "gallery")
+      } else if (from == "gallery") {
+        console.log("Telling Android to get the photo from Gallery. Will send to URL: "+this.url());
         Android.getPhotoFromGallery(this.url(), 'window.androidCaptureSuccess');
-
+      }
     },
 
     upload: function () {

@@ -940,6 +940,7 @@
       //var photoDetails;
       console.log("Rendering PhotoView...");
       //this.$el.text(JSON.stringify(this.model.toJSON(), null, 2));
+      console.log("Photo model in PhotoView.render:"+ JSON.stringify(this.model.toJSON(), null, 2));
       console.log("Photo url: "+this.model.thumbUrl());
 
       var img = this.$el.find('#photo-'+this.model.id);
