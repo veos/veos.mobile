@@ -244,7 +244,7 @@ window.veos = (function(veos) {
     /** report-selection.html (report-selection-page) **/
       .delegate("#report-selection-page", "pageshow", function(ev) {
         var MAX_DISTANCE_TO_INST = 0.15;
-        // fetch instalations ordered by closest to furthest
+        // fetch installations ordered by closest to furthest
         var nearbyInstallations = new veos.model.NearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude, MAX_DISTANCE_TO_INST);           // TODO I'm pretty sure this is not the right way to access these
 
         // Google Analytics
@@ -265,7 +265,8 @@ window.veos = (function(veos) {
             } else {
               jQuery('.report-selection-dynamic-text').text("There are no installations within " + MAX_DISTANCE_TO_INST*1000 + "m of your current location. Please choose New Installation.");
             }
-          }
+          },
+          reset:true
         });
       })
 
