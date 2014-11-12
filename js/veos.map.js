@@ -150,11 +150,20 @@
     },
     function (err) {
       console.warn('ERROR(' + err.code + '): ' + err.message);
+      if (err.code === 1) {
+        veos.alert("We are unable to locate you, because geolocation has been denied");
+      } else if (err.code === 2) {
+        // currently unhandled (we can't produce this with our phones)
+      } else if (err.code === 3) {
+        veos.alert("Your device is currently unable to determine location");
+      } else {
+        console.warn('Unknown error code');
+      }
     },
     // https://developer.mozilla.org/en-US/docs/Web/API/PositionOptions
-    // We do low accuracy to save batter, timeout till we get a result of 15 seconds and we accept any cached result
+    // We do low accuracy to save batter, timeout till we get a result of 15 seconds and we accept any cached result (switched to true)
     {
-      enableHighAccuracy: false,
+      enableHighAccuracy: true,
       timeout: 5000,
       maximumAge: Infinity
     }
