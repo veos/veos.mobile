@@ -93,6 +93,9 @@
 
     console.log("Started following user...");
 
+
+    // This implementation is missing an error hanlder and most important the options
+    // https://developer.mozilla.org/en-US/docs/Web/API/Geolocation.watchPosition
     map.posWatcher = navigator.geolocation.watchPosition(function (geoloc) {
       jQuery(veos).trigger('haveloc', geoloc);
 
@@ -143,7 +146,19 @@
       map.currentLocMarker.setPosition(glatlng);
       map.currentLocRadius.setCenter(glatlng);
       map.currentLocRadius.setRadius(accuracy);
-    });
+    },
+    function (err) {
+      console.warn('ERROR(' + err.code + '): ' + err.message);
+    },
+    // https://developer.mozilla.org/en-US/docs/Web/API/PositionOptions
+    // We do low accuracy to save batter, timeout till we get a result of 15 seconds and we accept any cached result
+    {
+      enableHighAccuracy: false,
+      timeout: 5000,
+      maximumAge: Infinity
+    }
+
+    );
   };
 
   /**
