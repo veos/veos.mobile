@@ -246,18 +246,16 @@ window.veos = (function(veos) {
       })
 
       .delegate("#installations-list-page", "pagehide", function(ev) {
-        var view = this;
         // The InstallationList View that is instantiated during the pageshow of #installations-list-page
         // attaches a scroll listener that should only be active as long as we are on the list view.
         // calling backbone's remove() on the view we remove the view from the DOM and stop listening to any bound event
-        // jQuery(window).off('scroll');
-        view.remove();
+        jQuery(window).off('scroll');
       })
 
     /** report-selection.html (report-selection-page) **/
       .delegate("#report-selection-page", "pageshow", function(ev) {
         var MAX_DISTANCE_TO_INST = 0.15;
-        // fetch instalations ordered by closest to furthest
+        // fetch installations ordered by closest to furthest
         var nearbyInstallations = new veos.model.NearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude, MAX_DISTANCE_TO_INST);           // TODO I'm pretty sure this is not the right way to access these
 
         // Google Analytics
@@ -278,7 +276,8 @@ window.veos = (function(veos) {
             } else {
               jQuery('.report-selection-dynamic-text').text("There are no installations within " + MAX_DISTANCE_TO_INST*1000 + "m of your current location. Please choose New Installation.");
             }
-          }
+          },
+          reset:true
         });
       })
 
