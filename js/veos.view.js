@@ -1148,21 +1148,16 @@
 
       this.collection.on('add', _.bind(this.addOne, self));
 
-
+      // WARNING: This scroll viewer triggers all the time unless you turn the listener
+      // off or remove the view, which we do in pagehide
       // Not sure if this ia a hack since it works nicely. Uses only plain jQuery to
       // trigger the function loading more data
       // From here: http://stackoverflow.com/questions/3898130/how-to-check-if-a-user-has-scrolled-to-the-bottom
       jQuery(window).scroll(function() {
-         if (jQuery(window).scrollTop() + jQuery(window).height() === jQuery(document).height()) {
-             self.loadMoreInstallations();
-         }
+        if (jQuery(window).scrollTop() + jQuery(window).height() === jQuery(document).height()) {
+          self.loadMoreInstallations();
+        }
       });
-
-      // jQuery(self.$el).scroll(function() {
-      //    if (jQuery(window).scrollTop() + jQuery(window).height() === jQuery(document).height()) {
-      //        self.loadMoreInstallations();
-      //    }
-      // });
     },
 
     showLoader: function () {
