@@ -1124,6 +1124,7 @@
   **/
   self.InstallationList = Backbone.View.extend({
     MAX_DISTANCE_FROM_CURRENT_LOCATION: 10, // km
+    instCounter: 0,    // used to keep track of the number of installations currently displayed (can't use length any more since pagination)
 
     events: {
       'click .ui-li': function (ev) {
@@ -1179,6 +1180,10 @@
       var list = this.$el.find('.installations-list');
       list.append(instRow.render());
       list.listview('refresh');
+
+      this.instCounter++;
+      // adding installation count to page
+      jQuery('.installation-count').text(this.instCounter);
     },
 
     loadMoreInstallations: function() {
@@ -1199,9 +1204,6 @@
         this.$el.find('.web-only').removeClass('hidden');
         this.$el.find('.android-only').addClass('hidden');
       }
-
-      // adding installation count to page
-      jQuery('.installation-count').text(this.collection.length);
 
       var list = this.$el.find('.installations-list');
       list.empty();
