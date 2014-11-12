@@ -85,6 +85,16 @@ window.veos = (function(veos) {
         veos.map.overviewMap.startFollowing();
       })
 
+      // this intercepts the pagehide event of the map view
+      .delegate("#overview-map-page", "pagehide", function(ev) {
+        // Now this is a hack as so often to fix other hacks
+        // markersArray avoids redrawing of pins on the map if we
+        // pan or zoom. However, returning to the map will result in
+        // all pins that are in the marker array missing on the map. No redraw.
+        console.log("Hiding Map and destroying markersArray");
+        veos.markersArray = [];
+      })
+
     /** report.html (report-page) **/
       .delegate("#report-page", "pageshow", function(ev) {
         var installationId = 0;
