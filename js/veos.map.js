@@ -86,8 +86,9 @@
   self.Map.prototype.startFollowing = function () {
     var map = this;
 
-    if (map.posWatcher) {
-      navigator.geolocation.clearWatch(this.posWatcher);
+    // clearing watch with globally stored ID
+    if (veos.geolocWatchId) {
+      navigator.geolocation.clearWatch(veos.geolocWatchId);
     }
 
 
@@ -96,7 +97,7 @@
 
     // This implementation is missing an error hanlder and most important the options
     // https://developer.mozilla.org/en-US/docs/Web/API/Geolocation.watchPosition
-    map.posWatcher = navigator.geolocation.watchPosition(function (geoloc) {
+    veos.geolocWatchId = navigator.geolocation.watchPosition(function (geoloc) {
       jQuery(veos).trigger('haveloc', geoloc);
 
       var glatlng = veos.map.convertGeolocToGmapLatLng(geoloc);
@@ -166,7 +167,7 @@
   **/
   self.Map.prototype.stopFollowing = function () {
     console.log("Stopped following user...");
-    navigator.geolocation.clearWatch(this.posWatcher);
+    navigator.geolocation.clearWatch(veos.geolocWatchId);
   };
 
   /**

@@ -5,6 +5,10 @@ window.veos = (function(veos) {
   var self = veos;
   self.amendingInst = false;
 
+  // Adding a global object to hold the current geolocation watch ID
+  // This allows us in veos.map.js to avoid having several watches added
+  self.geolocWatchId = null;
+
   var initLastLoc = function () {
     // There are rare occations where the phone doesn't return location information when inside
     // a building (could be a user setting or just a temporary glitch on the phone - happened to Armin serveral times)
