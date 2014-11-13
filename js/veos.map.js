@@ -72,6 +72,14 @@
       veos.installations.updateMaxDistance(80000/(Math.pow(2, zoom)));      // BASED ON http://stackoverflow.com/questions/8717279/what-is-zoom-level-15-equivalent-to
       veos.installations.fetch({reset:true});
     });
+
+    google.maps.event.addListener(gmap, 'center_changed', function() {
+      console.log('center_changed');
+      var center = gmap.getCenter();
+      veos.installations.updateLocation(center.lat(), center.lng());
+      veos.installations.fetch({reset:true});
+    });
+
   };
 
   self.Map.prototype = {
