@@ -31,7 +31,7 @@ module.exports = function(grunt) {
               'js/libs/underscore-1.6.0.min.js',
               'js/libs/backbone-1.1.2.min.js',
               'bower_components/backbone.paginator/lib/backbone.paginator.min.js'],
-        dest: 'js/libs/debs.postinit.bundle.js',
+        dest: 'js/libs/postinit.bundle.js',
       },
       own: {
         src: ['js/veos.js', 'js/veos.map.js', 'js/veos.model.js', 'js/veos.view.js'],
@@ -59,7 +59,7 @@ module.exports = function(grunt) {
 
   // Default task(s) .
   // grunt.registerTask('default', ['uglify']);
-  grunt.registerTask('default', ['uglify:minlib', 'concat:dist', 'concat:own']);
+  grunt.registerTask('default', ['uglify:minlib', 'concat:dist']);
   grunt.registerTask('lint', ['jshint']);
   grunt.registerTask('dist', ['jshint', 'uglify:minlib', 'concat:dist', 'concat:own', 'processhtml']);
 };
