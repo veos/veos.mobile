@@ -162,10 +162,11 @@
         veos.alert("We are unable to locate you, because geolocation has been denied");
       } else if (err.code === 2) {
         // currently unhandled (we can't produce this with our phones)
+        console.warn("This error should be handled somehow");
       } else if (err.code === 3) {
         veos.alert("Your device is currently unable to determine location");
       } else {
-        console.warn('Unknown error code');
+        console.warn("Unknown error code");
       }
     },
     // https://developer.mozilla.org/en-US/docs/Web/API/PositionOptions
@@ -203,7 +204,7 @@
   self.Map.prototype.addInstallationMarkers = function (installations) {
     console.log("Adding "+installations.length+" installation markers to map...");
 
-    var installationCountMsg = humane.create({ timeout: 3000 })
+    // var installationCountMsg = humane.create({ timeout: 3000 });
     //installationCountMsg.log("Total # of installations reported: " + installations.length);
 
 
@@ -291,7 +292,7 @@
 
   var closeMarker = function() {
     console.log('it triggered');
-  }
+  };
 
   self.Map.prototype.clearInstallationMarkers = function() {
     // deletes everything in the markersArray

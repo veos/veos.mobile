@@ -1,3 +1,1404 @@
+/*jshint debug:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, unused: false, undef:true, curly:true, browser: true, devel: true, jquery:true */
+/*globals jQuery, Android, google */
+
+window.veos = (function(veos) {
+  var self = veos;
+  self.amendingInst = false;
+
+  // Adding a global object to hold the current geolocation watch ID
+  // This allows us in veos.map.js to avoid having several watches added
+  self.geolocWatchId = null;
+
+  var initLastLoc = function () {
+    // There are rare occations where the phone doesn't return location information when inside
+    // a building (could be a user setting or just a temporary glitch on the phone - happened to Armin serveral times)
+    // Should this be the case the callback "haveloc" is never triggered and self.lastLoc stays undefined
+    // which leads to an error in .delegate("#report-selection-page" because undefined.coords doesn't work
+    // as a result the user get's stuck on the page with buttons not working
+    self.lastLoc = JSON.parse('{"coords": {"latitude": 43.6621614579938,"longitude": -79.39527873417967}}');
+    //self.lastLoc.coords.latitude = 43.6621614579938;
+    //lastLoc.coords.longitude = 79.39527873417967;
+  };
+
+  self.isAndroid = function () {
+    return typeof(Android) !== 'undefined';
+  };
+
+  self.alert = function (msg, title) {
+    if (veos.isAndroid()) {
+      Android.showToast(msg);
+    } else {
+      alert(msg, title);
+    }
+  };
+
+  /**
+    Initializes the whole app. This needs to be called at the bottom of every VEOS page.
+  **/
+  self.init = function () {
+    console.log("INITIALIZING VEOS!");
+
+    self.currentPhotos = []; // Armin: empty array to hold photo objects during report add/change
+
+    if (window.location.pathname === "/") {
+      console.log("Redirecting to /app.html");
+      window.location.href = "/app.html";
+      return;
+    }
+
+    // important to do in order to avoid undefined error later on
+    initLastLoc();
+
+    jQuery(self).bind('haveloc', function (ev, geoloc) {
+      console.log("Got updated gps location: ", geoloc);
+      self.lastLoc = geoloc;
+    });
+
+    jQuery(document)
+
+    /** overview-map.html (overview-map-page) **/
+      .delegate("#overview-map-page", "pageshow", function(ev) {
+        //if (!veos.map.overviewMap) {
+          veos.map.overviewMap = new veos.map.Map('#overview-map-canvas');
+        //}
+        //var map = new veos.map.Map('#overview-map-canvas');
+
+        // Google Analytics
+        // self.analytics(ev);
+
+        // TODO - FIX THIS HARDCODED NONSENSE. BACKEND CHANGES REALLY MESSED US UP
+
+        // if we have a geographic location for the user...
+        if (typeof geoloc !== "undefined") {
+          jQuery(self).one('haveloc', function (ev, geoloc) {
+            veos.installations = new veos.model.NearbyInstallations(geoloc.coords.latitude, geoloc.coords.longitude, 2);
+            veos.installations.on('reset', function(collection) {
+              veos.map.overviewMap.addInstallationMarkers(collection);
+            });
+            veos.installations.fetch({reset:true});
+          });
+        } else {
+          veos.installations = new veos.model.NearbyInstallations(43.6621614579938, -79.39527873417967, 2);
+          veos.installations.on('reset', function(collection) {
+            veos.map.overviewMap.addInstallationMarkers(collection);
+          });
+          veos.installations.fetch({reset:true});
+        }
+
+        // start following user
+        veos.map.overviewMap.startFollowing();
+      })
+
+      // this intercepts the pagehide event of the map view
+      .delegate("#overview-map-page", "pagehide", function(ev) {
+        // Now this is a hack as so often to fix other hacks
+        // markersArray avoids redrawing of pins on the map if we
+        // pan or zoom. However, returning to the map will result in
+        // all pins that are in the marker array missing on the map. No redraw.
+        console.log("Hiding Map and destroying markersArray");
+        veos.markersArray = [];
+      })
+
+    /** report.html (report-page) **/
+      .delegate("#report-page", "pageshow", function(ev) {
+        var installationId = 0;
+        var editReport = false;
+        var ref = '';
+
+        // Google Analytics
+        // self.analytics(ev);
+
+        if (window.location.href.match("[\\?&]installationId=(\\d+)")) {
+          installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
+
+          // we know that we edit report and we want to change the cancel button if referrer available
+          if (installationId > 0) {
+            editReport = true;
+
+            if (window.location.href.match("[\\&&]ref=(\\w+-\\w+)")) {
+              ref = window.location.href.match("[\\&&]ref=(\\w+-\\w+)")[1];
+              // change href in the cancel button to referrer (ref) from URL
+              jQuery('#cancel-report').attr('href', ref+'.html?id='+installationId);
+            }
+          }
+        }
+
+        // if the location has been changed by the user (ie loca_lat_from_gps exists), we want the accordion to be open to show the change
+        // also - gross
+        if (self.currentReport) {
+          if (self.currentReport.has('loc_lat_from_gps')) {
+            jQuery('#report-location-container').trigger('expand');
+          }
+        }
+
+        // edit report
+        // if (self.currentInstallation) {
+        if (editReport) {
+          if (self.amendingInst) {
+            self.amendingInst = false;
+            console.log('Fetching model for installation '+installationId+'...');
+            var installation = new veos.model.Installation({id: installationId});
+
+            var installationSuccess = function (model, response) {
+              self.currentInstallation = model; // used to set initial location for EditReport
+              self.currentReport = model.startAmending();
+
+              self.reportForm = new self.view.ReportEditForm({el: '#report-page', model: self.currentReport});
+              self.currentReport.on('change', self.reportForm.render, self.reportForm);
+
+              jQuery('#report-header-text').text('Edit the Installation');
+            };
+
+            var installationError = function (model, response) {
+              console.error("Error fetching installation model with message: "+response);
+              veos.alert("Error fetching installation details");
+            };
+
+            installation.fetch({success: installationSuccess, error: installationError});
+          } else {
+            console.log('Called again - prob after multi picker');
+          }
+        }
+        // new report
+        else {
+          if (!self.currentReport) {
+            self.currentReport = new veos.model.Report();
+
+            if (veos.lastLoc) {
+              var initLoc = veos.map.convertGeolocToGmapLatLng(veos.lastLoc);
+              self.currentReport.set('loc_lng_from_gps', initLoc.lng());
+              self.currentReport.set('loc_lat_from_gps', initLoc.lat());
+            }
+
+            // Armin: Fixing bug where loc_description_from_google is now set in view
+            // I think this is due to missing change listener triggering render (did this like we do it above for the editing)
+            self.reportForm = new self.view.ReportForm({el: '#report-page', model: self.currentReport});
+            self.currentReport.on('change', self.reportForm.render, self.reportForm);
+          }
+
+          if (!self.reportForm) {
+            self.reportForm = new veos.view.ReportForm({
+              el: ev.target,
+              model: self.currentReport
+            });
+          }
+
+          if (!self.reportForm.$el.data('initialized')) {
+            console.log("Pointing ReportForm to "+ev.target);
+            self.reportForm.setElement(ev.target);
+            self.reportForm.$el.data('initialized', true);
+          }
+
+          self.reportForm.render();
+        }
+      })
+
+
+    /** refine-location.html (refine-location-page) **/
+      .delegate("#refine-location-page", "pageshow", function(ev) {
+        if (!veos.reportForm) {
+          console.error("Cannot refine location because there is no report currently in progress.");
+          jQuery.mobile.changePage("report.html");
+          return;
+        }
+
+        var refinerMap;
+        var refinerLoc;
+
+        // Google Analytics
+        // self.analytics(ev);
+
+        // if the user has made a change to the address bar, use that location
+        if (veos.currentReport.get('loc_lat_from_user') && veos.currentReport.get('loc_lng_from_user')) {
+          refinerLoc = new google.maps.LatLng(veos.currentReport.get('loc_lat_from_user'), veos.currentReport.get('loc_lng_from_user'));
+          refinerMap = new veos.map.Map('#refine-location-canvas', refinerLoc);
+        }
+        // default case - user has not made any changes to location yet
+        else if (veos.lastLoc) {
+          refinerLoc = veos.lastLoc;
+          refinerMap = new veos.map.Map('#refine-location-canvas', refinerLoc);
+        }
+        // should never occur
+        else {
+          console.log("Cannot refine location because there is no lat/lng");
+        }
+
+        refinerMap.addReportRefinerMarker(self.reportForm.model, refinerLoc);
+      })
+
+    /** installations-list.html (installations-list-page) **/
+      .delegate("#installations-list-page", "pageshow", function(ev) {
+        // var installations = new veos.model.Installations();
+
+        // fetch instalations ordered by closest to furthest without Max distance
+        var installations = new veos.model.PagedNearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude);           // TODO I'm pretty sure this is not the right way to access these
+
+        var view = new veos.view.InstallationList({
+          el: ev.target,
+          collection: installations
+        });
+
+        view.showLoader();
+        installations.fetch({
+          success: function () {view.hideLoader();},
+          reset:true
+        });
+      })
+
+      .delegate("#installations-list-page", "pagehide", function(ev) {
+        // The InstallationList View that is instantiated during the pageshow of #installations-list-page
+        // attaches a scroll listener that should only be active as long as we are on the list view.
+        // calling backbone's remove() on the view we remove the view from the DOM and stop listening to any bound event
+        jQuery(window).off('scroll');
+      })
+
+    /** report-selection.html (report-selection-page) **/
+      .delegate("#report-selection-page", "pageshow", function(ev) {
+        var MAX_DISTANCE_TO_INST = 0.15;
+        // fetch installations ordered by closest to furthest
+        var nearbyInstallations = new veos.model.NearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude, MAX_DISTANCE_TO_INST);           // TODO I'm pretty sure this is not the right way to access these
+
+        // Google Analytics
+        // self.analytics(ev);
+
+        var view = new veos.view.InstallationListReport({
+          el: ev.target,
+          collection: nearbyInstallations
+        });
+
+        view.showLoader();
+        nearbyInstallations.fetch({
+          success: function () {
+            view.hideLoader();
+            // could go in the view, but is non-dynamic, and better to do it as early as possible
+            if (nearbyInstallations.length > 0) {
+              jQuery('.report-selection-dynamic-text').text("The following installations are within " + MAX_DISTANCE_TO_INST*1000 + "m of your current location. If you see an installation listed here that you wish to revise, select it. Otherwise, choose New Installation.");
+            } else {
+              jQuery('.report-selection-dynamic-text').text("There are no installations within " + MAX_DISTANCE_TO_INST*1000 + "m of your current location. Please choose New Installation.");
+            }
+          },
+          reset:true
+        });
+      })
+
+    /** installation-details.html (installation-details-page) **/
+      .delegate("#installation-details-page", "pageshow", function(ev) {
+        console.log("Showing details page at "+window.location.href);
+        var installationId = window.location.href.match("[\\?&]id=(\\d+)")[1];
+        console.log("Showing details for installation "+installationId);
+
+        // Google Analytics
+        // self.analytics(ev);
+
+        self.currentInstallation = new veos.model.Installation({id: installationId});
+
+        var view = new veos.view.InstallationDetails({
+          el: ev.target,
+          model: self.currentInstallation
+        });
+
+        view.showLoader();
+        view.model.fetch();
+      })
+
+    /** photo-details.html (photo-details-page) **/
+      .delegate("#photo-details-page", "pageshow", function(ev) {
+        console.log("Showing photo details page at "+window.location.href);
+
+        // Google Analytics
+        // self.analytics(ev);
+
+        // retrieve installationId from URL
+        var installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
+        // and set it in the href of the back button
+        var backButton = jQuery('.photo-details-page-back-button');
+        backButton.attr('href', 'installation-details.html?id='+installationId);
+
+        // retrieve photoId from URL
+        var photoId = window.location.href.match("[\\?&]photoId=(\\d+)")[1];
+        console.log("Showing details for photo "+photoId);
+
+        // where to render picture into
+        var photoContainer = jQuery('.photo-container');
+        // Photo model for given Photo ID (from URL)
+        var photo = new veos.model.Photo({id: photoId});
+        // PhotoDetailsView renders the picture and aditional information
+        var view = new veos.view.PhotoDetailsView({
+          el: photoContainer,
+          model: photo
+        });
+
+        // view.showLoader();
+        view.model.fetch();
+      })
+
+    /** privacy-compliance.html (privacy-compliance-page) **/
+      .delegate("#privacy-compliance-page", "pageshow", function(ev) {
+        var installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
+        var installation = new veos.model.Installation({id: installationId});
+
+        // Google Analytics
+        // self.analytics(ev);
+
+        var view = new veos.view.PrivacyComplianceView({
+          el: ev.target,
+          model: installation
+        });
+
+        view.showLoader();
+        view.model.fetch();
+      });
+
+  };
+
+  // self.analytics = function (ev) {
+  //   try {
+  //     veos._gaq.push( ['_trackPageview', ev.target.id] );
+  //     console.log('Recorded Google Analytics data for page: ' + ev.target.id);
+  //   } catch(err) {
+  //     console.err('Unable to record Google Analytics data for page: ' + ev.target.id);
+  //   }
+  // }
+
+  // Piwik page analytics
+  // self.setUpPiwik = function() {
+  //   var pkBaseURL = "//piwik.surveillancerights.ca/";
+  //   //document.write(unescape("%3Cscript src='" + pkBaseURL + "piwik.js' type='text/javascript'%3E%3C/script%3E"));
+
+  //   try {
+  //     self.piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
+  //     self.piwikTracker.trackPageView();
+  //     self.piwikTracker.enableLinkTracking();
+  //   } catch( err ) {}
+  // };
+
+  return self;
+})(window.veos || {});
+
+/*jshint debug:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true */
+/*globals jQuery, _,google */
+
+(function(veos) {
+  var self = {};
+
+  self.convertGeolocToGmapLatLng = function (geoloc) {
+    if (geoloc instanceof google.maps.LatLng) {
+      return geoloc; // TODO: should be _.clone() this just to be safe?
+    } else {
+      return new google.maps.LatLng(geoloc.coords.latitude, geoloc.coords.longitude);
+    }
+  };
+
+  self.Map = function (mapDiv, initLoc) {
+    console.log("initializing map in " + mapDiv);
+
+    if (veos.isAndroid()) {
+      // we're in the Android app
+      jQuery('.web-only').addClass('hidden');
+      jQuery('.android-only').removeClass('hidden');
+    } else {
+      // we're in a regular browser
+      jQuery('.web-only').removeClass('hidden');
+      jQuery('.android-only').addClass('hidden');
+    }
+
+    var center;
+    var zoom;
+    if (!initLoc) {
+      center = new google.maps.LatLng(43.6621614579938, -79.39527873417967);
+      zoom = 4;
+    } else {
+      center = veos.map.convertGeolocToGmapLatLng(initLoc);
+      zoom = 16;
+    }
+
+    var mapOptions = {
+      zoom: zoom,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      center: center,
+      streetViewControl: false,
+      zoomControl: true, // changed this back to true - pinch zoom not working on some phones (note ZoomControl must be set to +/- or will not show up on Android 3.0 and later)
+      zoomControlOptions: {
+          style: google.maps.ZoomControlStyle.SMALL
+      }
+    };
+
+    jQuery(mapDiv).empty(); // empty out the div in case it was previously used to init another map...
+
+    var mapElement = jQuery(mapDiv)[0];
+
+    var gmap = new google.maps.Map(mapElement, mapOptions);
+
+    jQuery(document).bind("pageshow", function (ev) {
+        console.log("Triggering gmaps resize for page ", ev.target);
+        google.maps.event.trigger(gmap, 'resize');
+    });
+
+    this.gmap = gmap;
+
+    google.maps.event.addListener(gmap, 'dragend', function() {
+      console.log('dragend triggered');
+      var center = gmap.getCenter();
+      veos.installations.updateLocation(center.lat(), center.lng());
+      veos.installations.fetch({reset:true});
+    });
+
+    google.maps.event.addListener(gmap, 'zoom_changed', function() {
+      console.log('zoom_changed triggered');
+      var zoom = gmap.getZoom();
+      veos.installations.updateMaxDistance(80000/(Math.pow(2, zoom)));      // BASED ON http://stackoverflow.com/questions/8717279/what-is-zoom-level-15-equivalent-to
+      veos.installations.fetch({reset:true});
+    });
+
+    google.maps.event.addListener(gmap, 'center_changed', function() {
+      console.log('center_changed');
+      var center = gmap.getCenter();
+      veos.installations.updateLocation(center.lat(), center.lng());
+      veos.installations.fetch({reset:true});
+    });
+
+  };
+
+  self.Map.prototype = {
+
+  };
+
+
+  /**
+    Shows the current location marker and continuously updates its
+    position based on incoming GPS data.
+  **/
+  self.Map.prototype.startFollowing = function () {
+    var map = this;
+
+    // clearing watch with globally stored ID
+    if (veos.geolocWatchId) {
+      navigator.geolocation.clearWatch(veos.geolocWatchId);
+    }
+
+
+    console.log("Started following user...");
+
+
+    // This implementation is missing an error hanlder and most important the options
+    // https://developer.mozilla.org/en-US/docs/Web/API/Geolocation.watchPosition
+    veos.geolocWatchId = navigator.geolocation.watchPosition(function (geoloc) {
+      jQuery(veos).trigger('haveloc', geoloc);
+
+      var glatlng = veos.map.convertGeolocToGmapLatLng(geoloc);
+      var accuracy = geoloc.coords.accuracy;
+
+      if (!map.currentLocMarker) {
+        map.currentLocMarker = new google.maps.Marker({
+          position: glatlng,
+          //draggable: true,
+          //icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+          icon: 'http://maps.google.com/mapfiles/ms/micons/man.png',
+          //icon: 'http://www.google.com/mapfiles/arrow.png',
+          title: "You are here",
+          zIndex: 99999 // half assed attempt at making sure the dude is on top
+        });
+
+        var infowindow = new google.maps.InfoWindow({
+          content: "<p><b>You are here!</b></p>"
+        });
+
+        google.maps.event.addListener(map.currentLocMarker, 'click', function() {
+          infowindow.open(map.gmap, map.currentLocMarker);
+        });
+
+        map.currentLocRadius = new google.maps.Circle({
+          center: glatlng,
+          radius: accuracy,
+          map: map.gmap,
+          fillColor: '#6991FD',
+          fillOpacity: 0.4,
+          strokeColor: 'black',
+          strokeOpacity: 0.0, // 0.8,
+          strokeWeight: 1
+        });
+
+        map.gmap.setZoom(16);             // sets zoom back to default level (relevant if user does not gps and !initLoc in line 21)
+
+        map.currentLocMarker.setMap(map.gmap);
+
+        map.gmap.panTo(glatlng);
+      }
+
+      // this would reframe the map to the accuracy circle
+      //self.gmap.fitBounds(self.currentLocRadius.getBounds());
+
+
+      map.currentLocMarker.setPosition(glatlng);
+      map.currentLocRadius.setCenter(glatlng);
+      map.currentLocRadius.setRadius(accuracy);
+    },
+    function (err) {
+      console.warn('ERROR(' + err.code + '): ' + err.message);
+      if (err.code === 1) {
+        veos.alert("We are unable to locate you, because geolocation has been denied");
+      } else if (err.code === 2) {
+        // currently unhandled (we can't produce this with our phones)
+        console.warn("This error should be handled somehow");
+      } else if (err.code === 3) {
+        veos.alert("Your device is currently unable to determine location");
+      } else {
+        console.warn("Unknown error code");
+      }
+    },
+    // https://developer.mozilla.org/en-US/docs/Web/API/PositionOptions
+    // We do low accuracy to save batter, timeout till we get a result of 15 seconds and we accept any cached result (switched to true)
+    {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: Infinity
+    }
+
+    );
+  };
+
+  /**
+    Stops updating the current location marker.
+  **/
+  self.Map.prototype.stopFollowing = function () {
+    console.log("Stopped following user...");
+    navigator.geolocation.clearWatch(veos.geolocWatchId);
+  };
+
+  /**
+    Removes the current location marker from the map.
+  **/
+  self.Map.prototype.clearCurrentLocation = function () {
+    console.log("Resetting current location...");
+    this.currentLocMarker.setMap(null);
+  };
+
+
+  /**
+    Adds markers for a collection of Installations.
+    @param installations veos.model.Installations
+  **/
+  self.Map.prototype.addInstallationMarkers = function (installations) {
+    console.log("Adding "+installations.length+" installation markers to map...");
+
+    // var installationCountMsg = humane.create({ timeout: 3000 });
+    //installationCountMsg.log("Total # of installations reported: " + installations.length);
+
+
+    var map = this;
+    if (veos.markersArray === undefined) {
+      veos.markersArray = [];
+    }
+
+    map.infowindow = new google.maps.InfoWindow({
+      // do you seriously need a plugin for styling infowindows?!?! Puke
+      // http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/docs/examples.html
+      // http://code.google.com/p/google-maps-utility-library-v3/wiki/Libraries
+    });
+
+    installations.each(function(i) {
+      if (!_.findWhere(veos.markersArray, {"id": i.id})) {
+        var latLng = new google.maps.LatLng(i.get('loc_lat'), i.get('loc_lng'));
+        var buttonText = "";
+
+        var compliancePinOn;
+        var compliancePinOff;
+        var compliancePin;
+        if (i.get('compliance_level') === 'compliant') {
+          compliancePinOn = '/images/pin-green-on.png';
+          compliancePinOff = '/images/pin-green-off.png';
+        } else if (i.get('compliance_level') === 'min_compliant') {
+          compliancePinOn = '/images/pin-yellow-green-on.png';
+          compliancePinOff = '/images/pin-yellow-green-off.png';
+        } else if (i.get('compliance_level') === 'low_compliant') {
+          compliancePinOn = '/images/pin-yellow-on.png';
+          compliancePinOff = '/images/pin-yellow-off.png';
+        } else if (i.get('compliance_level') === 'non_compliant') {
+          compliancePinOn = '/images/pin-red-on.png';
+          compliancePinOff = '/images/pin-red-off.png';
+        } else {
+          compliancePin = 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
+        }
+
+        var marker = new google.maps.Marker({
+          id: i.id,
+          position: latLng,
+          icon: compliancePinOn,
+          iconUnselected: compliancePinOff,
+          iconSelected: compliancePinOn,
+          title: i.get('owner_name') || "Unknown Owner"
+        });
+
+        // duplicating html from InstallationList (veos.view.js) for popup content
+        var mapPopupContent;
+
+        if (i.get('owner_name')) {
+          buttonText = "<span class='owner_name'>" + i.get('owner_name') + "</span><br/><span class='trunc-address'>" + i.getTruncatedLocDescription() + "</span>";
+        } else {
+          buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/><span class='trunc-address'>" + i.getTruncatedLocDescription() + "</span>";
+        }
+
+        var thumb = "";
+        if (i.has('photos') && i.get('photos').length > 0) {
+          var photoID = i.get('photos')[0].id;
+          thumb = "<img class='photo photo-"+photoID+"' />";
+        }
+
+        mapPopupContent = "<a class='styled-link-text' href=installation-details.html?id="+i.id+">"+thumb+buttonText+"</a>";
+
+        // binding a popup click event to the marker
+        google.maps.event.addListener(marker, 'click', function() {
+          injectThumbnail(i);
+          map.infowindow.setContent(mapPopupContent);
+          map.infowindow.open(map.gmap, marker);
+          highlightOwnerPins(marker, i.get('owner_name'));
+        });
+
+        // binding a click event that triggers when the infowindow is closed
+        google.maps.event.addListener(map.infowindow, 'closeclick', function() {
+          _.each(veos.markersArray, function(m) {
+            m.setIcon(m.iconSelected);
+          });
+        });
+
+        marker.setMap(map.gmap);
+        veos.markersArray.push(marker);
+      }
+    });
+  };
+
+  var closeMarker = function() {
+    console.log('it triggered');
+  };
+
+  self.Map.prototype.clearInstallationMarkers = function() {
+    // deletes everything in the markersArray
+    console.log('clearing all markers...');
+    _.each(veos.markersArray, function(i) {
+      i.setMap(null);
+    });
+    // this may not be necessary (they're going to get overwritten by addInstallationMarkers immediately), but seems safer
+    veos.markersArray = [];
+  };
+
+  var injectThumbnail = function(installation) {
+    if (installation.has('photos') && installation.get('photos').length > 0) {
+      var photoID = installation.get('photos')[0].id;
+
+      console.log('Trying to retrieve photo thumb URL for photo with ID: '+photoID);
+
+      var thumbPhoto = new veos.model.Photo({id: photoID});
+
+      var photoFetchSuccess = function (model, response) {
+        console.log("We made it and are about to retrieve Photo thumb URL");
+        var img = jQuery('.photo-'+model.id);
+        img.attr('src', model.thumbUrl());
+      };
+
+      var photoFetchError = function (model, response) {
+        console.error("Fetching photo model for Installation List failed with error: " +response);
+      };
+
+      thumbPhoto.fetch({success: photoFetchSuccess, error: photoFetchError});
+    }
+   };
+
+
+  var highlightOwnerPins = function(marker, ownerName) {
+    // clear the markers (set back to initial state)
+    _.each(veos.markersArray, function(m) {
+      m.setIcon(m.iconUnselected);
+    });
+
+    // set the clicked marker as selected (necessary because the _.each will only catch markers with known owner_names)
+    marker.setIcon(marker.iconSelected);
+
+    var ownerInstallations = new veos.model.Installations();
+
+    var ownerSuccess = function (model, response) {
+      ownerInstallations.each(function(i) {
+        console.log('related installation ids: ' + i.get('id'));
+
+        // this is very inefficient, but working (will ping once for *each* match... lots of duplicate higlights)
+        // can we use pluck or filter or find here? Or even better, can we count on the fact that all ownerInstallations have the same name?
+        _.each(veos.markersArray, function(m) {
+          // if the owner_names match
+          if (m.title === i.get('owner_name')) {
+            console.log('found one: ' + i.get('owner_name'));
+            m.setIcon(m.iconSelected);
+            m.setZIndex(1000);                 // move this marker to the front, does not seem to need to be cleared
+          }
+        });
+
+      });
+    };
+
+    ownerInstallations.fetch({
+      success: ownerSuccess,
+      data: {owner_name: ownerName}
+    });
+  };
+
+  /**
+    Adds a draggable report marker, used for refining report location.
+  **/
+  self.Map.prototype.addReportRefinerMarker = function (report, geoloc) {
+    var map = this;
+
+    var drawMarker = function(geoloc) {
+      var glatlng = veos.map.convertGeolocToGmapLatLng(geoloc);
+
+      var marker = new google.maps.Marker({
+        position: glatlng,
+        draggable: true,
+        icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+        title: "Report location"
+      });
+
+      // adding an event listener to retrieve location once marker is dragged
+      google.maps.event.addListener(marker, 'dragend', function (event) {
+        console.log('Pin dragged to latitude: ' + event.latLng.lat() + ' longitude: ' + event.latLng.lng());
+        report.set({
+          loc_lat_from_user: event.latLng.lat(),
+          loc_lng_from_user: event.latLng.lng()
+        });
+      });
+
+      marker.setMap(map.gmap);
+
+      map.gmap.setCenter(glatlng);
+
+      google.maps.event.addListenerOnce(map.gmap, 'tilesloaded', function () {
+        map.gmap.panTo(glatlng);
+      });
+    };
+
+    if (geoloc) {
+      drawMarker(geoloc);
+    } else {
+      navigator.geolocation.getCurrentPosition(function (geoloc) {
+        drawMarker(geoloc);
+      }, null, {enableHighAccuracy: true});
+    }
+
+  };
+
+
+  self.generateStaticMapURL = function(geoloc) {
+    var glatlng = veos.map.convertGeolocToGmapLatLng(geoloc);
+
+    var url = "https://maps.googleapis.com/maps/api/staticmap?zoom=14&size=200x100&scale=2&sensor=true&center=" +
+      glatlng.lat() + "," + glatlng.lng();
+
+    // add the current location as red pin to the map
+    url += "&markers=color:blue%7C" + glatlng.lat() + "," + glatlng.lng();
+
+    return url;
+  };
+
+
+  // perform a reverse geolocation lookup (convert latitude and longitude into a street address)
+  self.lookupAddressForLoc = function(geoloc, successCallback) {
+    console.log("Looking up address for ", geoloc);
+    var geocoder = new google.maps.Geocoder();
+    var glatlng = veos.map.convertGeolocToGmapLatLng(geoloc);
+
+    geocoder.geocode({'latLng': glatlng}, function(results, status) {
+      if (status === google.maps.GeocoderStatus.OK) {
+        if (results[0]) {
+          console.log("Reverse geocoding for: ", glatlng, " returned this address: ", results[0].formatted_address);
+          successCallback(results[0]);
+        }
+      } else {
+        console.error("Geocoder failed due to: " + status);
+      }
+    });
+  };
+
+  // lookup geolocation for a given street address
+  self.lookupLocForAddress = function(address, successCallback) {
+    console.log("Looking up loc for address ", address);
+    var geocoder = new google.maps.Geocoder();
+
+    geocoder.geocode({'address': address}, function(results, status) {
+      if (status === google.maps.GeocoderStatus.OK) {
+        var lat = results[0].geometry.location.lat();
+        var lng = results[0].geometry.location.lng();
+
+        console.log("Reverse geocoding for address: " + address + " returned this latitute: " + lat + " and longitude: " + lng);
+        successCallback(lat, lng);
+      } else {
+        console.error("Geocoder failed due to: " + status);
+      }
+    });
+  };
+
+  veos.map = self;
+})(window.veos);
+
+/*jshint sub:true, debug:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true */
+/*global Backbone, _, jQuery, Android, FileTransfer, FileUploadOptions, google */
+
+(function(veos) {
+  var model = {};
+
+  // model.baseURL = window.location.protocol + "://" + window.location.host +
+  //   (window.location.port ? ':' + window.location.port : '');
+  //model.baseURL = "http://backend.veos.ca";
+  //model.baseURL = "http://veos.surveillancerights.ca";
+  //model.baseURL = "http://192.168.222.108:3000";
+  //model.baseURL = "http://192.168.43.221:3000";
+
+  // need full URL for photo uploads to work with reverse proxying
+  model.baseURL = location.protocol + "//" + location.host + "/backend";
+
+  // model.baseURL = "http://backend.dev.surveillancerights.ca";
+
+  jQuery.support.cors = true; // enable cross-domain AJAX requests
+
+  /**
+   * Does recursive magic on the given 'attrs' object, renaming
+   * each property given in 'nested' array from "myprop" to "myprop_attributes".
+   * This is done to make Rails' accepts_nested_attributes_for happy.
+   **/
+  function wrapNested(nested, attrs) {
+    _.each(nested, function (k) {
+      if (k instanceof Array) {
+        if (attrs[k[0]]) {
+          wrapNested(k[1], attrs[k[0]]);
+        }
+        k = k[0];
+      }
+
+      if (attrs[k]) {
+        attrs[k+"_attributes"] = attrs[k];
+        delete attrs[k];
+      }
+    });
+  }
+
+  var Base = Backbone.Model.extend({
+    initialize: function (attributes, options) {
+      this.bind("error", this.defaultErrorHandler);
+    },
+    toJSON: function() {
+      var attrs = _.clone( this.attributes ); // WARNING: shallow clone only!
+
+      wrapNested(this.nested, attrs);
+
+      var wrap = {};
+      wrap[this.singular] = attrs;
+      return wrap;
+    },
+    url: function () {
+      var base = model.baseURL + '/' + this.plural;
+      if (this.isNew()) {
+        return base + '.json';
+      }
+      else {
+        return base + '/' + this.id + '.json';
+      }
+    },
+    defaultErrorHandler: function (model, response, opts) {
+      console.error("Error on "+this.singular+" model: " + JSON.stringify(model) + " --- " + JSON.stringify(response));
+
+      var msg;
+
+      // FIXME: a 422 response over cross domain will for some reason return status 0... catching it like this here
+      //        could result in bogus error reporting.
+      if (response.status === 422 || response.status === 0) {
+        msg = "Sorry, there is a problem in your "+this.singular+". Please check your input and try again.";
+        var errors = {};
+        try {
+          errors = JSON.parse(response.responseText).errors;
+        } catch (err) {
+          console.error("Couldn't parse response text: "+response.responseText+ " ("+err+")");
+        }
+
+        var errContainer = jQuery("#error-message-container");
+
+        _.each(errors, function(v, k) {
+          var errField = jQuery("*[name='"+k+"'].field");
+
+          if (errField.is(':checkbox, :radio')) {
+            errField = errField.parent();
+          }
+
+          errField.addClass("error");
+          jQuery('*[for='+errField.attr('id')+']').addClass("error");
+          errField.one('change focus', function() {
+            errField.removeClass("error");
+            jQuery('*[for='+errField.attr('id')+']').removeClass("error");
+          });
+
+
+          if (errContainer.length !== 0) {
+            var humanFieldName = k.replace(/_/, ' ');
+            errContainer.append("<li><strong>"+humanFieldName+"</strong> "+v+"</li>");
+          }
+        });
+
+        if (errContainer.length !== 0) {
+          errContainer.show();
+        }
+
+      } else if (response.status >= 500 && response.status < 600) {
+        msg = "Our apologies, the server responded with an error. There may be a problem with the system.";
+      } else {
+        msg = "Sorry, there was an error while performing this action. The server may be temporarily unavailable.";
+      }
+
+      jQuery('html, body').animate({ scrollTop: 0 }, 0);
+
+      veos.alert(msg, "Error");
+    }
+  });
+
+
+  /*** Report ***/
+
+  model.Report = Base.extend({
+    singular: "report",
+    plural: "reports",
+    nested: ['tags', ['photos', ['tags']], ['installation', ['organization']]],
+    defaults: {
+      'owner_identifiable': true
+    },
+
+    // validate: function(attrs) {
+    //   console.log("Validating the model...");
+
+    //   var validationObj = {};
+
+    //   // not checking all 'required' fields since it's pretty conditional requirements for now (if B but not A, then...), and there are only 3
+    //   // better to check using attrs, if possible, rather than the fields using jQuery
+
+    //   // owner_name or owner_identifiable must be filled
+    //   if (!(attrs.owner_name)) {
+    //     if (jQuery('#unidentified-owner-checkbox').is(':checked')) {
+    //       console.log('passing validation...');
+    //     } else {
+    //       alert('Owner name must be filled in or marked as unidentifiable');
+    //     }
+    //   }
+
+    //   // if owner_name is filled, owner_type must be filled
+    //   if (!(attrs.owner_type)) {
+    //     if (attrs.owner_name) {
+    //       alert('Owner type must be filled out if owner can be identified');
+    //     }
+    //   }
+
+    //   // _.all(jQuery("input.required").val(), funciton (v) { return v != "" })
+    // },
+
+    attachPhoto: function (photo, successCallback) {
+      var report = this;
+      photo.save({'report_id': report.id}, {success: function () {
+        if (!report.photos) {
+          report.photos = [];
+        }
+
+        report.photos.push(photo);
+        photo.report = report; // in case we need to later refer to the report we're attached to from the photo
+
+        report.updatePhotosAttribute();
+
+        photo.on('change sync', report.updatePhotosAttribute, report);
+
+        console.log("Photo "+photo.id+" attached to report "+ report.id);
+
+        if (successCallback) {
+          successCallback(report, photo);
+        }
+      }});
+    },
+
+    removePhoto: function (fingerprint) {
+      var report = this;
+
+      // this shouldn't really happen...
+      if (!report.photos) {
+        report.photos = [];
+      }
+
+      var photo = _.find(report.photos, function (p) {
+        return p.get('image_fingerprint') === fingerprint;
+      });
+
+      if (!photo) {
+        console.error("Tried to remove a photo with fingerprint '"+fingerprint+"' but this report has no such photo. Attached photos are:",report.photos);
+        throw "Tried to remove a photo that doesn't exist in this report!";
+      }
+
+      report.photos.splice(_.indexOf(report.photos, photo), 1);
+      report.updatePhotosAttribute();
+    },
+
+    updatePhotosAttribute: function () {
+      if (!this.photos) {
+        this.photos = [];
+      }
+
+      var photos = [];
+
+      _.each(this.photos, function (photo) {
+        photos.push(photo.toJSON()['photo']);
+      });
+
+      this.set('photos', photos);
+      this.trigger('change');
+    },
+
+    addTag: function (tag, tagType) {
+      var tags = this.get('tags');
+      if (!tags) {
+        tags = [];
+      }
+
+      tags.push({tag: tag, tag_type: tagType});
+
+      this.set('tags', tags);
+      this.trigger('change');
+    },
+
+    removeTag: function (tag, tagType) {
+      var tags = this.get('tags');
+
+      var t;
+      while (this.findTag(tag, tagType)) {
+        t = this.findTag(tag, tagType);
+        tags.splice(_.indexOf(tags, t), 1);
+      }
+
+      this.trigger('change');
+    },
+
+    setTags: function (tags, tagType) {
+      var ts = _.reject(this.get('tags'), function (t) {
+        return t.tag_type === tagType;
+      });
+      ts = _.uniq(ts, false, function (t) {
+        return [t.tag, t.tag_type];
+      });
+      _.each(_.uniq(tags), function (t) {
+        ts.push({tag: t, tag_type: tagType});
+      });
+
+      this.set('tags', ts);
+    },
+
+    findTag: function (tag, tagType) {
+      var tags = this.get('tags');
+
+      return _.find(tags, function (t) {
+        return t.tag === tag && t.tag_type === tagType;
+      });
+    },
+
+    // return attached photos as Photo model objects
+    getPhotos: function () {
+      return _.map(this.get('photos'), function (data) { return new model.Photo(data);});
+    },
+
+    getLatLng: function() {
+      if (this.get('loc_lat_from_user')) {
+        console.log('In getLatLng() returning loc from user. Lat: '+this.get('loc_lat_from_user')+' Lng: '+this.get('loc_lng_from_user')+'');
+        return new google.maps.LatLng(this.get('loc_lat_from_user'), this.get('loc_lng_from_user'));
+      } else if (this.get('loc_lat_from_gps')) {
+        console.log('In getLatLng() returning loc from GPS. Lat: '+this.get('loc_lat_from_gps')+' Lng: '+this.get('loc_lng_from_gps')+'');
+        return new google.maps.LatLng(this.get('loc_lat_from_gps'), this.get('loc_lng_from_gps'));
+      } else {
+        return null;
+      }
+    },
+
+    getLocDescription: function() {
+      return this.get('loc_description_from_user') || this.get('loc_description_from_google') || "";
+    }
+  });
+
+  model.Reports = Backbone.Collection.extend({
+      model: model.Report,
+      url: model.baseURL + '/reports.json'
+  });
+
+  /*** Installation ***/
+
+  model.Installation = Base.extend({
+    singular: "installation",
+    plural: "installations",
+
+    getLocDescription: function() {
+      return this.get('loc_description') || "";
+    },
+
+    getTruncatedLocDescription: function() {
+      var locText = this.get('loc_description') || "";
+      return locText.substring(0,24) + '...';
+    },
+
+    startAmending: function () {
+      var newReport = new model.Report();
+      newReport.fetch({url: model.baseURL + '/installations/' + this.id + '/amend.json'});
+      return newReport;
+    }
+
+  });
+
+  model.Installations = Backbone.PageableCollection.extend({
+      model: model.Installation,
+      url: model.baseURL + '/installations.json'
+  });
+
+  model.PagedNearbyInstallations = Backbone.PageableCollection.extend({
+      initialize: function (nearLat, nearLng) {
+        this.nearLat = nearLat;
+        this.nearLng = nearLng;
+        // Since we want people to be able to scroll to any installation
+        // no matter how fare away we set maxDist to half of the circumference of the earth
+        this.maxDist = 20000;
+      },
+      model: model.Installation,
+      url: function () {
+        return model.baseURL + '/installations/near.json?lat=' + this.nearLat + '&lng=' + this.nearLng + '&max_dist=' + this.maxDist;
+      }
+  });
+
+  model.NearbyInstallations = Backbone.Collection.extend({
+      initialize: function (nearLat, nearLng, maxDist) {
+        this.nearLat = nearLat;
+        this.nearLng = nearLng;
+        this.maxDist = maxDist;
+      },
+      updateLocation: function (nearLat, nearLng, maxDist) {
+        this.nearLat = nearLat;
+        this.nearLng = nearLng;
+        if (maxDist) {this.maxDist = maxDist;}
+      },
+      updateMaxDistance: function(maxDist) {
+        this.maxDist = maxDist;
+      },
+      model: model.Installation,
+      url: function () {
+        return model.baseURL + '/installations/near.json?lat=' + this.nearLat + '&lng=' + this.nearLng + '&max_dist=' + this.maxDist + '&per_page=500';
+      }
+  });
+
+  /*** Organization ***/
+
+  model.Organization = Base.extend({
+    singular: "organization",
+    plural: "organizations"
+  });
+
+  /*** Photo ***/
+
+  model.Photo = Base.extend({
+    singular: "photo",
+    plural: "photos",
+    nested: ['tags'],
+
+    captureFromCamera: function () {
+      this.capture("camera");
+    },
+
+    captureFromGallery: function () {
+      this.capture("gallery");
+    },
+
+    // used for desktop browser uploads
+    captureFromFile: function (file) {
+      this.imageFile = file;
+      this.captureSuccess();
+    },
+
+    captureSuccess: function () {
+      var photo = this;
+      photo.trigger('image_capture');
+    },
+
+    capture: function (from) {
+      var photo = this;
+
+      if (from === "camera") {
+        console.log("Trying to select photo from gallery...");
+      } else if (from === "gallery") {
+        console.log("Trying to capture photo from camera...");
+      } else {
+        throw "Trying to capture from unknown source!";
+      }
+
+      // NOTE: scope needs to be global for it to be callable inside android
+
+      window.androidUploadStart = function () {
+        photo.trigger('image_upload_start');
+      };
+
+      window.androidUploadError = function () {
+        photo.trigger('image_upload_error');
+      };
+
+      window.androidUploadSuccess = function (id) {
+        console.log("Image uploaded successfully.");
+
+        photo.set('id', id);
+        console.log("Photo model in Photo.capture.androidUploadSuccess:"+ JSON.stringify(photo.toJSON(), null, 2));
+        photo.fetch({
+          success: function () {
+            console.log("Assigned id to photo: "+photo.id);
+            console.log("Photo model in Photo.capture.androidUploadSuccess.fetch:"+ JSON.stringify(photo.toJSON(), null, 2));
+            photo.trigger('image_upload_finish');
+          }
+        });
+      };
+
+      window.androidCaptureSuccess = function () {
+        photo.captureSuccess();
+      };
+
+      // need to pass callback funciton name as string so that
+      // it can be executed on the Android side
+
+      if (from === "camera") {
+        console.log("Telling Android to get the photo from Camera. Will send to URL: "+this.url());
+        Android.getPhotoFromCamera(this.url(), 'window.androidCaptureSuccess');
+      } else if (from === "gallery") {
+        console.log("Telling Android to get the photo from Gallery. Will send to URL: "+this.url());
+        Android.getPhotoFromGallery(this.url(), 'window.androidCaptureSuccess');
+      }
+    },
+
+    upload: function () {
+      var photo = this;
+
+      // if (!photo.imageURL) {
+      //   throw new Error("Cannot upload photo because it does not have an imageURL! You need to capture an image before uploading.");
+      // }
+      if (!photo.imageFile) {
+        throw new Error("Cannot upload photo because it does not have a imageFile property! You need to capture an image before uploading.");
+      }
+
+      console.log("Uploading photo: "+photo.imageFile.name);
+      photo.trigger('image_upload_start');
+
+      // var options = new FileUploadOptions();
+      // options.fileKey = "photo[image]";
+      // options.fileName = photo.imageURL.substr(photo.imageURL.lastIndexOf('/')+1);
+      // options.mimeType = "image/jpeg";
+      // chunkedMode false uses more memory and might lead to crashes after some pictures
+      // chunkedMode true can lead to a situation where no data is transmitted to the server
+      // this seems to be fixed by setting the 6th value in transfer.upload to true (acceptSelfSignedCert)
+      // while I am not sure how that affects a unencrypted http connection it seems to work
+      // Sep 11, 2012 doesn't seem to work so set to false
+      // options.chunkedMode = false;
+
+      var success = function (data) {
+        console.log("Image uploaded successfully; "+data.image_file_size+" bytes uploaded.");
+
+        photo.set('id', data.id);
+
+        console.log("Assigned id to photo: "+data.id);
+
+        photo.set(data);
+
+        photo.trigger('image_upload_finish', data);
+      };
+
+      var failure = function (error) {
+        console.error("Image upload failed: " + JSON.stringify(error));
+        photo.trigger('image_upload_error', error);
+      };
+
+      // WARNING: This uses XHR2 to upload the file. This is not supported by older browsers.
+      //          See http://caniuse.com/xhr2 and http://stackoverflow.com/questions/4856917/jquery-upload-progress-and-ajax-file-upload/4943774#4943774
+      var formData = new FormData();
+      formData.append('photo[image]', photo.imageFile);
+
+      jQuery.ajax({
+        url: photo.url(),
+        type: 'POST',
+        // xhr: function () {
+        //   myXhr = $.ajaxSettings.xhr();
+        //   if(myXhr.upload){ // if upload property exists
+        //       myXhr.upload.addEventListener('progress', progressHandlingFunction, false); // progressbar
+        //   }
+        //   return myXhr;
+        // },
+        success: success,
+        error: failure,
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false
+      }, 'json');
+    },
+
+    addTag: function (tag) {
+      var tags = this.get('tags');
+      if (!tags) {
+        tags = [];
+      }
+
+      tags.push({tag: tag});
+
+      this.set('tags', tags);
+      this.trigger('change');
+    },
+
+    removeTag: function (tag) {
+      var tags = this.get('tags');
+
+      var t;
+      while (this.findTag(tag)) {
+        t = this.findTag(tag);
+        if (t.id) {
+          t._destroy = true;
+        } else {
+          tags.splice(_.indexOf(tags, t), 1);
+        }
+      }
+
+      this.trigger('change');
+    },
+
+    setTags: function (tags) {
+      var ts = [];
+      this.set('tags', ts);
+      _.each(tags, function (t) {
+        ts.push({tag: t});
+      });
+    },
+
+    findTag: function (tag) {
+      var tags = this.get('tags');
+
+      return _.find(tags, function (t) {
+        return t.tag === tag && !t._destroy;
+      });
+    },
+
+    thumbUrl: function () {
+      if (veos.isAndroid()) {
+        return model.baseURL + "/" + this.get('thumb_url');
+      } else {
+        return model.baseURL + "/" + this.get('big_thumb_url');
+      }
+    },
+
+    bigUrl: function () {
+      return model.baseURL + "/" + this.get('big_url');
+    },
+
+    originalUrl: function () {
+      return model.baseURL + "/" + this.get('original_url');
+    }
+  });
+
+
+  veos.model = model;
+})(window.veos);
+
 /*jshint debug:true, noarg:true, noempty:true, eqeqeq:false, bitwise:true, undef:true, curly:true, browser: true, devel: true, jquery:true, unused:false */
 /*global Backbone, _, jQuery, Android, FileTransfer, FileUploadOptions, google, device */
 
