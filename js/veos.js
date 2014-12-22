@@ -255,7 +255,7 @@ window.veos = (function(veos) {
         // var installations = new veos.model.Installations();
 
         // fetch instalations ordered by closest to furthest without Max distance
-        var installations = new veos.model.PagedNearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude);           // TODO I'm pretty sure this is not the right way to access these
+        // var installations = new veos.model.PagedNearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude);           // TODO I'm pretty sure this is not the right way to access these
 
         var view = new veos.view.InstallationList({
           el: ev.target,
