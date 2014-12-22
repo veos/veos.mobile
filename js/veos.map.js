@@ -233,7 +233,7 @@
           thumb = "<img class='photo photo-"+photoID+"' />";
         }
 
-        mapPopupContent = $('<a class="styled-link-text">'+thumb+buttonText+'</a>');
+        mapPopupContent = jQuery('<a class="styled-link-text">'+thumb+buttonText+'</a>');
         mapPopupContent.click(function () { veos.goToInstallationDetails(i.id); });
 
         // binding a popup click event to the marker

@@ -32,6 +32,21 @@ window.veos = (function(veos) {
     jQuery.mobile.changePage("#overview-map-page");
   };
 
+  self.goToInstallationDetails = function (installationId) {
+    veos.currentInstallationId = installationId;
+    jQuery.mobile.changePage("#installation-details-page", {chageHash: true});
+    history.pushState({installationId: installationId}, "Installation Details",
+      "#installations/"+installationId+"/details");
+  };
+
+  self.goToInstallationReportAmend = function (installationId) {
+    veos.currentInstallationId = installationId;
+    veos.amendingInst = true; // not if this is really needed; copied from colin/armin's old code
+    jQuery.mobile.changePage("#report-page", {chageHash: true});
+    history.pushState({installationId: installationId}, "Amend Installation Report",
+      "#installations/"+installationId+"/report/amend");
+  }
+
   /**
     Initializes the whole app. This needs to be called at the bottom of every VEOS page.
   **/
@@ -266,8 +281,9 @@ window.veos = (function(veos) {
 
     /** installation-details.html (installation-details-page) **/
       .delegate("#installation-details-page", "pageshow", function(ev) {
+        var installationId = veos.currentInstallationId;
         console.log("Showing details page at "+window.location.href);
-        var installationId = window.location.href.match("[\\?&]id=(\\d+)")[1];
+        //var installationId = window.location.href.match("[\\?&]id=(\\d+)")[1];
         console.log("Showing details for installation "+installationId);
 
         // Google Analytics
