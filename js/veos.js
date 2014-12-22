@@ -84,21 +84,25 @@ window.veos = (function(veos) {
         // TODO - FIX THIS HARDCODED NONSENSE. BACKEND CHANGES REALLY MESSED US UP
 
         // if we have a geographic location for the user...
-        if (typeof geoloc !== "undefined") {
-          jQuery(self).one('haveloc', function (ev, geoloc) {
-            veos.installations = new veos.model.NearbyInstallations(geoloc.coords.latitude, geoloc.coords.longitude, 2);
-            veos.installations.on('reset', function(collection) {
-              veos.map.overviewMap.addInstallationMarkers(collection);
-            });
-            veos.installations.fetch({reset:true});
-          });
+        if (typeof geoloc === "undefined") {
+          // default center focus is at U of T (?)
+          var lat = 43.6621614579938;
+          var lng = -79.39527873417967;
         } else {
-          veos.installations = new veos.model.NearbyInstallations(43.6621614579938, -79.39527873417967, 2);
+          var lat = geoloc.coords.latitude;
+          var lng = geoloc.coords.longitude;
+        }
+
+        jQuery(self).one('haveloc', function (ev, geoloc) {
+          veos.installations = new veos.model.NearbyInstallations(lat, lng, 2);
+          veos.installations.on('add', function(installation) {
+            veos.map.overviewMap.addInstallationMarker(installation);
+          });
           veos.installations.on('reset', function(collection) {
             veos.map.overviewMap.addInstallationMarkers(collection);
           });
           veos.installations.fetch({reset:true});
-        }
+        });
 
         // start following user
         veos.map.overviewMap.startFollowing();
@@ -233,7 +237,7 @@ window.veos = (function(veos) {
 
     /** installations-list.html (installations-list-page) **/
       .delegate("#installations-list-page", "pageshow", function(ev) {
-        var installations = new veos.model.Installations();
+        //var installations = new veos.model.Installations();
 
 
         // Google Analytics
@@ -241,13 +245,12 @@ window.veos = (function(veos) {
 
         var view = new veos.view.InstallationList({
           el: ev.target,
-          collection: installations
+          collection: veos.installations
         });
 
         view.showLoader();
-        installations.fetch({
-          success: function () {view.hideLoader();},
-          reset:true
+        veos.installations.fetch({
+          success: function () {view.hideLoader(); view.render(); }
         });
       })
 

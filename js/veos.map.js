@@ -63,14 +63,14 @@
       console.log('dragend triggered');
       var center = gmap.getCenter();
       veos.installations.updateLocation(center.lat(), center.lng());
-      veos.installations.fetch({reset:true});
+      veos.installations.fetch();
     });
 
     google.maps.event.addListener(gmap, 'zoom_changed', function() {
       console.log('zoom_changed triggered');
       var zoom = gmap.getZoom();
       veos.installations.updateMaxDistance(80000/(Math.pow(2, zoom)));      // BASED ON http://stackoverflow.com/questions/8717279/what-is-zoom-level-15-equivalent-to
-      veos.installations.fetch({reset:true});
+      veos.installations.fetch();
     });
   };
 
@@ -162,7 +162,6 @@
     this.currentLocMarker.setMap(null);
   };
 
-
   /**
     Adds markers for a collection of Installations.
     @param installations veos.model.Installations
@@ -170,91 +169,99 @@
   self.Map.prototype.addInstallationMarkers = function (installations) {
     console.log("Adding "+installations.length+" installation markers to map...");
 
+    var map = this;
+
     var installationCountMsg = humane.create({ timeout: 3000 })
     //installationCountMsg.log("Total # of installations reported: " + installations.length);
 
+    installations.each(function(i) {
+      map.addInstallationMarker(i);
+    });
+  };
 
+  self.Map.prototype.addInstallationMarker = function (i) {
     var map = this;
     if (veos.markersArray === undefined) {
       veos.markersArray = [];
     }
 
-    map.infowindow = new google.maps.InfoWindow({
-      // do you seriously need a plugin for styling infowindows?!?! Puke
-      // http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/docs/examples.html
-      // http://code.google.com/p/google-maps-utility-library-v3/wiki/Libraries
-    });
+    if (!map.infowindows) {
+      map.infowindow = new google.maps.InfoWindow({
+        // do you seriously need a plugin for styling infowindows?!?! Puke
+        // http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/docs/examples.html
+        // http://code.google.com/p/google-maps-utility-library-v3/wiki/Libraries
+      });
+    }
 
-    installations.each(function(i) {
-      if (!_.findWhere(veos.markersArray, {"id": i.id})) {
-        var latLng = new google.maps.LatLng(i.get('loc_lat'), i.get('loc_lng'));
-        var buttonText = "";
+    if (!_.findWhere(veos.markersArray, {"id": i.id})) {
+      console.log("adding marker for", i.id)
+      var latLng = new google.maps.LatLng(i.get('loc_lat'), i.get('loc_lng'));
+      var buttonText = "";
 
-        var compliancePinOn;
-        var compliancePinOff;
-        var compliancePin;
-        if (i.get('compliance_level') === 'compliant') {
-          compliancePinOn = '/images/pin-green-on.png';
-          compliancePinOff = '/images/pin-green-off.png';
-        } else if (i.get('compliance_level') === 'min_compliant') {
-          compliancePinOn = '/images/pin-yellow-green-on.png';
-          compliancePinOff = '/images/pin-yellow-green-off.png';
-        } else if (i.get('compliance_level') === 'low_compliant') {
-          compliancePinOn = '/images/pin-yellow-on.png';
-          compliancePinOff = '/images/pin-yellow-off.png';
-        } else if (i.get('compliance_level') === 'non_compliant') {
-          compliancePinOn = '/images/pin-red-on.png';
-          compliancePinOff = '/images/pin-red-off.png';
-        } else {
-          compliancePin = 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
-        }
-
-        var marker = new google.maps.Marker({
-          id: i.id,
-          position: latLng,
-          icon: compliancePinOn,
-          iconUnselected: compliancePinOff,
-          iconSelected: compliancePinOn,
-          title: i.get('owner_name') || "Unknown Owner"
-        });
-
-        // duplicating html from InstallationList (veos.view.js) for popup content
-        var mapPopupContent;
-
-        if (i.get('owner_name')) {
-          buttonText = "<span class='owner_name'>" + i.get('owner_name') + "</span><br/><span class='trunc-address'>" + i.getTruncatedLocDescription() + "</span>";
-        } else {
-          buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/><span class='trunc-address'>" + i.getTruncatedLocDescription() + "</span>";
-        }
-
-        var thumb = "";
-        if (i.has('photos') && i.get('photos').length > 0) {
-          var photoID = i.get('photos')[0].id;
-          thumb = "<img class='photo photo-"+photoID+"' />";
-        }
-
-        mapPopupContent = jQuery('<a class="styled-link-text">'+thumb+buttonText+'</a>');
-        mapPopupContent.click(function () { veos.goToInstallationDetails(i.id); });
-
-        // binding a popup click event to the marker
-        google.maps.event.addListener(marker, 'click', function() {
-          injectThumbnail(i);
-          map.infowindow.setContent(mapPopupContent[0]);
-          map.infowindow.open(map.gmap, marker);
-          highlightOwnerPins(marker, i.get('owner_name'));
-        });
-
-        // binding a click event that triggers when the infowindow is closed
-        google.maps.event.addListener(map.infowindow, 'closeclick', function() {
-          _.each(veos.markersArray, function(m) {
-            m.setIcon(m.iconSelected);
-          });
-        });
-
-        marker.setMap(map.gmap);
-        veos.markersArray.push(marker);
+      var compliancePinOn;
+      var compliancePinOff;
+      var compliancePin;
+      if (i.get('compliance_level') === 'compliant') {
+        compliancePinOn = '/images/pin-green-on.png';
+        compliancePinOff = '/images/pin-green-off.png';
+      } else if (i.get('compliance_level') === 'min_compliant') {
+        compliancePinOn = '/images/pin-yellow-green-on.png';
+        compliancePinOff = '/images/pin-yellow-green-off.png';
+      } else if (i.get('compliance_level') === 'low_compliant') {
+        compliancePinOn = '/images/pin-yellow-on.png';
+        compliancePinOff = '/images/pin-yellow-off.png';
+      } else if (i.get('compliance_level') === 'non_compliant') {
+        compliancePinOn = '/images/pin-red-on.png';
+        compliancePinOff = '/images/pin-red-off.png';
+      } else {
+        compliancePin = 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';
       }
-    });
+
+      var marker = new google.maps.Marker({
+        id: i.id,
+        position: latLng,
+        icon: compliancePinOn,
+        iconUnselected: compliancePinOff,
+        iconSelected: compliancePinOn,
+        title: i.get('owner_name') || "Unknown Owner"
+      });
+
+      // duplicating html from InstallationList (veos.view.js) for popup content
+      var mapPopupContent;
+
+      if (i.get('owner_name')) {
+        buttonText = "<span class='owner_name'>" + i.get('owner_name') + "</span><br/><span class='trunc-address'>" + i.getTruncatedLocDescription() + "</span>";
+      } else {
+        buttonText = "<span class='owner_name unknown'>Unknown Owner</span><br/><span class='trunc-address'>" + i.getTruncatedLocDescription() + "</span>";
+      }
+
+      var thumb = "";
+      if (i.has('photos') && i.get('photos').length > 0) {
+        var photoID = i.get('photos')[0].id;
+        thumb = "<img class='photo photo-"+photoID+"' />";
+      }
+
+      mapPopupContent = jQuery('<a class="styled-link-text">'+thumb+buttonText+'</a>');
+      mapPopupContent.click(function () { veos.goToInstallationDetails(i.id); });
+
+      // binding a popup click event to the marker
+      google.maps.event.addListener(marker, 'click', function() {
+        injectThumbnail(i);
+        map.infowindow.setContent(mapPopupContent[0]);
+        map.infowindow.open(map.gmap, marker);
+        highlightOwnerPins(marker, i.get('owner_name'));
+      });
+
+      // binding a click event that triggers when the infowindow is closed
+      google.maps.event.addListener(map.infowindow, 'closeclick', function() {
+        _.each(veos.markersArray, function(m) {
+          m.setIcon(m.iconSelected);
+        });
+      });
+
+      marker.setMap(map.gmap);
+      veos.markersArray.push(marker);
+    }
   };
 
   var closeMarker = function() {

@@ -1140,10 +1140,6 @@
     initialize: function () {
       var self = this;
 
-      if (!this.collection) {
-        this.collection = new veos.model.Installations();
-      }
-
       // TODO: consider binding 'add' and 'remove' to pick up added/removed Installations too?
       this.collection.on('reset', _.bind(this.render, self));
 
@@ -1180,7 +1176,15 @@
     loadMoreInstallations: function() {
       var view = this;
 
-      view.collection.getNextPage();
+      var PER_PAGE = 100;
+      var pageToFetch = (view.collection.length / PER_PAGE) + 1;
+
+      var lat = veos.lastLoc.coords.latitude;
+      var lng = veos.lastLoc.coords.longitude;
+
+      view.collection.fetch({data:
+        {page: pageToFetch, per_page: PER_PAGE, lat: lat, lng: lng, max_dist: 1000}
+      });
     },
 
     render: function () {
@@ -1278,10 +1282,6 @@
 
     initialize: function () {
       var self = this;
-
-      if (!this.collection) {
-        this.collection = new veos.model.Installations();
-      }
 
       // TODO: consider binding 'add' and 'remove' to pick up added/removed Installations too?
       this.collection.on('reset', _.bind(this.render, self));
