@@ -206,7 +206,8 @@
 
     var map = this;
 
-    var installationCountMsg = humane.create({ timeout: 3000 })
+    // TODO: for this to work we need a backend call to find out how many installations exist
+    // var installationCountMsg = humane.create({ timeout: 3000 });
     //installationCountMsg.log("Total # of installations reported: " + installations.length);
 
     installations.each(function(i) {
@@ -229,7 +230,7 @@
     }
 
     if (!_.findWhere(veos.markersArray, {"id": i.id})) {
-      console.log("adding marker for", i.id)
+      console.log("adding marker for", i.id);
       var latLng = new google.maps.LatLng(i.get('loc_lat'), i.get('loc_lng'));
       var buttonText = "";
 
