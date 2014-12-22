@@ -1,10 +1,7 @@
 /*jshint node: true */
 
-//var BACKEND_URL = "http://backend.dev.surveillancerights.ca";
-//var BACKEND_URL = "http://192.168.222.114:3000";
-//var BACKEND_URL = "http://192.168.43.221:3000";
-//var BACKEND_URL = "http://192.168.0.22:3000";
-var BACKEND_URL = "http://192.168.222.143:3000";
+var config = require('./config');
+var BACKEND_URL = config.backend_url || "http://backend.dev.surveillancerights.ca";
 
 var http = require('http');
 var httpProxy = require('http-proxy');
