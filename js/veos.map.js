@@ -267,12 +267,13 @@
           thumb = "<img class='photo photo-"+photoID+"' />";
         }
 
-        mapPopupContent = "<a class='styled-link-text' href=installation-details.html?id="+i.id+">"+thumb+buttonText+"</a>";
+        mapPopupContent = jQuery('<a class="styled-link-text">'+thumb+buttonText+'</a>');
+        mapPopupContent.click(function () { veos.goToInstallationDetails(i.id); });
 
         // binding a popup click event to the marker
         google.maps.event.addListener(marker, 'click', function() {
           injectThumbnail(i);
-          map.infowindow.setContent(mapPopupContent);
+          map.infowindow.setContent(mapPopupContent[0]);
           map.infowindow.open(map.gmap, marker);
           highlightOwnerPins(marker, i.get('owner_name'));
         });

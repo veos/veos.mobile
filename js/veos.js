@@ -32,6 +32,25 @@ window.veos = (function(veos) {
     }
   };
 
+  self.goToOverviewMap = function () {
+    jQuery.mobile.changePage("#overview-map-page");
+  };
+
+  self.goToInstallationDetails = function (installationId) {
+    veos.currentInstallationId = installationId;
+    jQuery.mobile.changePage("#installation-details-page", {chageHash: true});
+    history.pushState({installationId: installationId}, "Installation Details",
+      "#installations/"+installationId+"/details");
+  };
+
+  self.goToInstallationReportAmend = function (installationId) {
+    veos.currentInstallationId = installationId;
+    veos.amendingInst = true; // not if this is really needed; copied from colin/armin's old code
+    jQuery.mobile.changePage("#report-page", {chageHash: true});
+    history.pushState({installationId: installationId}, "Amend Installation Report",
+      "#installations/"+installationId+"/report/amend");
+  }
+
   /**
     Initializes the whole app. This needs to be called at the bottom of every VEOS page.
   **/
@@ -58,9 +77,9 @@ window.veos = (function(veos) {
 
     /** overview-map.html (overview-map-page) **/
       .delegate("#overview-map-page", "pageshow", function(ev) {
-        //if (!veos.map.overviewMap) {
+        if (!veos.map.overviewMap) {
           veos.map.overviewMap = new veos.map.Map('#overview-map-canvas');
-        //}
+        }
         //var map = new veos.map.Map('#overview-map-canvas');
 
         // Google Analytics
@@ -198,7 +217,7 @@ window.veos = (function(veos) {
       .delegate("#refine-location-page", "pageshow", function(ev) {
         if (!veos.reportForm) {
           console.error("Cannot refine location because there is no report currently in progress.");
-          jQuery.mobile.changePage("report.html");
+          jQuery.mobile.changePage("#report-page");
           return;
         }
 
@@ -283,8 +302,9 @@ window.veos = (function(veos) {
 
     /** installation-details.html (installation-details-page) **/
       .delegate("#installation-details-page", "pageshow", function(ev) {
+        var installationId = veos.currentInstallationId;
         console.log("Showing details page at "+window.location.href);
-        var installationId = window.location.href.match("[\\?&]id=(\\d+)")[1];
+        //var installationId = window.location.href.match("[\\?&]id=(\\d+)")[1];
         console.log("Showing details for installation "+installationId);
 
         // Google Analytics
@@ -312,7 +332,7 @@ window.veos = (function(veos) {
         var installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
         // and set it in the href of the back button
         var backButton = jQuery('.photo-details-page-back-button');
-        backButton.attr('href', 'installation-details.html?id='+installationId);
+        backButton.attr('href', '#installation-details?id='+installationId);
 
         // retrieve photoId from URL
         var photoId = window.location.href.match("[\\?&]photoId=(\\d+)")[1];

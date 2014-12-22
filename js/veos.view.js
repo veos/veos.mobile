@@ -185,7 +185,7 @@
             delete veos.currentPhoto; // Armin: I do believe this is necessary to avoid picture showing up on other reports
             veos.currentPhotos = []; // Armin: Clear the currentPhotos array to avoid duplicate errors
             veos.alert("Report submitted successfully!");
-            jQuery.mobile.changePage("overview-map.html");
+            veos.goToOverviewMap();
           };
 
           var images = jQuery('.photo-list-item');    // get all images that were taken
@@ -229,7 +229,7 @@
               veos.alert("Error fetching Photo data during Report submission!");
               delete veos.currentReport;
               delete veos.reportForm;
-              jQuery.mobile.changePage("overview-map.html");
+              jQuery.mobile.changePage("#overview-map-page");
             }
 
             photo.fetch({success: photoFetchSuccess, error: photoFetchError});
@@ -599,7 +599,7 @@
             veos.currentPhotos = []; // Armin: Clear the currentPhotos array to avoid duplicate errors
 
             veos.alert("Report submitted successfully!");
-            jQuery.mobile.changePage("overview-map.html");
+            jQuery.mobile.changePage("#overview-map-page");
           };
 
           var report = self.model;
@@ -665,7 +665,7 @@
                 veos.alert("Error fetching Photo data during Report submission!");
                 delete veos.currentReport;
                 delete veos.reportForm;
-                jQuery.mobile.changePage("overview-map.html");
+                veos.goToOverviewMap();
               };
 
               photo.fetch({success: photoFetchSuccess, error: photoFetchError});
@@ -954,7 +954,7 @@
         var photoDetails = jQuery('<a />');
 
         // Only add a link to details (big picture) if on installation-details page
-        if (href.match(/installation-details.html/)) {
+        if (href.match(/details/)) { // FIXME: need to detect the page we're on properly; this will break
           // wrap a link around the picture
           // temporarily disabled for beta release
           if (veos.isAndroid()) {
@@ -1108,7 +1108,10 @@
         thumb = "<img class='list-picture photo-"+photoID+"' src='"+thumbUrl+"' />";
       }
 
-      var item = jQuery("<a class='relative' href='installation-details.html?id="+installation.get('id')+"'>"+complianceLevel+thumb+buttonText+"</a>");
+      var installationId = installation.get('id');
+      var item = jQuery("<a class='relative'>"+complianceLevel+thumb+buttonText+"</a>")
+      item.click(function () { veos.goToInstallationDetails(installationId); });
+
       // item.data('installation', installation);        // add the installation object so that we can retrieve it in the click event
       // item.attr('data-installationId', installation.get('id'));
       var li = jQuery("<li />");
@@ -1360,13 +1363,17 @@
           thumbPhoto.fetch({success: photoFetchSuccess, error: photoFetchError});
         }
 
+        var installationId = installation.get('id');
+        var item = jQuery("<a class='relative'>"+complianceLevel+thumb+buttonText+"</a>")
+        item.click(function () { veos.goToInstallationReportAmend(installationId); });
+
         // create the URL to load report.html in edit mode with prefilled data
         // the installationId is retrieved in veos.js .delegate and used to load a installation model
         // and render the ReportEditForm view
         // Adding a referrer so that the cancel button can lead back to installation details page / This is to fix bug 68.1
-        var item = jQuery("<a class='relative' href=report.html?installationId="+ installation.get('id') +"&ref=report-selection>"+complianceLevel+thumb+buttonText+"</a>");
+        // var item = jQuery("<a class='relative' href=report.html?installationId="+ installation.get('id') +"&ref=report-selection>"+complianceLevel+thumb+buttonText+"</a>");
         // instead of setting fresh=true in the url and changing that to false later on we use a global variable (and we all love them)
-        veos.amendingInst = true;
+        //veos.amendingInst = true;
         // item.data('installation', installation);        // add the installation object so that we can retrieve it in the click event
         // item.attr('data-installationId', installation.get('id'));
         var li = jQuery("<li />");
@@ -1489,14 +1496,18 @@
         this.$el.find('.android-only').addClass('hidden');
       }
 
+      var installationId = installation.get('id');
+      var editButton = jQuery('#installation-details-page .edit-button');
+      editButton.click(function () { veos.goToInstallationReportAmend(installationId); });
+
       // create the URL to load report.html in edit mode with prefilled data
       // the installationId is retrieved in veos.js .delegate and used to load a installation model
       // and render the ReportEditForm view
-      var editButton = jQuery('#installation-details-page .edit-button');
+      // var editButton = jQuery('#installation-details-page .edit-button');
       // Adding a referrer so that the cancel button can lead back to installation details page / This is to fix bug 68.1
-      editButton.attr('href', 'report.html?installationId='+installation.get('id')+'&ref=installation-details');
+      // editButton.attr('href', 'report.html?installationId='+installation.get('id')+'&ref=installation-details');
       // instead of setting fresh=true in the url and changing that to false later on we use a global variable (and we all love them)
-      veos.amendingInst = true;
+      // veos.amendingInst = true;
 
       var complianceButton = jQuery('#installation-details-page .compliance-banner');
       complianceButton.attr('href', 'privacy-compliance.html?installationId='+installation.get('id'));
