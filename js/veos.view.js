@@ -1190,7 +1190,7 @@
       var lng = veos.lastLoc.coords.longitude;
 
       view.collection.fetch({data:
-        {page: pageToFetch, per_page: PER_PAGE, lat: lat, lng: lng, max_dist: 1000}
+        {page: pageToFetch, per_page: PER_PAGE, lat: lat, lng: lng, max_dist: 24000}
       });
     },
 
