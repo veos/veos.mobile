@@ -9,16 +9,6 @@ window.veos = (function(veos) {
   // This allows us in veos.map.js to avoid having several watches added
   self.geolocWatchId = null;
 
-  var initLastLoc = function () {
-    // There are rare occations where the phone doesn't return location information when inside
-    // a building (could be a user setting or just a temporary glitch on the phone - happened to Armin serveral times)
-    // Should this be the case the callback "haveloc" is never triggered and self.lastLoc stays undefined
-    // which leads to an error in .delegate("#report-selection-page" because undefined.coords doesn't work
-    // as a result the user get's stuck on the page with buttons not working
-    self.lastLoc = JSON.parse('{"coords": {"latitude": 43.6621614579938,"longitude": -79.39527873417967}}');
-    //self.lastLoc.coords.latitude = 43.6621614579938;
-    //lastLoc.coords.longitude = 79.39527873417967;
-  };
 
   self.isAndroid = function () {
     return typeof(Android) !== 'undefined';
@@ -65,52 +55,40 @@ window.veos = (function(veos) {
       return;
     }
 
-    // important to do in order to avoid undefined error later on
-    initLastLoc();
+    var defaultLat = self.geo.DEFAULT_POS.coords.latitude;
+    var defaultLng = self.geo.DEFAULT_POS.coords.longitude;
+    self.installations = new veos.model.NearbyInstallations(defaultLat, defaultLng, 2);
 
-    jQuery(self).bind('haveloc', function (ev, geoloc) {
-      console.log("Got updated gps location: ", geoloc);
-      self.lastLoc = geoloc;
+    // set up the map view
+
+    veos.map.overviewMap = new veos.map.Map('#overview-map-canvas');
+
+    jQuery(veos.geo).on('haveloc', function (ev, geoloc) {
+      veos.map.overviewMap.setMyLocation(geoloc);
     });
+
+    veos.installations.on('add', function(installation) {
+      veos.map.overviewMap.addInstallationMarker(installation);
+    });
+    veos.installations.on('reset', function(collection) {
+      veos.map.overviewMap.addInstallationMarkers(collection);
+    });
+
+    jQuery(veos.geo).one('haveloc', function (ev, geoloc) {
+      console.log("Fetching");
+      veos.installations.fetch();
+    });
+
+    self.geo.startFollowing();
 
     jQuery(document)
 
     /** overview-map.html (overview-map-page) **/
       .delegate("#overview-map-page", "pageshow", function(ev) {
-        if (!veos.map.overviewMap) {
-          veos.map.overviewMap = new veos.map.Map('#overview-map-canvas');
-        }
-        //var map = new veos.map.Map('#overview-map-canvas');
-
-        // Google Analytics
-        // self.analytics(ev);
-
-        // TODO - FIX THIS HARDCODED NONSENSE. BACKEND CHANGES REALLY MESSED US UP
-
-        // if we have a geographic location for the user...
-        var lat, lng;
-        if (self.lastLoc === undefined) {
-          // default center focus is at U of T (?)
-          lat = 43.6621614579938;
-          lng = -79.39527873417967;
-        } else {
-          lat = self.lastLoc.coords.latitude;
-          lng = self.lastLoc.coords.longitude;
-        }
-
-        jQuery(self).one('haveloc', function (ev, geoloc) {
-          veos.installations = new veos.model.NearbyInstallations(lat, lng, 2);
-          veos.installations.on('add', function(installation) {
-            veos.map.overviewMap.addInstallationMarker(installation);
-          });
-          veos.installations.on('reset', function(collection) {
-            veos.map.overviewMap.addInstallationMarkers(collection);
-          });
-          veos.installations.fetch({reset:true});
+        console.log("Fetching installations because we're in the overview-map-page")
+        veos.installations.fetch({
+          success: function () { }
         });
-
-        // start following user
-        veos.map.overviewMap.startFollowing();
       })
 
       // this intercepts the pagehide event of the map view
@@ -263,6 +241,7 @@ window.veos = (function(veos) {
         });
 
         view.showLoader();
+        console.log("Fetching installations because we're in the installations-list-page")
         veos.installations.fetch({
           success: function () {view.hideLoader(); view.render(); }
         });

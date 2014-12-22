@@ -60,25 +60,37 @@
 
     this.gmap = gmap;
 
+    // Hack to prevent sending a request more than every 1.5
+    // seconds. Without this, dragging and zooming can result
+    // in a lot of unnecessary requests to the server.
+    var REQUEST_RATE_LIMIT = 1500;
+    var preventFlood = null;
+
     google.maps.event.addListener(gmap, 'dragend', function() {
+      if (preventFlood) return;
       console.log('dragend triggered');
       var center = gmap.getCenter();
       veos.installations.updateLocation(center.lat(), center.lng());
+      preventFlood = preventFlood || setTimeout(function () { preventFlood = null; }, REQUEST_RATE_LIMIT);
       veos.installations.fetch();
     });
 
     google.maps.event.addListener(gmap, 'zoom_changed', function() {
+      if (preventFlood) return;
       console.log('zoom_changed triggered');
       var zoom = gmap.getZoom();
       veos.installations.updateMaxDistance(80000/(Math.pow(2, zoom)));      // BASED ON http://stackoverflow.com/questions/8717279/what-is-zoom-level-15-equivalent-to
+      preventFlood = preventFlood || setTimeout(function () { preventFlood = null; }, REQUEST_RATE_LIMIT);
       veos.installations.fetch();
     });
 
     google.maps.event.addListener(gmap, 'center_changed', function() {
+      if (preventFlood) return;
       console.log('center_changed');
       var center = gmap.getCenter();
       veos.installations.updateLocation(center.lat(), center.lng());
-      veos.installations.fetch({reset:true});
+      preventFlood = preventFlood || setTimeout(function () { preventFlood = null; }, REQUEST_RATE_LIMIT);
+      veos.installations.fetch();
     });
 
   };
@@ -87,106 +99,56 @@
 
   };
 
+  self.Map.prototype.setMyLocation = function (geoloc) {
+    var glatlng = veos.map.convertGeolocToGmapLatLng(geoloc);
+    var accuracy = geoloc.coords.accuracy;
 
-  /**
-    Shows the current location marker and continuously updates its
-    position based on incoming GPS data.
-  **/
-  self.Map.prototype.startFollowing = function () {
     var map = this;
 
-    // clearing watch with globally stored ID
-    if (veos.geolocWatchId) {
-      navigator.geolocation.clearWatch(veos.geolocWatchId);
+    if (!map.currentLocMarker) {
+      map.currentLocMarker = new google.maps.Marker({
+        position: glatlng,
+        //draggable: true,
+        //icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+        icon: 'http://maps.google.com/mapfiles/ms/micons/man.png',
+        //icon: 'http://www.google.com/mapfiles/arrow.png',
+        title: "You are here",
+        zIndex: 99999 // half assed attempt at making sure the dude is on top
+      });
+
+      var infowindow = new google.maps.InfoWindow({
+        content: "<p><b>You are here!</b></p>"
+      });
+
+      google.maps.event.addListener(map.currentLocMarker, 'click', function() {
+        infowindow.open(map.gmap, map.currentLocMarker);
+      });
+
+      map.currentLocRadius = new google.maps.Circle({
+        center: glatlng,
+        radius: accuracy,
+        map: map.gmap,
+        fillColor: '#6991FD',
+        fillOpacity: 0.4,
+        strokeColor: 'black',
+        strokeOpacity: 0.0, // 0.8,
+        strokeWeight: 1
+      });
+
+      map.gmap.setZoom(16);             // sets zoom back to default level (relevant if user does not gps and !initLoc in line 21)
+
+      map.currentLocMarker.setMap(map.gmap);
+
+      map.gmap.panTo(glatlng);
     }
 
-
-    console.log("Started following user...");
-
-
-    // This implementation is missing an error hanlder and most important the options
-    // https://developer.mozilla.org/en-US/docs/Web/API/Geolocation.watchPosition
-    veos.geolocWatchId = navigator.geolocation.watchPosition(function (geoloc) {
-      jQuery(veos).trigger('haveloc', geoloc);
-
-      var glatlng = veos.map.convertGeolocToGmapLatLng(geoloc);
-      var accuracy = geoloc.coords.accuracy;
-
-      if (!map.currentLocMarker) {
-        map.currentLocMarker = new google.maps.Marker({
-          position: glatlng,
-          //draggable: true,
-          //icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-          icon: 'http://maps.google.com/mapfiles/ms/micons/man.png',
-          //icon: 'http://www.google.com/mapfiles/arrow.png',
-          title: "You are here",
-          zIndex: 99999 // half assed attempt at making sure the dude is on top
-        });
-
-        var infowindow = new google.maps.InfoWindow({
-          content: "<p><b>You are here!</b></p>"
-        });
-
-        google.maps.event.addListener(map.currentLocMarker, 'click', function() {
-          infowindow.open(map.gmap, map.currentLocMarker);
-        });
-
-        map.currentLocRadius = new google.maps.Circle({
-          center: glatlng,
-          radius: accuracy,
-          map: map.gmap,
-          fillColor: '#6991FD',
-          fillOpacity: 0.4,
-          strokeColor: 'black',
-          strokeOpacity: 0.0, // 0.8,
-          strokeWeight: 1
-        });
-
-        map.gmap.setZoom(16);             // sets zoom back to default level (relevant if user does not gps and !initLoc in line 21)
-
-        map.currentLocMarker.setMap(map.gmap);
-
-        map.gmap.panTo(glatlng);
-      }
-
-      // this would reframe the map to the accuracy circle
-      //self.gmap.fitBounds(self.currentLocRadius.getBounds());
+    // this would reframe the map to the accuracy circle
+    //self.gmap.fitBounds(self.currentLocRadius.getBounds());
 
 
-      map.currentLocMarker.setPosition(glatlng);
-      map.currentLocRadius.setCenter(glatlng);
-      map.currentLocRadius.setRadius(accuracy);
-    },
-    function (err) {
-      console.warn('ERROR(' + err.code + '): ' + err.message);
-      if (err.code === 1) {
-        veos.alert("We are unable to locate you, because geolocation has been denied");
-      } else if (err.code === 2) {
-        // currently unhandled (we can't produce this with our phones)
-        console.warn("This error should be handled somehow");
-      } else if (err.code === 3) {
-        veos.alert("Your device is currently unable to determine location");
-      } else {
-        console.warn("Unknown error code");
-      }
-    },
-    // https://developer.mozilla.org/en-US/docs/Web/API/PositionOptions
-    // We do low accuracy to save batter, timeout till we get a result of 15 seconds and we accept any cached result (switched to true)
-    {
-      enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: Infinity
-    }
-
-    );
-  };
-
-  /**
-    Stops updating the current location marker.
-  **/
-  self.Map.prototype.stopFollowing = function () {
-    console.log("Stopped following user...");
-    navigator.geolocation.clearWatch(veos.geolocWatchId);
+    map.currentLocMarker.setPosition(glatlng);
+    map.currentLocRadius.setCenter(glatlng);
+    map.currentLocRadius.setRadius(accuracy);
   };
 
   /**
@@ -230,7 +192,6 @@
     }
 
     if (!_.findWhere(veos.markersArray, {"id": i.id})) {
-      console.log("adding marker for", i.id);
       var latLng = new google.maps.LatLng(i.get('loc_lat'), i.get('loc_lng'));
       var buttonText = "";
 

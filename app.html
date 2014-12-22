@@ -32,6 +32,7 @@
 
         <!-- build:js js/veos.bundle.js -->
         <script type="text/javascript" charset="utf-8" src="js/veos.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/veos.geo.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/veos.map.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/veos.model.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/veos.view.js"></script>
@@ -53,9 +54,9 @@
         </script>
 
         <script type="text/javascript">
-            veos.init();
-
             jQuery(document).ready(function () {
+                veos.init();
+
                 // veos.setUpPiwik();
                 if (location.hash == "") {
                     veos.goToOverviewMap();
