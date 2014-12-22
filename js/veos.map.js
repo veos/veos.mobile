@@ -28,6 +28,7 @@
     var center;
     var zoom;
     if (!initLoc) {
+      // TODO: FIX ME
       center = new google.maps.LatLng(43.6621614579938, -79.39527873417967);
       zoom = 4;
     } else {
@@ -299,19 +300,21 @@
     }
   };
 
-  var closeMarker = function() {
-    console.log('it triggered');
-  };
+  // NOTE: I think these can both be removed - but commented out for now
 
-  self.Map.prototype.clearInstallationMarkers = function() {
-    // deletes everything in the markersArray
-    console.log('clearing all markers...');
-    _.each(veos.markersArray, function(i) {
-      i.setMap(null);
-    });
-    // this may not be necessary (they're going to get overwritten by addInstallationMarkers immediately), but seems safer
-    veos.markersArray = [];
-  };
+  // var closeMarker = function() {
+  //   console.log('it triggered');
+  // };
+
+  // self.Map.prototype.clearInstallationMarkers = function() {
+  //   // deletes everything in the markersArray
+  //   console.log('clearing all markers...');
+  //   _.each(veos.markersArray, function(i) {
+  //     i.setMap(null);
+  //   });
+  //   // this may not be necessary (they're going to get overwritten by addInstallationMarkers immediately), but seems safer
+  //   veos.markersArray = [];
+  // };
 
   var injectThumbnail = function(installation) {
     if (installation.has('photos') && installation.get('photos').length > 0) {
