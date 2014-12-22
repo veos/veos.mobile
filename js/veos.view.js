@@ -1184,7 +1184,7 @@
       var view = this;
 
       var PER_PAGE = 100;
-      var pageToFetch = (view.collection.length / PER_PAGE) + 1;
+      var pageToFetch = Math.floor(view.collection.length / PER_PAGE) + 1;
 
       var lat = veos.lastLoc.coords.latitude;
       var lng = veos.lastLoc.coords.longitude;
