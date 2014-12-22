@@ -1109,7 +1109,7 @@
       }
 
       var installationId = installation.get('id');
-      var item = jQuery("<a class='relative'>"+complianceLevel+thumb+buttonText+"</a>")
+      var item = jQuery("<a class='relative'>"+complianceLevel+thumb+buttonText+"</a>");
       item.click(function () { veos.goToInstallationDetails(installationId); });
 
       // item.data('installation', installation);        // add the installation object so that we can retrieve it in the click event
@@ -1364,7 +1364,7 @@
         }
 
         var installationId = installation.get('id');
-        var item = jQuery("<a class='relative'>"+complianceLevel+thumb+buttonText+"</a>")
+        var item = jQuery("<a class='relative'>"+complianceLevel+thumb+buttonText+"</a>");
         item.click(function () { veos.goToInstallationReportAmend(installationId); });
 
         // create the URL to load report.html in edit mode with prefilled data

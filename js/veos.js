@@ -49,7 +49,7 @@ window.veos = (function(veos) {
     jQuery.mobile.changePage("#report-page", {chageHash: true});
     history.pushState({installationId: installationId}, "Amend Installation Report",
       "#installations/"+installationId+"/report/amend");
-  }
+  };
 
   /**
     Initializes the whole app. This needs to be called at the bottom of every VEOS page.
@@ -88,13 +88,14 @@ window.veos = (function(veos) {
         // TODO - FIX THIS HARDCODED NONSENSE. BACKEND CHANGES REALLY MESSED US UP
 
         // if we have a geographic location for the user...
+        var lat, lng;
         if (self.lastLoc === undefined) {
           // default center focus is at U of T (?)
-          var lat = 43.6621614579938;
-          var lng = -79.39527873417967;
+          lat = 43.6621614579938;
+          lng = -79.39527873417967;
         } else {
-          var lat = self.lastLoc.coords.latitude;
-          var lng = self.lastLoc.coords.longitude;
+          lat = self.lastLoc.coords.latitude;
+          lng = self.lastLoc.coords.longitude;
         }
 
         jQuery(self).one('haveloc', function (ev, geoloc) {
