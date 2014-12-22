@@ -313,6 +313,20 @@
       url: model.baseURL + '/installations.json'
   });
 
+  model.PagedNearbyInstallations = Backbone.PageableCollection.extend({
+      initialize: function (nearLat, nearLng) {
+        this.nearLat = nearLat;
+        this.nearLng = nearLng;
+        // Since we want people to be able to scroll to any installation
+        // no matter how fare away we set maxDist to half of the circumference of the earth
+        this.maxDist = 20000;
+      },
+      model: model.Installation,
+      url: function () {
+        return model.baseURL + '/installations/near.json?lat=' + this.nearLat + '&lng=' + this.nearLng + '&max_dist=' + this.maxDist;
+      }
+  });
+
   model.NearbyInstallations = Backbone.Collection.extend({
       initialize: function (nearLat, nearLng, maxDist) {
         this.nearLat = nearLat;
@@ -322,7 +336,7 @@
       updateLocation: function (nearLat, nearLng, maxDist) {
         this.nearLat = nearLat;
         this.nearLng = nearLng;
-        if (maxDist) this.maxDist = maxDist;
+        if (maxDist) {this.maxDist = maxDist;}
       },
       updateMaxDistance: function(maxDist) {
         this.maxDist = maxDist;
@@ -358,7 +372,7 @@
     // used for desktop browser uploads
     captureFromFile: function (file) {
       this.imageFile = file;
-      this.captureSuccess()
+      this.captureSuccess();
     },
 
     captureSuccess: function () {
@@ -369,11 +383,11 @@
     capture: function (from) {
       var photo = this;
 
-      if (from == "camera")
+      if (from === "camera") {
         console.log("Trying to select photo from gallery...");
-      else if (from == "gallery")
+      } else if (from === "gallery") {
         console.log("Trying to capture photo from camera...");
-      else {
+      } else {
         throw "Trying to capture from unknown source!";
       }
 
@@ -381,23 +395,25 @@
 
       window.androidUploadStart = function () {
         photo.trigger('image_upload_start');
-      }
+      };
 
       window.androidUploadError = function () {
         photo.trigger('image_upload_error');
-      }
+      };
 
       window.androidUploadSuccess = function (id) {
         console.log("Image uploaded successfully.");
 
-        photo.id = id;
+        photo.set('id', id);
+        console.log("Photo model in Photo.capture.androidUploadSuccess:"+ JSON.stringify(photo.toJSON(), null, 2));
         photo.fetch({
           success: function () {
             console.log("Assigned id to photo: "+photo.id);
+            console.log("Photo model in Photo.capture.androidUploadSuccess.fetch:"+ JSON.stringify(photo.toJSON(), null, 2));
             photo.trigger('image_upload_finish');
           }
         });
-      }
+      };
 
       window.androidCaptureSuccess = function () {
         photo.captureSuccess();
@@ -406,11 +422,13 @@
       // need to pass callback funciton name as string so that
       // it can be executed on the Android side
 
-      if (from == "camera")
+      if (from === "camera") {
+        console.log("Telling Android to get the photo from Camera. Will send to URL: "+this.url());
         Android.getPhotoFromCamera(this.url(), 'window.androidCaptureSuccess');
-      else if (from == "gallery")
+      } else if (from === "gallery") {
+        console.log("Telling Android to get the photo from Gallery. Will send to URL: "+this.url());
         Android.getPhotoFromGallery(this.url(), 'window.androidCaptureSuccess');
-
+      }
     },
 
     upload: function () {
@@ -456,7 +474,7 @@
 
       // WARNING: This uses XHR2 to upload the file. This is not supported by older browsers.
       //          See http://caniuse.com/xhr2 and http://stackoverflow.com/questions/4856917/jquery-upload-progress-and-ajax-file-upload/4943774#4943774
-      formData = new FormData();
+      var formData = new FormData();
       formData.append('photo[image]', photo.imageFile);
 
       jQuery.ajax({

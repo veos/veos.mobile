@@ -72,6 +72,14 @@
       veos.installations.updateMaxDistance(80000/(Math.pow(2, zoom)));      // BASED ON http://stackoverflow.com/questions/8717279/what-is-zoom-level-15-equivalent-to
       veos.installations.fetch();
     });
+
+    google.maps.event.addListener(gmap, 'center_changed', function() {
+      console.log('center_changed');
+      var center = gmap.getCenter();
+      veos.installations.updateLocation(center.lat(), center.lng());
+      veos.installations.fetch({reset:true});
+    });
+
   };
 
   self.Map.prototype = {
@@ -86,14 +94,18 @@
   self.Map.prototype.startFollowing = function () {
     var map = this;
 
-    if (map.posWatcher) {
-      navigator.geolocation.clearWatch(this.posWatcher);
+    // clearing watch with globally stored ID
+    if (veos.geolocWatchId) {
+      navigator.geolocation.clearWatch(veos.geolocWatchId);
     }
 
 
     console.log("Started following user...");
 
-    map.posWatcher = navigator.geolocation.watchPosition(function (geoloc) {
+
+    // This implementation is missing an error hanlder and most important the options
+    // https://developer.mozilla.org/en-US/docs/Web/API/Geolocation.watchPosition
+    veos.geolocWatchId = navigator.geolocation.watchPosition(function (geoloc) {
       jQuery(veos).trigger('haveloc', geoloc);
 
       var glatlng = veos.map.convertGeolocToGmapLatLng(geoloc);
@@ -143,7 +155,29 @@
       map.currentLocMarker.setPosition(glatlng);
       map.currentLocRadius.setCenter(glatlng);
       map.currentLocRadius.setRadius(accuracy);
-    });
+    },
+    function (err) {
+      console.warn('ERROR(' + err.code + '): ' + err.message);
+      if (err.code === 1) {
+        veos.alert("We are unable to locate you, because geolocation has been denied");
+      } else if (err.code === 2) {
+        // currently unhandled (we can't produce this with our phones)
+        console.warn("This error should be handled somehow");
+      } else if (err.code === 3) {
+        veos.alert("Your device is currently unable to determine location");
+      } else {
+        console.warn("Unknown error code");
+      }
+    },
+    // https://developer.mozilla.org/en-US/docs/Web/API/PositionOptions
+    // We do low accuracy to save batter, timeout till we get a result of 15 seconds and we accept any cached result (switched to true)
+    {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: Infinity
+    }
+
+    );
   };
 
   /**
@@ -151,7 +185,7 @@
   **/
   self.Map.prototype.stopFollowing = function () {
     console.log("Stopped following user...");
-    navigator.geolocation.clearWatch(this.posWatcher);
+    navigator.geolocation.clearWatch(veos.geolocWatchId);
   };
 
   /**
@@ -266,7 +300,7 @@
 
   var closeMarker = function() {
     console.log('it triggered');
-  }
+  };
 
   self.Map.prototype.clearInstallationMarkers = function() {
     // deletes everything in the markersArray

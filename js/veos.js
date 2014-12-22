@@ -5,6 +5,10 @@ window.veos = (function(veos) {
   var self = veos;
   self.amendingInst = false;
 
+  // Adding a global object to hold the current geolocation watch ID
+  // This allows us in veos.map.js to avoid having several watches added
+  self.geolocWatchId = null;
+
   var initLastLoc = function () {
     // There are rare occations where the phone doesn't return location information when inside
     // a building (could be a user setting or just a temporary glitch on the phone - happened to Armin serveral times)
@@ -106,6 +110,16 @@ window.veos = (function(veos) {
 
         // start following user
         veos.map.overviewMap.startFollowing();
+      })
+
+      // this intercepts the pagehide event of the map view
+      .delegate("#overview-map-page", "pagehide", function(ev) {
+        // Now this is a hack as so often to fix other hacks
+        // markersArray avoids redrawing of pins on the map if we
+        // pan or zoom. However, returning to the map will result in
+        // all pins that are in the marker array missing on the map. No redraw.
+        console.log("Hiding Map and destroying markersArray");
+        veos.markersArray = [];
       })
 
     /** report.html (report-page) **/
@@ -237,11 +251,10 @@ window.veos = (function(veos) {
 
     /** installations-list.html (installations-list-page) **/
       .delegate("#installations-list-page", "pageshow", function(ev) {
-        //var installations = new veos.model.Installations();
+        // var installations = new veos.model.Installations();
 
-
-        // Google Analytics
-        // self.analytics(ev);
+        // fetch instalations ordered by closest to furthest without Max distance
+        var installations = new veos.model.PagedNearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude);           // TODO I'm pretty sure this is not the right way to access these
 
         var view = new veos.view.InstallationList({
           el: ev.target,
@@ -254,10 +267,17 @@ window.veos = (function(veos) {
         });
       })
 
+      .delegate("#installations-list-page", "pagehide", function(ev) {
+        // The InstallationList View that is instantiated during the pageshow of #installations-list-page
+        // attaches a scroll listener that should only be active as long as we are on the list view.
+        // calling backbone's remove() on the view we remove the view from the DOM and stop listening to any bound event
+        jQuery(window).off('scroll');
+      })
+
     /** report-selection.html (report-selection-page) **/
       .delegate("#report-selection-page", "pageshow", function(ev) {
         var MAX_DISTANCE_TO_INST = 0.15;
-        // fetch instalations ordered by closest to furthest
+        // fetch installations ordered by closest to furthest
         var nearbyInstallations = new veos.model.NearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude, MAX_DISTANCE_TO_INST);           // TODO I'm pretty sure this is not the right way to access these
 
         // Google Analytics
@@ -278,7 +298,8 @@ window.veos = (function(veos) {
             } else {
               jQuery('.report-selection-dynamic-text').text("There are no installations within " + MAX_DISTANCE_TO_INST*1000 + "m of your current location. Please choose New Installation.");
             }
-          }
+          },
+          reset:true
         });
       })
 
