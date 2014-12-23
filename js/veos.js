@@ -85,7 +85,7 @@ window.veos = (function(veos) {
 
     /** overview-map.html (overview-map-page) **/
       .delegate("#overview-map-page", "pageshow", function(ev) {
-        console.log("Fetching installations because we're in the overview-map-page")
+        console.log("Fetching installations because we're in the overview-map-page");
         veos.installations.fetch({
           success: function () { }
         });
@@ -241,7 +241,7 @@ window.veos = (function(veos) {
         });
 
         view.showLoader();
-        console.log("Fetching installations because we're in the installations-list-page")
+        console.log("Fetching installations because we're in the installations-list-page");
         veos.installations.fetch({
           success: function () {view.hideLoader(); view.render(); }
         });

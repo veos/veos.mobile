@@ -67,7 +67,9 @@
     var preventFlood = null;
 
     google.maps.event.addListener(gmap, 'dragend', function() {
-      if (preventFlood) return;
+      if (preventFlood) {
+        return;
+      }
       console.log('dragend triggered');
       var center = gmap.getCenter();
       veos.installations.updateLocation(center.lat(), center.lng());
@@ -76,7 +78,9 @@
     });
 
     google.maps.event.addListener(gmap, 'zoom_changed', function() {
-      if (preventFlood) return;
+      if (preventFlood) {
+        return;
+      }
       console.log('zoom_changed triggered');
       var zoom = gmap.getZoom();
       veos.installations.updateMaxDistance(80000/(Math.pow(2, zoom)));      // BASED ON http://stackoverflow.com/questions/8717279/what-is-zoom-level-15-equivalent-to
@@ -85,7 +89,9 @@
     });
 
     google.maps.event.addListener(gmap, 'center_changed', function() {
-      if (preventFlood) return;
+      if (preventFlood) {
+        return;
+      }
       console.log('center_changed');
       var center = gmap.getCenter();
       veos.installations.updateLocation(center.lat(), center.lng());

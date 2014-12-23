@@ -56,7 +56,9 @@
     }
 
     navigator.geolocation.clearWatch(veos.locWatchId);
-    delete navigator.geolo
+    // Matt: Looks to me like there is a typo here since navigator.geolo is undefined
+    // And deleting the navigator.geolocation object means we cna never follow the location afte this
+    delete navigator.geolo;
 
     console.log("Stopped following user...");
   };
