@@ -4,7 +4,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
-      all: ['Gruntfile.js', 'js/*.js']
+      all: ['Gruntfile.js', 'server.js', 'config.example.js', 'config.js' ,'js/*.js']
     },
     uglify: {
       options: {
@@ -59,7 +59,7 @@ module.exports = function(grunt) {
 
   // Default task(s) .
   // grunt.registerTask('default', ['uglify']);
-  grunt.registerTask('default', ['uglify:minlib', 'concat:dist']);
+  grunt.registerTask('default', ['uglify:minlib', 'concat:dist', 'jshint']);
   grunt.registerTask('lint', ['jshint']);
   grunt.registerTask('dist', ['jshint', 'uglify:minlib', 'concat:dist', 'concat:own', 'processhtml']);
 };
