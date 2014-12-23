@@ -29,8 +29,7 @@ module.exports = function(grunt) {
         src: ['js/libs/jquery.mobile-1.3.2.min.js',
               'js/libs/jquery.mobile.autoComplete-1.4.3.min.js',
               'js/libs/underscore-1.6.0.min.js',
-              'js/libs/backbone-1.1.2.min.js',
-              'bower_components/backbone.paginator/lib/backbone.paginator.min.js'],
+              'js/libs/backbone-1.1.2.min.js'],
         dest: 'js/libs/postinit.bundle.js',
       },
       own: {
