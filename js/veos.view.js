@@ -1182,16 +1182,8 @@
 
     loadMoreInstallations: function() {
       var view = this;
-
-      var PER_PAGE = 100;
-      var pageToFetch = Math.floor(view.collection.length / PER_PAGE) + 1;
-
-      var lat = veos.lastLoc.coords.latitude;
-      var lng = veos.lastLoc.coords.longitude;
-
-      view.collection.fetch({data:
-        {page: pageToFetch, per_page: PER_PAGE, lat: lat, lng: lng, max_dist: 24000}
-      });
+      // moved logic of how to fetch more data to the model
+      view.collection.fetchMore();
     },
 
     render: function () {

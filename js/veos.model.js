@@ -338,6 +338,14 @@
         this.nearLng = nearLng;
         if (maxDist) {this.maxDist = maxDist;}
       },
+      fetchMore: function () {
+        var per_page = 50,
+          pageToFetch = Math.floor(this.length / per_page) + 1,
+          url = veos.model.baseURL + '/installations/near.json?lat=' + this.nearLat + '&lng=' + this.nearLng;
+
+        url += '&per_page=' + per_page + '&page=' + pageToFetch;
+        this.fetch({'url': url});
+      },
       updateMaxDistance: function(maxDist) {
         this.maxDist = maxDist;
       },
