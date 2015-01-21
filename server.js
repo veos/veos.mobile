@@ -1,8 +1,10 @@
-/*jshint node: true, sub:true */
+#!/usr/bin/env node
+/*jshint node: true, sub: true */
 
 var config = require('./config').config;
+console.log("Loaded config:",config);
 var BACKEND_URL = config.backend_url || "http://backend.dev.surveillancerights.ca";
-console.log(BACKEND_URL);
+console.log('BACKEND_URL is:',BACKEND_URL);
 
 var http = require('http');
 var httpProxy = require('http-proxy');
