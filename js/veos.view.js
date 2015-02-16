@@ -392,9 +392,10 @@
             jQuery('#sign-stated-purpose').selectmenu('refresh', 'true');
           }
         } else if (k === "has_sign") {
-          if (self.model.get(k)) {
+          var hasSign = self.model.get(k);
+          if (hasSign === 'yes' || hasSign === true) {
             jQuery('#sign-yes').attr("checked",true).checkboxradio("refresh");
-          } else if (!self.model.get(k)) {
+          } else if (hasSign === 'no' || hasSign === false) {
             jQuery('#sign-no').attr("checked",true).checkboxradio("refresh");
           }
         }
