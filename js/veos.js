@@ -166,8 +166,8 @@ window.veos = (function(veos) {
           if (!self.currentReport) {
             self.currentReport = new veos.model.Report();
 
-            if (veos.lastLoc) {
-              var initLoc = veos.map.convertGeolocToGmapLatLng(veos.lastLoc);
+            if (veos.geo.lastLoc) {
+              var initLoc = veos.map.convertGeolocToGmapLatLng(veos.geo.lastLoc);
               self.currentReport.set('loc_lng_from_gps', initLoc.lng());
               self.currentReport.set('loc_lat_from_gps', initLoc.lat());
             }
@@ -216,8 +216,8 @@ window.veos = (function(veos) {
           refinerMap = new veos.map.Map('#refine-location-canvas', refinerLoc);
         }
         // default case - user has not made any changes to location yet
-        else if (veos.lastLoc) {
-          refinerLoc = veos.lastLoc;
+        else if (veos.geo.lastLoc) {
+          refinerLoc = veos.geo.lastLoc;
           refinerMap = new veos.map.Map('#refine-location-canvas', refinerLoc);
         }
         // should never occur
@@ -258,7 +258,8 @@ window.veos = (function(veos) {
       .delegate("#report-selection-page", "pageshow", function(ev) {
         var MAX_DISTANCE_TO_INST = 0.15;
         // fetch installations ordered by closest to furthest
-        var nearbyInstallations = new veos.model.NearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude, MAX_DISTANCE_TO_INST);           // TODO I'm pretty sure this is not the right way to access these
+        var lastLoc = self.geo.lastLoc;
+        var nearbyInstallations = new veos.model.NearbyInstallations(lastLoc.coords.latitude, lastLoc.coords.longitude, MAX_DISTANCE_TO_INST);           // TODO I'm pretty sure this is not the right way to access these
 
         // Google Analytics
         // self.analytics(ev);

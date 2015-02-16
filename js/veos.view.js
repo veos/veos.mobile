@@ -271,9 +271,9 @@
       if (this.model.getLatLng()) {
         console.log("Using location from report model...", this.model.getLatLng());
         geoloc = this.model.getLatLng();
-      } else if (veos.lastLoc) {
-        console.log("Using last known location...", veos.lastLoc);
-        geoloc = veos.lastLoc;
+      } else if (veos.geo.lastLoc) {
+        console.log("Using last known location...", veos.geo.lastLoc);
+        geoloc = veos.geo.lastLoc;
       } else {
         console.warn("Location unavailable... cannot update fields that depend on location.");
         return;
