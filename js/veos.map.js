@@ -63,42 +63,40 @@
     // Hack to prevent sending a request more than every 1.5
     // seconds. Without this, dragging and zooming can result
     // in a lot of unnecessary requests to the server.
-    var REQUEST_RATE_LIMIT = 1500;
-    var preventFlood = null;
+    var REQUEST_RATE_LIMIT = 1000; //1500;
+    var timeoutIdentifier = null; // holds a setTimeout ressu
+
+    function fetchInstallationsWithFloodProtection () {
+      if (timeoutIdentifier) return;
+      timeoutIdentifier = setTimeout(function () {
+          console.log("unsetting timeoutIdentifier")
+          timeoutIdentifier = null;
+        }, REQUEST_RATE_LIMIT);
+
+      console.log('timeoutIdentifier:',timeoutIdentifier);
+      veos.installations.fetch();
+    };
 
     google.maps.event.addListener(gmap, 'dragend', function() {
-      if (preventFlood) {
-        return;
-      }
-      console.log('dragend triggered');
+      if (!timeoutIdentifier) console.log('dragend triggered');
       var center = gmap.getCenter();
       veos.installations.updateLocation(center.lat(), center.lng());
-      preventFlood = preventFlood || setTimeout(function () { preventFlood = null; }, REQUEST_RATE_LIMIT);
-      veos.installations.fetch();
+      fetchInstallationsWithFloodProtection();
     });
 
     google.maps.event.addListener(gmap, 'zoom_changed', function() {
-      if (preventFlood) {
-        return;
-      }
-      console.log('zoom_changed triggered');
       var zoom = gmap.getZoom();
+      if (!timeoutIdentifier) console.log('zoom_changed triggered; new zoom:', zoom);
       veos.installations.updateMaxDistance(80000/(Math.pow(2, zoom)));      // BASED ON http://stackoverflow.com/questions/8717279/what-is-zoom-level-15-equivalent-to
-      preventFlood = preventFlood || setTimeout(function () { preventFlood = null; }, REQUEST_RATE_LIMIT);
-      veos.installations.fetch();
+      fetchInstallationsWithFloodProtection();
     });
 
     google.maps.event.addListener(gmap, 'center_changed', function() {
-      if (preventFlood) {
-        return;
-      }
-      console.log('center_changed');
       var center = gmap.getCenter();
+      if (!timeoutIdentifier) console.log('center_changed triggered; new center:', center);
       veos.installations.updateLocation(center.lat(), center.lng());
-      preventFlood = preventFlood || setTimeout(function () { preventFlood = null; }, REQUEST_RATE_LIMIT);
-      veos.installations.fetch();
+      fetchInstallationsWithFloodProtection();
     });
-
   };
 
   self.Map.prototype = {

@@ -339,12 +339,23 @@
         if (maxDist) {this.maxDist = maxDist;}
       },
       fetchMore: function () {
-        var per_page = 50,
-          pageToFetch = Math.floor(this.length / per_page) + 1,
-          url = veos.model.baseURL + '/installations/near.json?lat=' + this.nearLat + '&lng=' + this.nearLng;
+        var PER_PAGE = 30;
+        var pageToFetch = Math.floor(this.length / PER_PAGE) + 1;
 
-        url += '&per_page=' + per_page + '&page=' + pageToFetch;
-        this.fetch({'url': url});
+        var lat = veos.geo.lastLoc.coords.latitude;
+        var lng = veos.geo.lastLoc.coords.longitude;
+
+        this.fetch({
+          data: {
+            page: pageToFetch,
+            per_page: PER_PAGE,
+            lat: lat,
+            lng: lng,
+            max_dist: 24000
+          },
+          remove: false,
+          reset: false // probably not needed, but just in case...
+        });
       },
       updateMaxDistance: function(maxDist) {
         this.maxDist = maxDist;
