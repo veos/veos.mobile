@@ -34,6 +34,14 @@ window.veos = (function(veos) {
       "#installations/"+installationId+"/details");
   };
 
+  self.goToPhotoDetails = function (installationId, photoId) {
+    veos.currentInstallationId = installationId;
+    veos.currentPhotoId = photoId;
+    jQuery.mobile.changePage("#photo-details-page", {chageHash: true});
+    history.pushState({installationId: installationId, photoId: photoId}, "Photo Detail",
+      "#installations/"+installationId+"/photos/"+photoId);
+  };
+
   self.goToInstallationReportAmend = function (installationId) {
     veos.currentInstallationId = installationId;
     veos.amendingInst = true;
@@ -312,10 +320,11 @@ window.veos = (function(veos) {
         var installationId = veos.currentInstallationId;
         // and set it in the href of the back button
         var backButton = jQuery('.photo-details-page-back-button');
-        backButton.attr('href', '#installation-details?id='+installationId);
+        backButton.off('click'); // remove any previously bound click handlers
+        backButton.on('click', function () { veos.goToInstallationDetails(installationId); });
 
-        // retrieve photoId from URL
-        var photoId = window.location.href.match("[\\?&]photoId=(\\d+)")[1];
+        var photoId = veos.currentPhotoId;
+
         console.log("Showing details for photo "+photoId);
 
         // where to render picture into

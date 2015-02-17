@@ -944,38 +944,45 @@
       console.log("Photo model in PhotoView.render:"+ JSON.stringify(this.model.toJSON(), null, 2));
       console.log("Photo url: "+this.model.thumbUrl());
 
-      var img = this.$el.find('#photo-'+this.model.id);
+      var photoView = this;
+
+      var img = photoView.$el.find('#photo-'+photoView.model.id);
       if (img.length === 0) {
-        // img = jQuery("<img style='display: block' class='photo-list-item' id='photo-"+this.model.id+"' onclick='veos.showModal("+this.model.id+")'/>"); // might make more sense to pass in this.model?
-        img = jQuery("<img class='photo-list-item' id='photo-"+this.model.id+"'/>");
-        //img.attr('data-model', this.model);
-        img.attr('data-model', JSON.stringify(this.model.toJSON()));
+        // img = jQuery("<img style='display: block' class='photo-list-item' id='photo-"+photoView.model.id+"' onclick='veos.showModal("+photoView.model.id+")'/>"); // might make more sense to pass in photoView.model?
+        img = jQuery("<img class='photo-list-item' id='photo-"+photoView.model.id+"'/>");
+        //img.attr('data-model', photoView.model);
+        img.attr('data-model', JSON.stringify(photoView.model.toJSON()));
 
         var href = location.href;
         var photoDetails = jQuery('<a />');
 
         // Only add a link to details (big picture) if on installation-details page
-        if (href.match(/details/)) { // FIXME: need to detect the page we're on properly; this will break
+        if (href.match(/details/)) { // FIXME: need to detect the page we're on properly; photoView will break
           // wrap a link around the picture
           // temporarily disabled for beta release
           if (veos.isAndroid()) {
             photoDetails = jQuery('<a data-role="button" href="#"></a>');
-            var photo = this.model;
-            photoDetails.click(function (ev) {
+            var photo = photoView.model;
+            photoDetails.off('click');
+            photoDetails.on('click', function (ev) {
               ev.preventDefault();
               Android.viewPhoto(photo.bigUrl());
             });
           } else {
-            photoDetails = jQuery('<a data-role="button" href="photo-details.html?photoId='+this.model.id+'&installationId='+this.options.installationId+'"></a>');
+            photoDetails = jQuery('<a data-role="button" href="#"></a>');
+            photoDetails.off('click');
+            photoDetails.on('click', function () {
+              veos.goToPhotoDetails(photoView.options.installationId, photoView.model.id);
+            });
           }
         }
 
         photoDetails.append(img);
 
-        this.$el.append(photoDetails);
+        photoView.$el.append(photoDetails);
       }
-      img.attr('src', this.model.thumbUrl());
-      img.attr('alt', this.model.get('notes'));
+      img.attr('src', photoView.model.thumbUrl());
+      img.attr('alt', photoView.model.get('notes'));
 
       jQuery.mobile.hidePageLoadingMsg();
     }
