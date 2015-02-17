@@ -1111,7 +1111,8 @@
 
       var installationId = installation.get('id');
       var item = jQuery("<a class='relative'>"+complianceLevel+thumb+buttonText+"</a>");
-      item.click(function () { veos.goToInstallationDetails(installationId); });
+      item.off('click'); // remove any previously bound click handlers
+      item.on('click', function () { veos.goToInstallationDetails(installationId); });
 
       // item.data('installation', installation);        // add the installation object so that we can retrieve it in the click event
       // item.attr('data-installationId', installation.get('id'));

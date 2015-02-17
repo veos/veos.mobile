@@ -28,6 +28,7 @@ window.veos = (function(veos) {
 
   self.goToInstallationDetails = function (installationId) {
     veos.currentInstallationId = installationId;
+    veos.amendingInst = false;
     jQuery.mobile.changePage("#installation-details-page", {chageHash: true});
     history.pushState({installationId: installationId}, "Installation Details",
       "#installations/"+installationId+"/details");
@@ -35,7 +36,7 @@ window.veos = (function(veos) {
 
   self.goToInstallationReportAmend = function (installationId) {
     veos.currentInstallationId = installationId;
-    veos.amendingInst = true; // not if this is really needed; copied from colin/armin's old code
+    veos.amendingInst = true;
     jQuery.mobile.changePage("#report-page", {chageHash: true});
     history.pushState({installationId: installationId}, "Amend Installation Report",
       "#installations/"+installationId+"/report/amend");
@@ -64,6 +65,7 @@ window.veos = (function(veos) {
     veos.map.overviewMap = new veos.map.Map('#overview-map-canvas');
 
     jQuery(veos.geo).on('haveloc', function (ev, geoloc) {
+      veos.installations.updateLocation(geoloc.coords.latitude, geoloc.coords.longitude);
       veos.map.overviewMap.setMyLocation(geoloc);
     });
 
@@ -71,12 +73,13 @@ window.veos = (function(veos) {
       veos.map.overviewMap.addInstallationMarker(installation);
       jQuery('.installation-count').text(this.size());
     });
+
     veos.installations.on('reset', function(collection) {
       veos.map.overviewMap.addInstallationMarkers(collection);
     });
 
     jQuery(veos.geo).one('haveloc', function (ev, geoloc) {
-      console.log("Fetching");
+      console.log("haveloc... updating location on installations collection and fetching");
       veos.installations.fetch();
     });
 
@@ -110,26 +113,18 @@ window.veos = (function(veos) {
 
     /** report.html (report-page) **/
       .delegate("#report-page", "pageshow", function(ev) {
-        var installationId = 0;
-        var editReport = false;
+        var installationId = veos.currentInstallationId;
         var ref = '';
 
         // Google Analytics
         // self.analytics(ev);
 
-        if (window.location.href.match("[\\?&]installationId=(\\d+)")) {
-          installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
 
-          // we know that we edit report and we want to change the cancel button if referrer available
-          if (installationId > 0) {
-            editReport = true;
-
-            if (window.location.href.match("[\\&&]ref=(\\w+-\\w+)")) {
-              ref = window.location.href.match("[\\&&]ref=(\\w+-\\w+)")[1];
-              // change href in the cancel button to referrer (ref) from URL
-              jQuery('#cancel-report').attr('href', ref+'.html?id='+installationId);
-            }
-          }
+        // we know that we edit report and we want to change the cancel button if referrer available
+        if (veos.amendingInst) {
+          var cancelButton = jQuery('#cancel-report');
+          cancelButton.off('click'); // remove any previously bound click handlers
+          cancelButton.on('click', function () { veos.goToInstallationDetails(installationId); });
         }
 
         // if the location has been changed by the user (ie loca_lat_from_gps exists), we want the accordion to be open to show the change
@@ -141,35 +136,28 @@ window.veos = (function(veos) {
         }
 
         // edit report
-        // if (self.currentInstallation) {
-        if (editReport) {
-          if (self.amendingInst) {
-            self.amendingInst = false;
-            console.log('Fetching model for installation '+installationId+'...');
-            var installation = new veos.model.Installation({id: installationId});
+        // if (self.currentInstallation) {{
+        if (self.amendingInst) {
+          console.log('Fetching model for installation '+installationId+'...');
+          var installation = new veos.model.Installation({id: installationId});
 
-            var installationSuccess = function (model, response) {
-              self.currentInstallation = model; // used to set initial location for EditReport
-              self.currentReport = model.startAmending();
+          var installationSuccess = function (model, response) {
+            self.currentInstallation = model; // used to set initial location for EditReport
+            self.currentReport = model.startAmending();
 
-              self.reportForm = new self.view.ReportEditForm({el: '#report-page', model: self.currentReport});
-              self.currentReport.on('change', self.reportForm.render, self.reportForm);
+            self.reportForm = new self.view.ReportEditForm({el: '#report-page', model: self.currentReport});
+            self.currentReport.on('change', self.reportForm.render, self.reportForm);
 
-              jQuery('#report-header-text').text('Edit the Installation');
-            };
+            jQuery('#report-header-text').text('Edit the Installation');
+          };
 
-            var installationError = function (model, response) {
-              console.error("Error fetching installation model with message: "+response);
-              veos.alert("Error fetching installation details");
-            };
+          var installationError = function (model, response) {
+            console.error("Error fetching installation model with message: "+response);
+            veos.alert("Error fetching installation details");
+          };
 
-            installation.fetch({success: installationSuccess, error: installationError});
-          } else {
-            console.log('Called again - prob after multi picker');
-          }
-        }
-        // new report
-        else {
+          installation.fetch({success: installationSuccess, error: installationError});
+        } else { // new report
           if (!self.currentReport) {
             self.currentReport = new veos.model.Report();
 
@@ -320,7 +308,8 @@ window.veos = (function(veos) {
         // self.analytics(ev);
 
         // retrieve installationId from URL
-        var installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
+        //var installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
+        var installationId = veos.currentInstallationId;
         // and set it in the href of the back button
         var backButton = jQuery('.photo-details-page-back-button');
         backButton.attr('href', '#installation-details?id='+installationId);
