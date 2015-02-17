@@ -69,6 +69,7 @@ window.veos = (function(veos) {
 
     veos.installations.on('add', function(installation) {
       veos.map.overviewMap.addInstallationMarker(installation);
+      jQuery('.installation-count').text(this.size());
     });
     veos.installations.on('reset', function(collection) {
       veos.map.overviewMap.addInstallationMarkers(collection);
@@ -80,6 +81,12 @@ window.veos = (function(veos) {
     });
 
     self.geo.startFollowing();
+
+    // TODO: move this into the view
+    veos.installations.summary(function (data) {
+      console.log("GOT TOTAL", data)
+      jQuery('.installation-count-total').text(data.total_installation_count);
+    });
 
     jQuery(document)
 

@@ -349,6 +349,9 @@
       updateMaxDistance: function(maxDist) {
         this.maxDist = maxDist;
       },
+      summary: function (success, failure) {
+        jQuery.get(veos.model.baseURL+"/installations/summary").done(success).fail(failure);
+      },
       model: model.Installation,
       url: function () {
         return model.baseURL + '/installations/near.json?lat=' + this.nearLat + '&lng=' + this.nearLng + '&max_dist=' + this.maxDist + '&per_page=500';

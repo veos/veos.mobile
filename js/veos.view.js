@@ -1175,10 +1175,6 @@
       var list = this.$el.find('.installations-list');
       list.append(instRow.render());
       list.listview('refresh');
-
-      this.instCounter++;
-      // adding installation count to page
-      jQuery('.installation-count').text(this.instCounter);
     },
 
     loadMoreInstallations: function() {

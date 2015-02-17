@@ -267,6 +267,14 @@
     text-shadow: 0 0px 0;
 }
 
+.installation-count-total {
+    font-weight: bold;
+}
+
+.installation-count {
+    font-weight: bold;
+}
+
 .compliance {
     position: absolute; top:0px; bottom:0px; left:0px;
     width: 5.5%;
