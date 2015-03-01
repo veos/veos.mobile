@@ -26,6 +26,10 @@ window.veos = (function(veos) {
     jQuery.mobile.changePage("#overview-map-page");
   };
 
+  self.goToInstallationList = function () {
+    jQuery.mobile.changePage("#installations-list-page");
+  }
+
   self.goToInstallationDetails = function (installationId) {
     veos.currentInstallationId = installationId;
     veos.amendingInst = false;
@@ -66,7 +70,12 @@ window.veos = (function(veos) {
 
     var defaultLat = self.geo.DEFAULT_POS.coords.latitude;
     var defaultLng = self.geo.DEFAULT_POS.coords.longitude;
-    self.installations = new veos.model.NearbyInstallations(defaultLat, defaultLng, 2);
+
+    self.installations = new veos.model.NearbyInstallations([], {
+      nearLat: defaultLat,
+      nearLng: defaultLng,
+      maxDist: 2
+    });
 
     // set up the map view
 
@@ -88,7 +97,11 @@ window.veos = (function(veos) {
 
     jQuery(veos.geo).one('haveloc', function (ev, geoloc) {
       console.log("haveloc... updating location on installations collection and fetching");
-      veos.installations.fetch();
+      veos.installations.fetch({
+        success: function () { },
+        remove: false,
+        reset: false
+      });
     });
 
     self.geo.startFollowing();
@@ -105,7 +118,9 @@ window.veos = (function(veos) {
       .delegate("#overview-map-page", "pageshow", function(ev) {
         console.log("Fetching installations because we're in the overview-map-page");
         veos.installations.fetch({
-          success: function () { }
+          success: function () { },
+          remove: false,
+          reset: false
         });
       })
 
@@ -115,8 +130,8 @@ window.veos = (function(veos) {
         // markersArray avoids redrawing of pins on the map if we
         // pan or zoom. However, returning to the map will result in
         // all pins that are in the marker array missing on the map. No redraw.
-        console.log("Hiding Map and destroying markersArray");
-        veos.markersArray = [];
+        //console.log("Hiding Map and destroying markersArray");
+        //veos.markersArray = [];
       })
 
     /** report.html (report-page) **/
@@ -231,30 +246,23 @@ window.veos = (function(veos) {
         refinerMap.addReportRefinerMarker(self.reportForm.model, refinerLoc);
       })
 
-    /** installations-list.html (installations-list-page) **/
-      .delegate("#installations-list-page", "pageshow", function(ev) {
-        // var installations = new veos.model.Installations();
-
-        // fetch instalations ordered by closest to furthest without Max distance
-        // var installations = new veos.model.PagedNearbyInstallations(self.lastLoc.coords.latitude, self.lastLoc.coords.longitude);           // TODO I'm pretty sure this is not the right way to access these
-
-        var view = new veos.view.InstallationList({
-          el: ev.target,
-          collection: veos.installations
+      .delegate("#installations-list-page", "pageinit", function (ev) {
+        self.installationListView = new veos.view.InstallationList({
+          el: jQuery('#installations-list-page')[0],
+          collection: self.installations
         });
 
-        view.showLoader();
-        console.log("Fetching installations because we're in the installations-list-page");
-        veos.installations.fetch({
-          success: function () {view.hideLoader(); view.render(); }
-        });
+        // some installations may have been loaded before this pageinit, so
+        // lets bring the list up to date
+        self.installationListView.render();
       })
-
+      .delegate("#installations-list-page", "pageshow", function(ev) {
+        veos.installationListView
+          .enableAutoLoadMoreOnScroll();
+      })
       .delegate("#installations-list-page", "pagehide", function(ev) {
-        // The InstallationList View that is instantiated during the pageshow of #installations-list-page
-        // attaches a scroll listener that should only be active as long as we are on the list view.
-        // calling backbone's remove() on the view we remove the view from the DOM and stop listening to any bound event
-        jQuery(window).off('scroll');
+        veos.installationListView
+          .disableAutoLoadMoreOnScroll();
       })
 
     /** report-selection.html (report-selection-page) **/
@@ -262,7 +270,11 @@ window.veos = (function(veos) {
         var MAX_DISTANCE_TO_INST = 0.15;
         // fetch installations ordered by closest to furthest
         var lastLoc = self.geo.lastLoc;
-        var nearbyInstallations = new veos.model.NearbyInstallations(lastLoc.coords.latitude, lastLoc.coords.longitude, MAX_DISTANCE_TO_INST);           // TODO I'm pretty sure this is not the right way to access these
+        var nearbyInstallations = new veos.model.NearbyInstallations([], {
+          nearLat: lastLoc.coords.latitude,
+          nearLng: lastLoc.coords.longitude, 
+          maxDist: MAX_DISTANCE_TO_INST
+        });
 
         // Google Analytics
         // self.analytics(ev);

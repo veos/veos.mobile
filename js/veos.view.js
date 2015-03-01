@@ -1077,6 +1077,12 @@
 
     },
 
+    tagName: "li",
+    className: "installation-list-row",
+    id: function() {
+      return "installation-list-row-"+this.model.id
+    },
+
     render: function () {
       var installation = this.model;
 
@@ -1155,17 +1161,6 @@
       this.collection.on('reset', _.bind(this.render, self));
 
       this.collection.on('add', _.bind(this.addOne, self));
-
-      // WARNING: This scroll viewer triggers all the time unless you turn
-      // the listener off, which we do in pagehide
-      // Not sure if this ia a hack since it works nicely. Uses only plain jQuery to
-      // trigger the function loading more data
-      // From here: http://stackoverflow.com/questions/3898130/how-to-check-if-a-user-has-scrolled-to-the-bottom
-      jQuery(window).scroll(function() {
-        if (jQuery(window).scrollTop() + jQuery(window).height() === jQuery(document).height()) {
-          self.loadMoreInstallations();
-        }
-      });
     },
 
     showLoader: function () {
@@ -1191,6 +1186,27 @@
       view.collection.fetchMore();
     },
 
+    enableAutoLoadMoreOnScroll: function () {
+      var self = this;
+      // WARNING: This scroll viewer triggers all the time unless you turn
+      // the listener off, which we do in pagehide
+      // Not sure if this ia a hack since it works nicely. Uses only plain jQuery to
+      // trigger the function loading more data
+      // From here: http://stackoverflow.com/questions/3898130/how-to-check-if-a-user-has-scrolled-to-the-bottom
+      jQuery(window).scroll(function() {
+        if (jQuery(window).scrollTop() + jQuery(window).height() === jQuery(document).height()) {
+          self.loadMoreInstallations();
+        }
+      });
+    },
+
+    disableAutoLoadMoreOnScroll: function () {
+      // The InstallationList View that is instantiated during the pageshow of #installations-list-page
+      // attaches a scroll listener that should only be active as long as we are on the list view.
+      // calling backbone's remove() on the view we remove the view from the DOM and stop listening to any bound event
+      jQuery(window).off('scroll');
+    },
+
     render: function () {
       var view = this;
 
@@ -1208,7 +1224,6 @@
       list.empty();
 
       this.collection.each(function (installation) {
-
         view.addOne(installation);
         // var buttonText = '';
         // var ownerName;

@@ -328,10 +328,10 @@
   // });
 
   model.NearbyInstallations = Backbone.Collection.extend({
-      initialize: function (nearLat, nearLng, maxDist) {
-        this.nearLat = nearLat;
-        this.nearLng = nearLng;
-        this.maxDist = maxDist;
+      initialize: function (installations, options) {
+        this.nearLat = options.nearLat;
+        this.nearLng = options.nearLng;
+        this.maxDist = options.maxDist;
       },
       updateLocation: function (nearLat, nearLng, maxDist) {
         this.nearLat = nearLat;
@@ -339,7 +339,7 @@
         if (maxDist) {this.maxDist = maxDist;}
       },
       fetchMore: function () {
-        var PER_PAGE = 30;
+        var PER_PAGE = 10;
         var pageToFetch = Math.floor(this.length / PER_PAGE) + 1;
 
         var lat = veos.geo.lastLoc.coords.latitude;

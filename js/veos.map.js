@@ -74,7 +74,7 @@
         }, REQUEST_RATE_LIMIT);
 
       console.log('timeoutIdentifier:',timeoutIdentifier);
-      veos.installations.fetch();
+      veos.installations.fetch({remove: false, reset: false});
     };
 
     google.maps.event.addListener(gmap, 'dragend', function() {
