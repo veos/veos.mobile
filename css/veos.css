@@ -38,6 +38,10 @@
     margin-left: 2em;
 }
 
+#info-button .ui-icon {
+    margin: 0;
+}
+
 /* overwriting jq mobile's header handling so that titles are left justified and don't interfere with the i button */
 .ui-header > .ui-title {
     text-align: left;
@@ -73,9 +77,17 @@
 
 .loading {
     text-align: center;
-    margin: auto;
-    margin-top: 10%;
-    margin-bottom: 10%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding-top: 200px;
+    padding-bottom: 20px;
+    font-weight: bold;
+    font-family: sans-serif;
+    background: rgba(255,255,255,0.8);
+    z-index: 1000;
 }
 
 .overflow-button-container {

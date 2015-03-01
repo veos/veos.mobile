@@ -112,7 +112,7 @@
             </div>-->
             <div class="header-with-buttons ui-bar ui-bar-a">
                 <div class="overflow-button-container web-only hidden">
-                    <a class="overflow-button web-only" data-role="button" data-theme="e" data-icon="info" data-iconpos="notext"
+                    <a  id="info-button"class="overflow-button web-only" data-role="button" data-theme="e" data-icon="info" data-iconpos="notext"
                         href="http://surveillancerights.ca/overflow.html" target="_blank">
                     </a>
                 </div>
@@ -127,7 +127,7 @@
                 <span class="installation-count-text">Showing <span class="installation-count"></span> nearby installations out of <span class="installation-count-total">???</span> known installations.
             </div>
 
-            <div data-role="content">
+            <div data-role="content" role="content">
                 <ul data-role="listview" class="installations-list">
                     <!-- this is filled by the veos.view.InstallationList.render() -->
                 </ul>
@@ -165,7 +165,7 @@
                 </a>
                 <h3>Details</h3>
             </div>
-            <div data-role="content">
+            <div data-role="content" style="min-height: 20px">
                 <a class="compliance-banner" data-role="button" data-theme="a" data-icon="arrow-r" data-iconpos="right" href=""></a>
 
                 <div class="owner-name-container">
@@ -200,7 +200,7 @@
                         <div class="photo-thumbnail-container">
                         </div>
                     </div>
-                </div>                
+                </div>
 
                 <!-- photo-details overlay... content is hidden until photo is clicked -->
                 <div id="photo-details-content">

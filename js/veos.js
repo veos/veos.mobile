@@ -33,6 +33,7 @@ window.veos = (function(veos) {
   self.goToInstallationDetails = function (installationId) {
     veos.currentInstallationId = installationId;
     veos.amendingInst = false;
+    veos.view.showGlobalLoader();
     jQuery.mobile.changePage("#installation-details-page", {chageHash: true});
     history.pushState({installationId: installationId}, "Installation Details",
       "#installations/"+installationId+"/details");
@@ -141,7 +142,6 @@ window.veos = (function(veos) {
 
         // Google Analytics
         // self.analytics(ev);
-
 
         // we know that we edit report and we want to change the cancel button if referrer available
         if (veos.amendingInst) {
@@ -284,10 +284,9 @@ window.veos = (function(veos) {
           collection: nearbyInstallations
         });
 
-        view.showLoader();
         nearbyInstallations.fetch({
           success: function () {
-            view.hideLoader();
+            veos.view.hideGlobalLoader();
             // could go in the view, but is non-dynamic, and better to do it as early as possible
             if (nearbyInstallations.length > 0) {
               jQuery('.report-selection-dynamic-text').text("The following installations are within " + MAX_DISTANCE_TO_INST*1000 + "m of your current location. If you see an installation listed here that you wish to revise, select it. Otherwise, choose New Installation.");
@@ -299,25 +298,33 @@ window.veos = (function(veos) {
         });
       })
 
-    /** installation-details.html (installation-details-page) **/
+
+      .delegate("#installation-details-page", "pageinit", function(ev) {
+        self.installationDetailView = new veos.view.InstallationDetails({
+          el: ev.target,
+          model: new veos.model.Installation()
+        });
+      })
       .delegate("#installation-details-page", "pageshow", function(ev) {
         var installationId = veos.currentInstallationId;
         console.log("Showing details page at "+window.location.href);
         //var installationId = window.location.href.match("[\\?&]id=(\\d+)")[1];
         console.log("Showing details for installation "+installationId);
 
-        // Google Analytics
-        // self.analytics(ev);
+        var view = self.installationDetailView;
+        view.model.set({id: self.currentInstallationId}, {silent: true});
 
-        self.currentInstallation = new veos.model.Installation({id: installationId});
+        view.dontRender = true;
+        view.model.fetch({success: function () {
+          view.dontRender = false;
+        }});
+      })
+      .delegate("#installation-details-page", "pagehide", function(ev) {
+        // clear the pictures now so they don't show up briefly when we switch
+        // to another installation
+        self.installationDetailView.resetPictures();
 
-        var view = new veos.view.InstallationDetails({
-          el: ev.target,
-          model: self.currentInstallation
-        });
-
-        view.showLoader();
-        view.model.fetch();
+        self.installationDetailView.unbind();
       })
 
     /** photo-details.html (photo-details-page) **/
@@ -349,7 +356,6 @@ window.veos = (function(veos) {
           model: photo
         });
 
-        // view.showLoader();
         view.model.fetch();
       })
 
@@ -366,7 +372,6 @@ window.veos = (function(veos) {
           model: installation
         });
 
-        view.showLoader();
         view.model.fetch();
       });
 

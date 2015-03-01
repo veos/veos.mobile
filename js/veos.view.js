@@ -6,8 +6,20 @@
 
   var addLoader = function (container) {
     var loader = jQuery("<div class='loading'><img src='images/loading-64.gif' alt='Loading...' /><p>Loading...</p></div>");
-    jQuery(container).append(loader);
+    jQuery(container).prepend(loader);
     return loader;
+  };
+
+  self.showGlobalLoader = function () {
+    veos.loader = addLoader(jQuery('body'));
+    // FIXME: this looks ugly
+  };
+
+  self.hideGlobalLoader = function () {
+    if (veos.loader) {
+      veos.loader.remove();
+      delete veos.loader;
+    }
   };
 
   /**
@@ -1163,15 +1175,6 @@
       this.collection.on('add', _.bind(this.addOne, self));
     },
 
-    showLoader: function () {
-      this.loader = addLoader(this.$el.find('[role="main"]'));
-    },
-
-    hideLoader: function () {
-      this.loader.remove();
-      delete this.loader;
-    },
-
     addOne: function(inst) {
       var instRow = new veos.view.InstallationListRow({model: inst});
       // this.$el.append(instRow.render().el);
@@ -1301,15 +1304,6 @@
 
       // TODO: consider binding 'add' and 'remove' to pick up added/removed Installations too?
       this.collection.on('reset', _.bind(this.render, self));
-    },
-
-    showLoader: function () {
-      this.loader = addLoader(this.$el.find('[role="main"]'));
-    },
-
-    hideLoader: function () {
-      this.loader.remove();
-      delete this.loader;
     },
 
     render: function () {
@@ -1443,20 +1437,6 @@
       }
     },
 
-    showLoader: function () {
-      this.loader = addLoader(this.$el.find('[role="content"]'));
-      // FIXME: this looks ugly
-      this.loader.css({
-        position: 'absolute',
-        top: '30%',
-        width: '100%'
-      });
-    },
-
-    hideLoader: function () {
-      this.loader.remove();
-      delete this.loader;
-    },
 
     createPointDetailsMap: function(installation) {
       // note: higher zoom level
@@ -1467,6 +1447,10 @@
       mapThumbnail.attr('src', staticMapCriteria);
       var thumbnailContainer = this.$el.find('.map-thumbnail-container');
       thumbnailContainer.html(mapThumbnail);
+    },
+
+    resetPictures: function () {
+      this.$el.find('.photo-thumbnail-container').empty();
     },
 
     showPictures: function(installation) {
@@ -1497,6 +1481,10 @@
     render: function () {
       var self = this;
       var installation = this.model;
+
+      // hack to prevent triggering render() for every attribute that gets updated
+      // after fetch
+      if (self.dontRender) return;
 
       if (veos.isAndroid()) {
         // we're in the Android app
@@ -1543,11 +1531,9 @@
         }
       }
 
-      if (this.loader) {
-        this.hideLoader();
-      }
-
       this.createPointDetailsMap(installation);
+
+      self.resetPictures();
 
       // TODO: The showPictures function will only add pictures and not reflect pictures getting less
       // maybe we can reuse the PhotoView.render function??
@@ -1639,6 +1625,7 @@
 
       });
 
+      veos.view.hideGlobalLoader();
     }
   });
 
@@ -1650,28 +1637,11 @@
       this.model.on('change sync', _.bind(this.render, self));
     },
 
-    showLoader: function () {
-      this.loader = addLoader(this.$el.find('[role="content"]'));
-      // FIXME: this looks ugly
-      this.loader.css({
-        position: 'absolute',
-        top: '30%',
-        width: '100%'
-      });
-    },
-
-    hideLoader: function () {
-      this.loader.remove();
-      delete this.loader;
-    },
-
     render: function () {
       var self = this;
       var installation = this.model;
 
-      if (this.loader) {
-        this.hideLoader();
-      }
+      veos.view.hideGlobalLoader();
 
       if (veos.isAndroid()) {
         // we're in the Android app
