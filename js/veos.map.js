@@ -3,6 +3,7 @@
 
 (function(veos) {
   var self = {};
+  var infowindow;
 
   self.convertGeolocToGmapLatLng = function (geoloc) {
     if (geoloc instanceof google.maps.LatLng) {
@@ -43,7 +44,7 @@
       streetViewControl: false,
       zoomControl: true, // changed this back to true - pinch zoom not working on some phones (note ZoomControl must be set to +/- or will not show up on Android 3.0 and later)
       zoomControlOptions: {
-          style: google.maps.ZoomControlStyle.SMALL
+        style: google.maps.ZoomControlStyle.SMALL
       }
     };
 
@@ -120,7 +121,7 @@
         zIndex: 99999 // half assed attempt at making sure the dude is on top
       });
 
-      var infowindow = new google.maps.InfoWindow({
+      infowindow = new google.maps.InfoWindow({
         content: "<p><b>You are here!</b></p>"
       });
 
@@ -188,7 +189,9 @@
     }
 
     if (!map.infowindows) {
-      map.infowindow = new google.maps.InfoWindow({
+      // close all previous infowindows (fixes new bug where user opens an infowind, moves to eg list and back to map, will leave the blank info window open)  (see also ~line 253)
+      infowindow.close();
+      infowindow = new google.maps.InfoWindow({
         // do you seriously need a plugin for styling infowindows?!?! Puke
         // http://google-maps-utility-library-v3.googlecode.com/svn/trunk/infobox/docs/examples.html
         // http://code.google.com/p/google-maps-utility-library-v3/wiki/Libraries
@@ -247,14 +250,17 @@
 
       // binding a popup click event to the marker
       google.maps.event.addListener(marker, 'click', function() {
+        // close all previous infowindows (fixes new bug where user opens an infowind, moves to eg list and back to map, will leave the blank info window open)
+        infowindow.close();
         injectThumbnail(i);
-        map.infowindow.setContent(mapPopupContent[0]);
-        map.infowindow.open(map.gmap, marker);
-        highlightOwnerPins(marker, i.get('owner_name'));
+        infowindow.setContent(mapPopupContent[0]);
+        infowindow.open(map.gmap, marker);
+        //highlightOwnerPins(marker, i.get('owner_name'));
+        // Since this functionality didn't really work with the new paradigm, and cause it was so confusing to begin with, removed for now
       });
 
       // binding a click event that triggers when the infowindow is closed
-      google.maps.event.addListener(map.infowindow, 'closeclick', function() {
+      google.maps.event.addListener(infowindow, 'closeclick', function() {
         _.each(veos.markersArray, function(m) {
           m.setIcon(m.iconSelected);
         });
@@ -301,43 +307,43 @@
 
       thumbPhoto.fetch({success: photoFetchSuccess, error: photoFetchError});
     }
-   };
-
-
-  var highlightOwnerPins = function(marker, ownerName) {
-    // clear the markers (set back to initial state)
-    _.each(veos.markersArray, function(m) {
-      m.setIcon(m.iconUnselected);
-    });
-
-    // set the clicked marker as selected (necessary because the _.each will only catch markers with known owner_names)
-    marker.setIcon(marker.iconSelected);
-
-    var ownerInstallations = new veos.model.Installations();
-
-    var ownerSuccess = function (model, response) {
-      ownerInstallations.each(function(i) {
-        console.log('related installation ids: ' + i.get('id'));
-
-        // this is very inefficient, but working (will ping once for *each* match... lots of duplicate higlights)
-        // can we use pluck or filter or find here? Or even better, can we count on the fact that all ownerInstallations have the same name?
-        _.each(veos.markersArray, function(m) {
-          // if the owner_names match
-          if (m.title === i.get('owner_name')) {
-            console.log('found one: ' + i.get('owner_name'));
-            m.setIcon(m.iconSelected);
-            m.setZIndex(1000);                 // move this marker to the front, does not seem to need to be cleared
-          }
-        });
-
-      });
-    };
-
-    ownerInstallations.fetch({
-      success: ownerSuccess,
-      data: {owner_name: ownerName}
-    });
   };
+
+
+  // var highlightOwnerPins = function(marker, ownerName) {
+  //   // clear the markers (set back to unhighlighted)
+  //   _.each(veos.markersArray, function(m) {
+  //     m.setIcon(m.iconUnselected);
+  //   });
+
+  //   // set the clicked marker as selected (necessary because the _.each will only catch markers with known owner_names)
+  //   marker.setIcon(marker.iconSelected);
+
+  //   var ownerInstallations = new veos.model.Installations();
+
+  //   var ownerSuccess = function (model, response) {
+  //     ownerInstallations.each(function(i) {
+  //       console.log('related installation ids: ' + i.get('id'));
+
+  //       // this is very inefficient, but working (will ping once for *each* match... lots of duplicate higlights)
+  //       // can we use pluck or filter or find here? Or even better, can we count on the fact that all ownerInstallations have the same name?
+  //       _.each(veos.markersArray, function(m) {
+  //         // if the owner_names match
+  //         if (m.title === i.get('owner_name')) {
+  //           console.log('found one: ' + i.get('owner_name'));
+  //           m.setIcon(m.iconSelected);
+  //           m.setZIndex(1000);                 // move this marker to the front, does not seem to need to be cleared
+  //         }
+  //       });
+
+  //     });
+  //   };
+
+  //   ownerInstallations.fetch({
+  //     success: ownerSuccess,
+  //     data: {owner_name: ownerName}
+  //   });
+  // };
 
   /**
     Adds a draggable report marker, used for refining report location.
