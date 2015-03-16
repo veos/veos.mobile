@@ -17,7 +17,7 @@
 
   self.hideGlobalLoader = function () {
     if (veos.loader) {
-      veos.loader.remove();
+      jQuery('.loading').remove();
       delete veos.loader;
     }
   };
@@ -58,6 +58,7 @@
           this.model.set('owner_identifiable', true);
         }
       },
+
       'change #unidentified-owner-checkbox': function (ev) {
         var f = jQuery(ev.target);
         f.parent().css('opacity', 1.0);
@@ -90,6 +91,10 @@
 
         veos.currentPhoto.captureFromCamera();
         veos.currentPhotos.push(veos.currentPhoto); // add currentPhoto to array to not lose photos during location change
+      },
+
+      'click #static-report-map': function (ev) {
+        veos.goToRefineLocation();
       },
 
       'click #select-camera-photo-button': function (ev) {
@@ -132,9 +137,11 @@
       this.$el.data('initialized', true); // check this later to prevent double-init
 
       // FIXME: this is kind of nasty... refine-location should get its own View to make this better
-      jQuery(document).delegate("#refine-location-submit", "click", function () {
+      jQuery(document).off("click", "#refine-location-submit");
+      jQuery(document).on("#refine-location-submit", "click", function () {
         console.log("User submitted refined location");
         veos.currentReport.set('loc_description_from_user', null); // we'll look it up again from geoloc
+  
         return true; // will now redirect to clicked element's href
       });
 
@@ -192,12 +199,12 @@
           // This function is called later on in the success once all is done
           // deletes objects and bounces us back to overview map
           var doneSubmit = function() {
-            delete veos.currentReport;
-            delete veos.reportForm;
-            delete veos.currentPhoto; // Armin: I do believe this is necessary to avoid picture showing up on other reports
-            veos.currentPhotos = []; // Armin: Clear the currentPhotos array to avoid duplicate errors
             veos.alert("Report submitted successfully!");
             veos.goToOverviewMap();
+            // FIXME! No seriously fix this!
+            // Hack to just reset everything on submit because there is a nasty event
+            // binding mess here that's probably not fixable without a proper rewrite.
+            location.reload();
           };
 
           var images = jQuery('.photo-list-item');    // get all images that were taken
@@ -239,8 +246,6 @@
             function photoFetchError (model, response) {
               console.error("Fetching photo model " + model.id +" failed with error: " +response);
               veos.alert("Error fetching Photo data during Report submission!");
-              delete veos.currentReport;
-              delete veos.reportForm;
               jQuery.mobile.changePage("#overview-map-page");
             }
 
@@ -257,12 +262,11 @@
 
     cancel: function () {
       console.log("Cancelling report...");
-      this.clear();
-      delete veos.reportForm;
-      delete veos.currentReport;
-      delete veos.currentPhoto; // Armin: I do believe this is necessary to avoid picture showing up on other reports
-      veos.currentPhotos = []; // Armin: Clear the currentPhotos array to avoid duplicate errors
-      return true; // will now redirect to clicked element's href
+      veos.goToOverviewMap();
+      // FIXME! No seriously fix this!
+      // Hack to just reset everything on submit because there is a nasty event
+      // binding mess here that's probably not fixable without a proper rewrite.
+      location.reload();
     },
 
     clear: function () {
@@ -307,10 +311,11 @@
       var self = this;
       veos.map.lookupAddressForLoc(geoloc, function (address) {
         self.model.set('loc_description_from_google', address.formatted_address);
+        self.$el.find("#location-address").attr("placeholder", address.formatted_address);
         // only set user address from location if user hasn't manually entered it
-        if (!self.model.get('loc_description_from_user')) {
-          self.model.set('loc_description_from_user', address.formatted_address);
-        }
+        // if (!self.model.get('loc_description_from_user')) {
+        //   self.model.set('loc_description_from_user', address.formatted_address);
+        // }
       });
     },
 
@@ -356,6 +361,10 @@
       // }
     },
 
+    resetPhotos: function () {
+      this.$el.find('.photo-list').empty();
+    },
+
     /**
       Triggers full update of all dynamic elements in the report page.
     **/
@@ -376,6 +385,10 @@
         this.$el.find('.web-only').removeClass('hidden');
         this.$el.find('.android-only').addClass('hidden');
       }
+
+      self.resetPhotos();
+
+      self.updateLocFields();
 
       // replaces changedFields() - we can't rely this.model.changed because we need to render after returning from refiningMap
       _.each(this.model.attributes, function(v, k) {
@@ -406,9 +419,11 @@
         } else if (k === "has_sign") {
           var hasSign = self.model.get(k);
           if (hasSign === 'yes' || hasSign === true) {
-            jQuery('#sign-yes').attr("checked",true).checkboxradio("refresh");
+            jQuery('#sign-yes').prop("checked",true).checkboxradio("refresh");
+            jQuery('#sign-no').prop("checked",false).checkboxradio("refresh");
           } else if (hasSign === 'no' || hasSign === false) {
-            jQuery('#sign-no').attr("checked",true).checkboxradio("refresh");
+            jQuery('#sign-yes').prop("checked",false).checkboxradio("refresh");
+            jQuery('#sign-no').prop("checked",true).checkboxradio("refresh");
           }
         }
          else {
@@ -416,29 +431,29 @@
         }
       });
 
+
       // brutal. Tell me why we're bother with backbone when all jQuery does is fight it?
       if (self.model.get('owner_identifiable')) {
-        jQuery('#unidentified-owner-checkbox').attr("checked",false).checkboxradio("refresh");      // who the hell comes up with this syntax?!? Good lord
+        jQuery('#unidentified-owner-checkbox').prop("checked",false).checkboxradio("refresh");      // who the hell comes up with this syntax?!? Good lord
       } else {
-        jQuery('#unidentified-owner-checkbox').attr("checked",true).checkboxradio("refresh");
+        jQuery('#unidentified-owner-checkbox').prop("checked",true).checkboxradio("refresh");
       }
 
       jQuery('#owner-type').selectmenu('refresh');                          // why doesn't this work with classes? Would be much cleaner. Also refresh, really?
       jQuery('#sign-visibility').selectmenu('refresh');
 
       // updating the text on the accordion headers
-      if (veos.currentReport.get('camera_count') || (spacesArray.length > 0)) {
+      if (self.model.get('camera_count') || (spacesArray.length > 0)) {
         jQuery('.camera-add-edit-text').text('Edit');
       } else {
         jQuery('.camera-add-edit-text').text('Add');
       }
-      if (veos.currentReport.get('sign_visibility') || veos.currentReport.get('sign_text') || (propertiesArray.length > 0) || (purposesArray.length > 0)) {
+      if (self.model.get('sign_visibility') || self.model.get('sign_text') || (propertiesArray.length > 0) || (purposesArray.length > 0)) {
         jQuery('.sign-add-edit-text').text('Edit');
       } else {
         jQuery('.sign-add-edit-text').text('Add');
       }
 
-      self.updateLocFields();
       self.renderPhotos();
 
       // ok, this is obviously insane - but if anyone can find a better way to keep the multi-selects from growing off the screen (on the phone, please let me know)
@@ -499,6 +514,7 @@
           this.model.set('owner_identifiable', true);
         }
       },
+
       'change #unidentified-owner-checkbox': function (ev) {
         var f = jQuery(ev.target);
         f.parent().css('opacity', 1.0);
@@ -541,6 +557,10 @@
         veos.currentPhotos.push(veos.currentPhoto); // add currentPhoto to array to not lose photos during location change
       },
 
+      'click #static-report-map': function (ev) {
+        veos.goToRefineLocation();
+      },
+
       'change #photo-from-hard-drive': function (ev) {
         veos.currentPhoto = new veos.model.Photo();
         new PhotoView({model: veos.currentPhoto, el: this.$el.find('#photos')});
@@ -571,8 +591,10 @@
       this.$el.data('initialized', true); // check this later to prevent double-init
 
       // FIXME: this is kind of nasty... refine-location should get its own View to make this better
-      jQuery(document).delegate("#refine-location-submit", "click", function () {
+      jQuery(document).off("click", "#refine-location-submit");
+      jQuery(document).on("click", "#refine-location-submit", function () {
         console.log("User submitted refined location");
+  
         veos.currentReport.set('loc_description_from_user', null); // we'll look it up again from geoloc
         return true; // will now redirect to clicked element's href
       });
@@ -605,14 +627,12 @@
           console.log("Report saved successfully with id "+self.model.id);
 
           var doneSubmit = function() {
-            delete veos.currentReport;
-            delete veos.reportForm;
-            delete veos.currentInstallation;        // unique to editReport's view
-            delete veos.currentPhoto; // Armin: I do believe this is necessary to avoid picture showing up on other reports
-            veos.currentPhotos = []; // Armin: Clear the currentPhotos array to avoid duplicate errors
-
             veos.alert("Report submitted successfully!");
             jQuery.mobile.changePage("#overview-map-page");
+            // FIXME! No seriously fix this!
+            // Hack to just reset everything on submit because there is a nasty event
+            // binding mess here that's probably not fixable without a proper rewrite.
+            location.reload();
           };
 
           var report = self.model;
@@ -695,14 +715,11 @@
 
     cancel: function () {
       console.log("Cancelling report...");
-      this.clear();
-      delete veos.reportForm;
-      delete veos.currentReport;
-      delete veos.currentInstallation;        // unique to editReport's view
-      delete veos.currentPhoto; // Armin: I do believe this is necessary to avoid picture showing up on other reports
-      veos.currentPhotos = []; // Armin: Clear the currentPhotos array to avoid duplicate errors
-
-      return true; // will now redirect to clicked element's href
+      veos.goToOverviewMap();
+      // FIXME! No seriously fix this!
+      // Hack to just reset everything on submit because there is a nasty event
+      // binding mess here that's probably not fixable without a proper rewrite.
+      location.reload();
     },
 
     clear: function () {
@@ -715,6 +732,10 @@
 
       // FIXME: bad!
       veos.currentReport = this.model;
+    },
+
+    resetPhotos: function () {
+      this.$el.find('.photo-list').empty();
     },
 
     updateLocFields: function () {
@@ -734,6 +755,8 @@
 
       this.updateMapThumbnailFromLoc(geoloc);
       this.updateAddressFromLoc(geoloc);
+
+      this.$el.find("#location-address").attr("placeholder", this.model.get("loc_description_from_google"));
     },
 
     updateMapThumbnailFromLoc: function (geoloc) {
@@ -748,10 +771,7 @@
       var self = this;
       veos.map.lookupAddressForLoc(geoloc, function (address) {
         self.model.set('loc_description_from_google', address.formatted_address);
-        // only set user address from location if user hasn't manually entered it
-        if (!self.model.get('loc_description_from_user')) {
-          self.model.set('loc_description_from_user', address.formatted_address);
-        }
+        self.$el.find("#location-address").attr("placeholder", address.formatted_address);
       });
     },
 
@@ -785,6 +805,8 @@
         this.$el.find('.android-only').addClass('hidden');
       }
 
+      self.updateLocFields();
+
       // replaces changedFields() - we can't rely this.model.changed because we need to render after returning from refiningMap
       _.each(this.model.attributes, function(v, k) {
         if (k === "tags") {
@@ -813,11 +835,11 @@
           }
         } else if (k === "has_sign") {
           if (self.model.get(k)) {
-            jQuery('#sign-yes').attr("checked",true).checkboxradio("refresh");
-            console.log('true');
+            jQuery('#sign-yes').prop("checked",true).checkboxradio("refresh");
+            jQuery('#sign-no').prop("checked",false).checkboxradio("refresh");
           } else if (!self.model.get(k)) {
-            jQuery('#sign-no').attr("checked",true).checkboxradio("refresh");
-            console.log('false');
+            jQuery('#sign-yes').prop("checked",false).checkboxradio("refresh");
+            jQuery('#sign-no').prop("checked",true).checkboxradio("refresh");
           }
         }
          else {
@@ -827,9 +849,9 @@
 
       // brutal. Tell me why we're bother with backbone when all jQuery does is fight it?
       if (self.model.get('owner_identifiable')) {
-        jQuery('#unidentified-owner-checkbox').attr("checked",false).checkboxradio("refresh");      // who the hell comes up with this syntax?!? Good lord
+        jQuery('#unidentified-owner-checkbox').prop("checked",false).checkboxradio("refresh");      // who the hell comes up with this syntax?!? Good lord
       } else {
-        jQuery('#unidentified-owner-checkbox').attr("checked",true).checkboxradio("refresh");
+        jQuery('#unidentified-owner-checkbox').prop("checked",true).checkboxradio("refresh");
       }
 
       jQuery('#owner-type').selectmenu('refresh');                          // why doesn't this work with classes? Would be much cleaner. Also refresh, really?
@@ -847,7 +869,6 @@
         jQuery('.sign-add-edit-text').text('Add');
       }
 
-      self.updateLocFields();
       self.renderPhotos();
 
       // see ReportEdit for explanation (uggggg)
@@ -953,8 +974,8 @@
       //var photoDetails;
       console.log("Rendering PhotoView...");
       //this.$el.text(JSON.stringify(this.model.toJSON(), null, 2));
-      console.log("Photo model in PhotoView.render:"+ JSON.stringify(this.model.toJSON(), null, 2));
-      console.log("Photo url: "+this.model.thumbUrl());
+      //console.log("Photo model in PhotoView.render:"+ JSON.stringify(this.model.toJSON(), null, 2));
+      //console.log("Photo url: "+this.model.thumbUrl());
 
       var photoView = this;
 
@@ -1401,6 +1422,11 @@
         console.log("opening flag dialogue");
 
         view.flagReport();
+      },
+
+      'click .compliance-banner': function (ev) {
+        veos.goToPrivacyCompliance(this.model.get('id'));
+        return false;
       }
     },
 
@@ -1498,19 +1524,11 @@
 
       var installationId = installation.get('id');
       var editButton = jQuery('#installation-details-page .edit-button');
-      editButton.click(function () { veos.goToInstallationReportAmend(installationId); });
+      editButton.off('click');
+      editButton.on('click', function () { veos.goToInstallationReportAmend(installationId); });
 
-      // create the URL to load report.html in edit mode with prefilled data
-      // the installationId is retrieved in veos.js .delegate and used to load a installation model
-      // and render the ReportEditForm view
-      // var editButton = jQuery('#installation-details-page .edit-button');
-      // Adding a referrer so that the cancel button can lead back to installation details page / This is to fix bug 68.1
-      // editButton.attr('href', 'report.html?installationId='+installation.get('id')+'&ref=installation-details');
-      // instead of setting fresh=true in the url and changing that to false later on we use a global variable (and we all love them)
-      // veos.amendingInst = true;
 
-      var complianceButton = jQuery('#installation-details-page .compliance-banner');
-      complianceButton.attr('href', 'privacy-compliance.html?installationId='+installation.get('id'));
+      var complianceButton = this.$el.find(".compliance-banner");
 
       if (installation.get('compliance_level')) {
         if (installation.get('compliance_level') === 'non_compliant') {
@@ -1630,6 +1648,13 @@
   });
 
   self.PrivacyComplianceView = Backbone.View.extend({
+    events: {
+      'click .back-button': function () {
+        veos.goToInstallationDetails(this.model.id);
+        return false;
+      }
+    },
+
     initialize: function () {
       var self = this;
 
@@ -1652,9 +1677,6 @@
         this.$el.find('.web-only').removeClass('hidden');
         this.$el.find('.android-only').addClass('hidden');
       }
-
-      var backButton = jQuery('#privacy-compliance-page .back-button');
-      backButton.attr('href', 'installation-details.html?id='+installation.get('id'));
 
       jQuery('.compliance-text').hide();
 

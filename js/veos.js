@@ -55,6 +55,20 @@ window.veos = (function(veos) {
       "#installations/"+installationId+"/report/amend");
   };
 
+  self.goToPrivacyCompliance = function (installationId) {
+    veos.currentInstallationId = installationId;
+    jQuery.mobile.changePage("#privacy-compliance-page", {chageHash: true});
+    history.pushState({installationId: installationId}, "Privacy Compliance",
+      "#installations/"+installationId+"/compliance");
+  };
+
+  self.goToRefineLocation = function (installationId) {
+    var installationId = veos.currentInstallationId;
+    jQuery.mobile.changePage("#refine-location-page", {chageHash: true});
+    history.pushState({installationId: installationId}, "Refine Location",
+      "#installations/"+installationId+"/report/refine-location");
+  };
+
   /**
     Initializes the whole app. This needs to be called at the bottom of every VEOS page.
   **/
@@ -113,10 +127,9 @@ window.veos = (function(veos) {
       jQuery('.installation-count-total').text(data.total_installation_count);
     });
 
-    jQuery(document)
-
     /** overview-map.html (overview-map-page) **/
-      .delegate("#overview-map-page", "pageshow", function(ev) {
+      jQuery("#overview-map-page")
+      .on("pageshow", function(ev) {
         console.log("Fetching installations because we're in the overview-map-page");
         veos.installations.fetch({
           success: function () { },
@@ -124,9 +137,7 @@ window.veos = (function(veos) {
           reset: false
         });
       })
-
-      // this intercepts the pagehide event of the map view
-      .delegate("#overview-map-page", "pagehide", function(ev) {
+      .on("pagehide", function(ev) {
         // Now this is a hack as so often to fix other hacks
         // markersArray avoids redrawing of pins on the map if we
         // pan or zoom. However, returning to the map will result in
@@ -136,7 +147,8 @@ window.veos = (function(veos) {
       })
 
     /** report.html (report-page) **/
-      .delegate("#report-page", "pageshow", function(ev) {
+      jQuery("#report-page")
+      .on("pageshow", function(ev) {
         var installationId = veos.currentInstallationId;
         var ref = '';
 
@@ -162,24 +174,29 @@ window.veos = (function(veos) {
         // if (self.currentInstallation) {{
         if (self.amendingInst) {
           console.log('Fetching model for installation '+installationId+'...');
-          var installation = new veos.model.Installation({id: installationId});
 
-          var installationSuccess = function (model, response) {
-            self.currentInstallation = model; // used to set initial location for EditReport
-            self.currentReport = model.startAmending();
+          if (self.currentInstallation && self.currentInstallation.id == installationId) {
+            self.reportForm.render();
+          } else {
+            var installation = new veos.model.Installation({id: installationId});
 
-            self.reportForm = new self.view.ReportEditForm({el: '#report-page', model: self.currentReport});
-            self.currentReport.on('change', self.reportForm.render, self.reportForm);
+            var installationSuccess = function (model, response) {
+              self.currentInstallation = model; // used to set initial location for EditReport
+              self.currentReport = model.startAmending();
 
-            jQuery('#report-header-text').text('Edit the Installation');
-          };
+              self.reportForm = new self.view.ReportEditForm({el: '#report-page', model: self.currentReport});
+              self.currentReport.on('change', self.reportForm.render, self.reportForm);
 
-          var installationError = function (model, response) {
-            console.error("Error fetching installation model with message: "+response);
-            veos.alert("Error fetching installation details");
-          };
+              jQuery('#report-header-text').text('Edit the Installation');
+            };
 
-          installation.fetch({success: installationSuccess, error: installationError});
+            var installationError = function (model, response) {
+              console.error("Error fetching installation model with message: "+response);
+              veos.alert("Error fetching installation details");
+            };
+
+            installation.fetch({success: installationSuccess, error: installationError});
+          }
         } else { // new report
           if (!self.currentReport) {
             self.currentReport = new veos.model.Report();
@@ -193,7 +210,6 @@ window.veos = (function(veos) {
             // Armin: Fixing bug where loc_description_from_google is now set in view
             // I think this is due to missing change listener triggering render (did this like we do it above for the editing)
             self.reportForm = new self.view.ReportForm({el: '#report-page', model: self.currentReport});
-            self.currentReport.on('change', self.reportForm.render, self.reportForm);
           }
 
           if (!self.reportForm) {
@@ -209,13 +225,29 @@ window.veos = (function(veos) {
             self.reportForm.$el.data('initialized', true);
           }
 
+          self.currentReport.on('change', self.reportForm.render, self.reportForm);
+
           self.reportForm.render();
+        }
+      })
+      .on("pagehide", function(ev) {
+        if (self.currentReport) {
+          self.currentReport.off();
+        }
+
+        // clear the pictures now so they don't show up briefly when we switch
+        // to another installation
+        if (self.reportForm) {
+          self.reportForm.resetPhotos();
+          self.reportForm.unbind();
+          self.reportForm.$el.not('[type="button"]').val(''); // reset form
         }
       })
 
 
     /** refine-location.html (refine-location-page) **/
-      .delegate("#refine-location-page", "pageshow", function(ev) {
+      jQuery("#refine-location-page")
+      .on("pageshow", function(ev) {
         if (!veos.reportForm) {
           console.error("Cannot refine location because there is no report currently in progress.");
           jQuery.mobile.changePage("#report-page");
@@ -246,7 +278,8 @@ window.veos = (function(veos) {
         refinerMap.addReportRefinerMarker(self.reportForm.model, refinerLoc);
       })
 
-      .delegate("#installations-list-page", "pageinit", function (ev) {
+      jQuery("#installations-list-page")
+      .on("pageinit", function (ev) {
         self.installationListView = new veos.view.InstallationList({
           el: jQuery('#installations-list-page')[0],
           collection: self.installations
@@ -256,17 +289,18 @@ window.veos = (function(veos) {
         // lets bring the list up to date
         self.installationListView.render();
       })
-      .delegate("#installations-list-page", "pageshow", function(ev) {
+      .on("pageshow", function(ev) {
         veos.installationListView
           .enableAutoLoadMoreOnScroll();
       })
-      .delegate("#installations-list-page", "pagehide", function(ev) {
+      .on("pagehide", function(ev) {
         veos.installationListView
           .disableAutoLoadMoreOnScroll();
       })
 
     /** report-selection.html (report-selection-page) **/
-      .delegate("#report-selection-page", "pageshow", function(ev) {
+      jQuery("#report-selection-page")
+      .on("pageshow", function(ev) {
         var MAX_DISTANCE_TO_INST = 0.15;
         // fetch installations ordered by closest to furthest
         var lastLoc = self.geo.lastLoc;
@@ -299,13 +333,19 @@ window.veos = (function(veos) {
       })
 
 
-      .delegate("#installation-details-page", "pageinit", function(ev) {
+      jQuery("#installation-details-page")
+      .on("pageinit", function(ev) {
+        if (veos.installationDetailView) {
+          veos.installationDetailView.unbind()
+        }
+
+
         self.installationDetailView = new veos.view.InstallationDetails({
           el: ev.target,
           model: new veos.model.Installation()
         });
       })
-      .delegate("#installation-details-page", "pageshow", function(ev) {
+      .on("pageshow", function(ev) {
         var installationId = veos.currentInstallationId;
         console.log("Showing details page at "+window.location.href);
         //var installationId = window.location.href.match("[\\?&]id=(\\d+)")[1];
@@ -319,7 +359,7 @@ window.veos = (function(veos) {
           view.dontRender = false;
         }});
       })
-      .delegate("#installation-details-page", "pagehide", function(ev) {
+      .on("pagehide", function(ev) {
         // clear the pictures now so they don't show up briefly when we switch
         // to another installation
         self.installationDetailView.resetPictures();
@@ -328,7 +368,8 @@ window.veos = (function(veos) {
       })
 
     /** photo-details.html (photo-details-page) **/
-      .delegate("#photo-details-page", "pageshow", function(ev) {
+      jQuery("#photo-details-page")
+      .on("pageshow", function(ev) {
         console.log("Showing photo details page at "+window.location.href);
 
         // Google Analytics
@@ -360,19 +401,27 @@ window.veos = (function(veos) {
       })
 
     /** privacy-compliance.html (privacy-compliance-page) **/
-      .delegate("#privacy-compliance-page", "pageshow", function(ev) {
-        var installationId = window.location.href.match("[\\?&]installationId=(\\d+)")[1];
+      jQuery("#privacy-compliance-page")
+      .on("pageshow", function(ev) {
+        var installationId = veos.currentInstallationId;
         var installation = new veos.model.Installation({id: installationId});
 
         // Google Analytics
         // self.analytics(ev);
 
-        var view = new veos.view.PrivacyComplianceView({
+        if (veos.privacyComplianceInfo) {
+          veos.privacyComplianceInfo.unbind()
+        }
+
+        veos.privacyComplianceInfo = new veos.view.PrivacyComplianceView({
           el: ev.target,
           model: installation
         });
 
-        view.model.fetch();
+        veos.privacyComplianceInfo.model.fetch();
+      })
+      .on("pagehide", function(ev) {
+        veos.privacyComplianceInfo.unbind();
       });
 
   };
