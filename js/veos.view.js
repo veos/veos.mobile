@@ -141,7 +141,7 @@
       jQuery(document).on("#refine-location-submit", "click", function () {
         console.log("User submitted refined location");
         veos.currentReport.set('loc_description_from_user', null); // we'll look it up again from geoloc
-  
+
         return true; // will now redirect to clicked element's href
       });
 
@@ -594,7 +594,7 @@
       jQuery(document).off("click", "#refine-location-submit");
       jQuery(document).on("click", "#refine-location-submit", function () {
         console.log("User submitted refined location");
-  
+
         veos.currentReport.set('loc_description_from_user', null); // we'll look it up again from geoloc
         return true; // will now redirect to clicked element's href
       });
@@ -1440,7 +1440,7 @@
     flagReport: function () {
       var response = confirm('Do you want to flag this report as inappropriate?');
       if (response) {
-        var reportId = veos.currentInstallation.get('latest_report').id;
+        var reportId = this.model.get('latest_report').id;
         var flaggedReport = new veos.model.Report({id: reportId});
 
         var reportSuccess = function (model, response) {
