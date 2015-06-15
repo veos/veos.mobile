@@ -42,6 +42,7 @@ window.veos = (function(veos) {
   self.goToPhotoDetails = function (installationId, photoId) {
     veos.currentInstallationId = installationId;
     veos.currentPhotoId = photoId;
+    jQuery('.photo-container').empty();
     jQuery.mobile.changePage("#photo-details-page", {chageHash: true});
     history.pushState({installationId: installationId, photoId: photoId}, "Photo Detail",
       "#installations/"+installationId+"/photos/"+photoId);
@@ -50,6 +51,7 @@ window.veos = (function(veos) {
   self.goToInstallationReportAmend = function (installationId) {
     veos.currentInstallationId = installationId;
     veos.amendingInst = true;
+    veos.view.showGlobalLoader("Loading...");
     jQuery.mobile.changePage("#report-page", {chageHash: true});
     history.pushState({installationId: installationId}, "Amend Installation Report",
       "#installations/"+installationId+"/report/amend");
@@ -185,6 +187,7 @@ window.veos = (function(veos) {
               self.currentReport = model.startAmending();
 
               self.reportForm = new self.view.ReportEditForm({el: '#report-page', model: self.currentReport});
+              self.reportForm.renderPhotos();
               self.currentReport.on('change', self.reportForm.render, self.reportForm);
 
               jQuery('#report-header-text').text('Edit the Installation');
@@ -389,6 +392,7 @@ window.veos = (function(veos) {
 
         // where to render picture into
         var photoContainer = jQuery('.photo-container');
+        photoContainer.empty();
         // Photo model for given Photo ID (from URL)
         var photo = new veos.model.Photo({id: photoId});
         // PhotoDetailsView renders the picture and aditional information

@@ -42,7 +42,7 @@
 
     veos.locWatchId = navigator.geolocation.watchPosition(haveloc, error, {
       enableHighAccuracy: true, // ask for exact location
-      timeout: 5000, // time out after 5 seconds
+      timeout: 10000, // time out after 10 seconds
       maximumAge: Infinity // allow using cached location
     });
   };
