@@ -4,14 +4,25 @@
 (function(veos) {
   var self = {};
 
-  var addLoader = function (container) {
-    var loader = jQuery("<div class='loading'><img src='images/loading-64.gif' alt='Loading...' /><p>Loading...</p></div>");
-    jQuery(container).prepend(loader);
-    return loader;
-  };
 
-  self.showGlobalLoader = function () {
-    veos.loader = addLoader(jQuery('body'));
+  self.showGlobalLoader = function (message, extra) {
+    var loader = jQuery("<div class='loading'><img src='images/loading-black-squares.gif' alt='Loading...' /><p>Loading...</p></div>");
+    if (message) {
+      loader.find('p').text(message);
+    } else {
+      loader.find('p').text("Loading...")
+    }
+    if (extra) {
+      var p = loader.find('p');
+      p.html(p.html() + extra);
+    }
+    loader.on('click', function () {
+      // allow the user to dismiss the loader in case we get stuck somehow
+      self.hideGlobalLoader();
+    });
+    jQuery('body').prepend(loader);
+    veos.loader = loader;
+    return loader;
     // FIXME: this looks ugly
   };
 
@@ -173,8 +184,7 @@
 
       var self = this;
 
-      jQuery.mobile.showPageLoadingMsg();
-      jQuery('.ui-loader h1').text('Submitting...');
+      veos.view.showGlobalLoader("Submitting report...");
       // use this once we upgrade to jQuery Mobile 1.2
       //jQuery.mobile.loading( 'show', { theme: "b", text: "Submitting...", textonly: false });
 
@@ -188,7 +198,7 @@
       self.model.save(null, {
         complete: function () {
           // replace failure with msg here?
-          jQuery.mobile.hidePageLoadingMsg();
+          veos.view.hideGlobalLoader();
         },
         success: function () {
           var report = self.model;
@@ -200,11 +210,12 @@
           // deletes objects and bounces us back to overview map
           var doneSubmit = function() {
             veos.alert("Report submitted successfully!");
-            veos.goToOverviewMap();
+            veos.view.showGlobalLoader("",
+              "<p style='color: #888'>Please wait while we<br />update the map...</p>");
             // FIXME! No seriously fix this!
             // Hack to just reset everything on submit because there is a nasty event
             // binding mess here that's probably not fixable without a proper rewrite.
-            location.reload();
+            location.assign("/");
           };
 
           var images = jQuery('.photo-list-item');    // get all images that were taken
@@ -266,7 +277,7 @@
       // FIXME! No seriously fix this!
       // Hack to just reset everything on submit because there is a nasty event
       // binding mess here that's probably not fixable without a proper rewrite.
-      location.reload();
+      location.assign("/");
     },
 
     clear: function () {
@@ -581,6 +592,7 @@
     },
 
     initialize: function () {
+      var self = this;
       //var self = this;
       console.log("Initializing ReportForm...");
 
@@ -589,6 +601,10 @@
       //this.model.on('change', _.bind(this.updateChangedFields, this));
 
       this.$el.data('initialized', true); // check this later to prevent double-init
+
+      this.on('image_upload_finish', function () {
+        self.renderPhotos();
+      })
 
       // FIXME: this is kind of nasty... refine-location should get its own View to make this better
       jQuery(document).off("click", "#refine-location-submit");
@@ -603,8 +619,7 @@
     submit: function () {
       var self = this;
 
-      jQuery.mobile.showPageLoadingMsg();
-      jQuery('.ui-loader h1').text('Submitting...');
+      veos.view.showGlobalLoader("Submitting amended report...");
       // use this once we upgrade to jQuery Mobile 1.2
       //jQuery.mobile.loading( 'show', { theme: "b", text: "Submitting...", textonly: false });
 
@@ -621,18 +636,21 @@
 
       self.model.save(null, {
         complete: function () {
-          jQuery.mobile.hidePageLoadingMsg();
+          veos.view.hideGlobalLoader();
         },
         success: function () {
           console.log("Report saved successfully with id "+self.model.id);
 
           var doneSubmit = function() {
             veos.alert("Report submitted successfully!");
-            jQuery.mobile.changePage("#overview-map-page");
+            veos.view.showGlobalLoader("",
+              "<p style='color: #888'>Please wait while we<br />update the map...</p>");
+
+            //jQuery.mobile.changePage("#overview-map-page");
             // FIXME! No seriously fix this!
             // Hack to just reset everything on submit because there is a nasty event
             // binding mess here that's probably not fixable without a proper rewrite.
-            location.reload();
+            location.assign("/");
           };
 
           var report = self.model;
@@ -719,7 +737,7 @@
       // FIXME! No seriously fix this!
       // Hack to just reset everything on submit because there is a nasty event
       // binding mess here that's probably not fixable without a proper rewrite.
-      location.reload();
+      location.assign("/");
     },
 
     clear: function () {
@@ -869,11 +887,13 @@
         jQuery('.sign-add-edit-text').text('Add');
       }
 
-      self.renderPhotos();
+      //self.renderPhotos();
 
       // see ReportEdit for explanation (uggggg)
       var multiWidth = jQuery(window).width() * 4/5;
       jQuery('.ui-select').width(multiWidth);
+
+      veos.view.hideGlobalLoader();
     },
 
     renderPhotos: function () {
@@ -887,6 +907,8 @@
           var photo = new veos.model.Photo({id: p.id});
           // associate a PhotoView with the Photo model
           var photoView = new PhotoView({model: photo, el: photoContainer});
+
+
 
           var photoFetchSuccess = function (model, response) {
             console.log("Add the photo model to the report photos collection");
@@ -960,13 +982,12 @@
       this.model.on('image_upload image_upload_finish change sync', this.render, this);
 
       this.model.on('image_upload_start', function () {
-        jQuery.mobile.showPageLoadingMsg();
-        jQuery('.ui-loader h1').text('Uploading photo...');
+        veos.view.showGlobalLoader("Uploading photo...", "<p style='color: #888'>( please wait, this can take a while )</p>");
       }, this);
 
       this.model.on('image_upload_error', function (err) {
+        veos.view.hideGlobalLoader();
         veos.alert("Image upload failed: " + JSON.stringify(err));
-        jQuery.mobile.hidePageLoadingMsg();
       }, this);
     },
 
@@ -1017,7 +1038,7 @@
       img.attr('src', photoView.model.thumbUrl());
       img.attr('alt', photoView.model.get('notes'));
 
-      jQuery.mobile.hidePageLoadingMsg();
+      veos.view.hideGlobalLoader();
     }
   });
 
@@ -1069,20 +1090,20 @@
       var headerPhotoId = jQuery('#photo-details-page .photo-id');
       headerPhotoId.text(this.model.id);
 
-      jQuery.mobile.hidePageLoadingMsg();
+      veos.view.hideGlobalLoader();
     },
 
     submit: function () {
       var self = this;
 
-      jQuery.mobile.showPageLoadingMsg();
-      jQuery('.ui-loader h1').text('Submitting...');
+
+      veos.view.showGlobalLoader("Submitting...");
       // use this once we upgrade to jQuery Mobile 1.2
       //jQuery.mobile.loading( 'show', { theme: "b", text: "Submitting...", textonly: false });
 
       self.model.save(null, {
         complete: function () {
-          jQuery.mobile.hidePageLoadingMsg();
+          veos.view.hideGlobalLoader();
         },
         success: function () {
           console.log("Photo detailes saved successfully with id "+self.model.id);

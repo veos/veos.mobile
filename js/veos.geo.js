@@ -26,17 +26,14 @@
     var error = function (err) {
       console.warn('ERROR(' + err.code + '): ' + err.message);
       if (err.code === 1) { // PERMISSION_DENIED
-        veos.alert("watchPosition PERMISSION_DENIED:",
-          "We are unable to locate you, because geolocation has been denied");
+        veos.alert("We are unable to locate you, because you declined to grant access to your geolocation (PERMISSION_DENIED)");
       } else if (err.code === 2) { // POSITION_UNAVAILABLE
         // currently unhandled (we can't produce this with our phones)
-        console.warn("watchPosition POSITION_UNAVAILABLE:",
-          "This error should be handled somehow");
+        console.warn("Your device is currently unable to determine location (POSITION_UNAVAILABLE)");
       } else if (err.code === 3) { // TIMEOUT
-        veos.alert("watchPosition TIMEOUT:",
-          "Your device is currently unable to determine location");
+        veos.alert("Your device is currently unable to determine location (TIMEOUT)");
       } else {
-        console.warn("Unknown watchPosition error code");
+        console.warn("Unknown watchPosition error code: "+err.code);
       }
 
       // Can't figure out the user's real position, so use the default.
@@ -45,7 +42,7 @@
 
     veos.locWatchId = navigator.geolocation.watchPosition(haveloc, error, {
       enableHighAccuracy: true, // ask for exact location
-      timeout: 5000, // time out after 5 seconds
+      timeout: 10000, // time out after 10 seconds
       maximumAge: Infinity // allow using cached location
     });
   };
