@@ -68,18 +68,22 @@
     var timeoutIdentifier = null; // holds a setTimeout ressu
 
     function fetchInstallationsWithFloodProtection () {
-      if (timeoutIdentifier) return;
+      if (timeoutIdentifier) {
+        return;
+      }
       timeoutIdentifier = setTimeout(function () {
-          console.log("unsetting timeoutIdentifier")
+          console.log("unsetting timeoutIdentifier");
           timeoutIdentifier = null;
         }, REQUEST_RATE_LIMIT);
 
       console.log('timeoutIdentifier:',timeoutIdentifier);
       veos.installations.fetch({remove: false, reset: false});
-    };
+    }
 
     google.maps.event.addListener(gmap, 'dragend', function() {
-      if (!timeoutIdentifier) console.log('dragend triggered');
+      if (!timeoutIdentifier) {
+        console.log('dragend triggered');
+      }
       var center = gmap.getCenter();
       veos.installations.updateLocation(center.lat(), center.lng());
       fetchInstallationsWithFloodProtection();
@@ -87,14 +91,18 @@
 
     google.maps.event.addListener(gmap, 'zoom_changed', function() {
       var zoom = gmap.getZoom();
-      if (!timeoutIdentifier) console.log('zoom_changed triggered; new zoom:', zoom);
+      if (!timeoutIdentifier) {
+        console.log('zoom_changed triggered; new zoom:', zoom);
+      }
       veos.installations.updateMaxDistance(80000/(Math.pow(2, zoom)));      // BASED ON http://stackoverflow.com/questions/8717279/what-is-zoom-level-15-equivalent-to
       fetchInstallationsWithFloodProtection();
     });
 
     google.maps.event.addListener(gmap, 'center_changed', function() {
       var center = gmap.getCenter();
-      if (!timeoutIdentifier) console.log('center_changed triggered; new center:', center);
+      if (!timeoutIdentifier) {
+        console.log('center_changed triggered; new center:', center);
+      }
       veos.installations.updateLocation(center.lat(), center.lng());
       fetchInstallationsWithFloodProtection();
     });

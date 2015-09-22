@@ -10,7 +10,7 @@
     if (message) {
       loader.find('p').text(message);
     } else {
-      loader.find('p').text("Loading...")
+      loader.find('p').text("Loading...");
     }
     if (extra) {
       var p = loader.find('p');
@@ -604,7 +604,7 @@
 
       this.on('image_upload_finish', function () {
         self.renderPhotos();
-      })
+      });
 
       // FIXME: this is kind of nasty... refine-location should get its own View to make this better
       jQuery(document).off("click", "#refine-location-submit");
@@ -1134,7 +1134,7 @@
     tagName: "li",
     className: "installation-list-row",
     id: function() {
-      return "installation-list-row-"+this.model.id
+      return "installation-list-row-"+this.model.id;
     },
 
     render: function () {
@@ -1531,7 +1531,9 @@
 
       // hack to prevent triggering render() for every attribute that gets updated
       // after fetch
-      if (self.dontRender) return;
+      if (self.dontRender) {
+        return;
+      }
 
       if (veos.isAndroid()) {
         // we're in the Android app

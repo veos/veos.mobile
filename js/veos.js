@@ -28,7 +28,7 @@ window.veos = (function(veos) {
 
   self.goToInstallationList = function () {
     jQuery.mobile.changePage("#installations-list-page");
-  }
+  };
 
   self.goToInstallationDetails = function (installationId) {
     veos.currentInstallationId = installationId;
@@ -65,7 +65,7 @@ window.veos = (function(veos) {
   };
 
   self.goToRefineLocation = function (installationId) {
-    var installationId = veos.currentInstallationId;
+    installationId = veos.currentInstallationId;
     jQuery.mobile.changePage("#refine-location-page", {chageHash: true});
     history.pushState({installationId: installationId}, "Refine Location",
       "#installations/"+installationId+"/report/refine-location");
@@ -125,7 +125,7 @@ window.veos = (function(veos) {
 
     // TODO: move this into the view
     veos.installations.summary(function (data) {
-      console.log("GOT TOTAL", data)
+      console.log("GOT TOTAL", data);
       jQuery('.installation-count-total').text(data.total_installation_count);
     });
 
@@ -146,7 +146,7 @@ window.veos = (function(veos) {
         // all pins that are in the marker array missing on the map. No redraw.
         //console.log("Hiding Map and destroying markersArray");
         //veos.markersArray = [];
-      })
+      });
 
     /** report.html (report-page) **/
       jQuery("#report-page")
@@ -177,7 +177,7 @@ window.veos = (function(veos) {
         if (self.amendingInst) {
           console.log('Fetching model for installation '+installationId+'...');
 
-          if (self.currentInstallation && self.currentInstallation.id == installationId) {
+          if (self.currentInstallation && self.currentInstallation.id === installationId) {
             self.reportForm.render();
           } else {
             var installation = new veos.model.Installation({id: installationId});
@@ -245,7 +245,7 @@ window.veos = (function(veos) {
           self.reportForm.unbind();
           self.reportForm.$el.not('[type="button"]').val(''); // reset form
         }
-      })
+      });
 
 
     /** refine-location.html (refine-location-page) **/
@@ -279,7 +279,7 @@ window.veos = (function(veos) {
         }
 
         refinerMap.addReportRefinerMarker(self.reportForm.model, refinerLoc);
-      })
+      });
 
       jQuery("#installations-list-page")
       .on("pageinit", function (ev) {
@@ -299,7 +299,7 @@ window.veos = (function(veos) {
       .on("pagehide", function(ev) {
         veos.installationListView
           .disableAutoLoadMoreOnScroll();
-      })
+      });
 
     /** report-selection.html (report-selection-page) **/
       jQuery("#report-selection-page")
@@ -309,7 +309,7 @@ window.veos = (function(veos) {
         var lastLoc = self.geo.lastLoc;
         var nearbyInstallations = new veos.model.NearbyInstallations([], {
           nearLat: lastLoc.coords.latitude,
-          nearLng: lastLoc.coords.longitude, 
+          nearLng: lastLoc.coords.longitude,
           maxDist: MAX_DISTANCE_TO_INST
         });
 
@@ -333,13 +333,13 @@ window.veos = (function(veos) {
           },
           reset:true
         });
-      })
+      });
 
 
       jQuery("#installation-details-page")
       .on("pageinit", function(ev) {
         if (veos.installationDetailView) {
-          veos.installationDetailView.unbind()
+          veos.installationDetailView.unbind();
         }
 
 
@@ -368,7 +368,7 @@ window.veos = (function(veos) {
         self.installationDetailView.resetPictures();
 
         self.installationDetailView.unbind();
-      })
+      });
 
     /** photo-details.html (photo-details-page) **/
       jQuery("#photo-details-page")
@@ -402,7 +402,7 @@ window.veos = (function(veos) {
         });
 
         view.model.fetch();
-      })
+      });
 
     /** privacy-compliance.html (privacy-compliance-page) **/
       jQuery("#privacy-compliance-page")
@@ -414,7 +414,7 @@ window.veos = (function(veos) {
         // self.analytics(ev);
 
         if (veos.privacyComplianceInfo) {
-          veos.privacyComplianceInfo.unbind()
+          veos.privacyComplianceInfo.unbind();
         }
 
         veos.privacyComplianceInfo = new veos.view.PrivacyComplianceView({
