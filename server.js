@@ -1,6 +1,6 @@
 /*jshint node: true */
 
-var BACKEND_URL = "http://backend.dev.surveillancerights.ca";
+var BACKEND_URL = "https://backend.dev.surveillancerights.ca";
 //var BACKEND_URL = "http://192.168.222.114:3000";
 //var BACKEND_URL = "http://192.168.43.221:3000";
 
