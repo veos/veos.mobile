@@ -116,7 +116,8 @@
           position: glatlng,
           //draggable: true,
           //icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-          icon: 'http://maps.google.com/mapfiles/ms/micons/man.png',
+          //icon: 'http://maps.google.com/mapfiles/ms/micons/man.png',
+          icon: 'https://maps.google.com/mapfiles/ms/micons/man.png',
           //icon: 'http://www.google.com/mapfiles/arrow.png',
           title: "You are here",
           zIndex: 99999 // half assed attempt at making sure the dude is on top
